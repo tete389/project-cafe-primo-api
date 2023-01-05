@@ -1,0 +1,10 @@
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  info:
+#    env:
+#      enable: true
+#  application:
+#    name:

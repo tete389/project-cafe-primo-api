@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+  db:
+    image: 'postgres:latest'
+    container_name: postgres_cafe
+    networks:
+      - order-pgsql
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=syspass
+  app:
+    container_name: spring_cafe
+    image: docker-spring-boot
+    build: ./
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - order-pgsql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=syspass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+networks:
+  order-pgsql:

@@ -1,0 +1,74 @@
+package com.example.cafebackend.controller;
+
+import com.example.cafebackend.mapper.ProductMapper;
+import com.example.cafebackend.model.request.ProdAddRequest;
+import com.example.cafebackend.model.request.ProdCateRequest;
+import com.example.cafebackend.model.request.ProdMateRequest;
+import com.example.cafebackend.model.request.ProdTypeRequest;
+import com.example.cafebackend.model.response.ProductCustomerResponse;
+import com.example.cafebackend.model.response.ProductResponse;
+import com.example.cafebackend.service.*;
+import com.example.cafebackend.table.*;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@AllArgsConstructor
+@Service
+public class EmployeeController {
+
+    private EmployeeService employeeService;
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////
+
+
+
+}
