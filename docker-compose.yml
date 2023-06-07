@@ -11,6 +11,9 @@ services:
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=syspass
+#    volumes:
+#      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
+#      - ./postgres-data:/var/lib/postgresql/data
   app:
     container_name: spring_cafe
     image: docker-spring-boot
@@ -26,6 +29,10 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=syspass
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    volumes:
+      - ./images/:/src/main/resources/static/images
 
+volumes:
+  db-data:
 networks:
   order-pgsql:

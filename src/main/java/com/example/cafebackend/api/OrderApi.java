@@ -1,16 +1,17 @@
 package com.example.cafebackend.api;
 
 import com.example.cafebackend.controller.OrderController;
+import com.example.cafebackend.exception.BaseException;
+
+import com.example.cafebackend.exception.OrderException;
 import com.example.cafebackend.model.request.OrderRequest;
+import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.table.Order;
-import com.example.cafebackend.table.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/order")
 public class OrderApi {
@@ -21,26 +22,31 @@ public class OrderApi {
         this.orderController = orderController;
     }
 
-
     ///////////////////////////////////////////////////////////
 
     @PostMapping("/createOrder")
-    public ResponseEntity<Order> createOrder(@RequestBody OrderRequest request) {
+    public ResponseEntity<Order> createOrder(@RequestBody OrderRequest request) throws BaseException {
         Order res = orderController.createOrder(request);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/getOrderById")
-    public ResponseEntity<Optional<Order>> getOrderById(@RequestBody Order request) {
-        Optional<Order> res = orderController.getOrderById(request.getOrderId());
+    public ResponseEntity<MessageResponse> getOrderById(@RequestBody String orderId) throws OrderException {
+        MessageResponse res = orderController.getOrderById(orderId);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/getAllOrder")
+    @GetMapping("/getAllOrder")
     public ResponseEntity<List<Order>> getOrderAll() {
         List<Order> res = orderController.getAllOrder();
         return ResponseEntity.ok(res);
     }
+
+//    @PostMapping("/editOrderById")
+//    public ResponseEntity<Order> editOrderById(@RequestBody OrderRequest request) throws BaseException {
+//        Order res = orderController.editOrder(request);
+//        return ResponseEntity.ok(res);
+//    }
 
 
 }

@@ -7,5 +7,9 @@ import java.util.List;
 @Data
 public class OrderRequest {
 
-    private List<OrderDetailRequest> orderDetailRequestList;
+    private String orderId;
+
+    private List<ProdRequest> prodRequests;
+
+    private String note;
 }

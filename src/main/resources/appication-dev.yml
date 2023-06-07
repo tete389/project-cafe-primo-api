@@ -1,8 +1,0 @@
-#spring:
-#  datasource:
-#    username: postgres
-#    password: syspass
-#    url: jdbc:postgresql://localhost:5432/cafe
-#  sql:
-#    init:
-#      mode: always

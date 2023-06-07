@@ -1,13 +1,14 @@
 package com.example.cafebackend.service;
 
+import com.example.cafebackend.exception.BaseException;
+import com.example.cafebackend.exception.MaterialException;
+import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.repository.MaterialRepository;
-import com.example.cafebackend.table.Category;
+import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.Material;
-import com.example.cafebackend.table.Product;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MaterialService {
@@ -21,52 +22,64 @@ public class MaterialService {
 
     //////////////////////////
 
-    public Optional<Material> findById(Integer id){
-        return materialRepository.findById(id);
-    }
-
-    /////////////////////////
-
-    public List<Material> findAllMate() {
-        return materialRepository.findAll();
-    }
-
-    /////////////////////////
-
-    public Material createMaterial(String mateName, String mateStatus) {
+    public Material createMaterial(String mateName, Double mateStock) throws BaseException {
+        /// verify
+        if(materialRepository.existsByMateName(mateName)) throw MaterialException.createFailNameDuplicate();
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
+        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
+        String Id = "M"+n1+n2;
+        /// save
         Material table = new Material();
+        table.setMateId(Id);
         table.setMateName(mateName);
-        table.setMateStatus(mateStatus);
+        table.setIsEnable(true);
+        table.setMateStock(mateStock);
         return materialRepository.save(table);
     }
 
-    /////////////////////////
+    public Optional<Material> findById(String id){
+        ///
+        return materialRepository.findById(id);
+    }
 
-    public Material updateMaterial(Material mate, String mateName, String mateStatus) {
-        mate.setMateName(mateName);
-        mate.setMateStatus(mateStatus);
+    public List<Material> findAllMate() {
+        ///
+        return materialRepository.findAll();
+    }
+
+    public Material updateMaterial(Material mate) throws BaseException {
+        /// verify
+        if(Objects.isNull(mate)) throw MaterialException.updateFail();
+        /// save
         return materialRepository.save(mate);
     }
 
+
     /////////////////////////
 
-    public void deleteMaterial(Integer mateId) {
+    public Boolean deleteMaterial(String mateId) throws MaterialException {
+        /// verify
         materialRepository.deleteById(mateId);
+        Optional<Material> mate = materialRepository.findById(mateId);
+        if(mate.isEmpty()) return true;
+        throw MaterialException.deleteFail();
     }
 
     /////////////////////////
 
-    public void addProductInMate(Material mate, List<Product> prod){
-
-        mate.setProduct(prod);
-        materialRepository.save(mate);
-    }
+//    public void addProductInMate(Material mate, List<Product> prod){
+//
+//        mate.setProduct(prod);
+//        materialRepository.save(mate);
+//    }
 
     /////////////////////////
-    public void addMateInProd(Material mate, Product prod){
-
-        mate.getProduct().add(prod);
-        materialRepository.save(mate);
-    }
+//    public void addMateInProd(Material mate, Product prod){
+//
+//        mate.getProduct().add(prod);
+//        materialRepository.save(mate);
+//    }
 
 }

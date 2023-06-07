@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,30 +14,40 @@ import java.util.List;
 @Table(name = "order")
 public class Order {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false, updatable = false, unique = true)
-    private Integer orderId;
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "order_number", length = 36, unique = true)
-    private Integer orderNumber;
+//    @GeneratedValue(generator = "uuid")
+//    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Id
+    @Column(name = "order_id", length = 36 ,nullable = false, updatable = false, unique = true)
+    private String orderId;
+
+    @Column(name = "number", length = 36)
+    private String number;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "order_create_date")
-    private Date orderCreateDate;
+    @Column(name = "create_date")
+    private String createDate;
 
-    @Column(name = "order_status")
-    private String orderStatus;
+    @Column(name = "status")
+    private String status;
 
-    @Column(name = "order_total_price", length = 12)
-    private Double orderTotalPrice;
+    @Column(name = "total_price", length = 12)
+    private Double totalPrice;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails = new ArrayList<>();
+    @Column(name = "total_bonus_point", length = 12)
+    private Double totalBonusPoint;
+
+    @Column(name = "note")
+    private String note;
+
+    @Column(name = "responsible")
+    private String responsible;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductRecord> productRecords = new ArrayList<>();
 
 
     public Order() {
-        orderCreateDate = new Date();
+        createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 }

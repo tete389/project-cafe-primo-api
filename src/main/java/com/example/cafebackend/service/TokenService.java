@@ -4,22 +4,28 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.cafebackend.exception.BaseException;
+import com.example.cafebackend.exception.EmployeeException;
+import com.example.cafebackend.table.Employee;
+import com.example.cafebackend.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class TokenService {
 
+    private final EmployeeService employeeService;
     @Value("${app.token.secret}")
     private String secret;
 
     @Value("${app.token.issuer}")
     private String issuer;
 
-    private final EmployeeService employeeService;
+
 
     public TokenService(EmployeeService employeeService) {
         this.employeeService = employeeService;
@@ -29,24 +35,23 @@ public class TokenService {
         return Algorithm.HMAC256(secret);
     }
 
-    ///public String tokenize(UserProfile userProfile)
-    public String tokenize(String userProfile){
+    public String tokenize(Employee emp){
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR,1);
+        calendar.add(Calendar.HOUR,24);
         Date expiresAt = calendar.getTime();
 
-        if (userProfile.equals("Admin")){
-            return JWT.create()
-                    .withIssuer(issuer)
-                    .withClaim("principal",userProfile)
-                    .withClaim("role","ADMIN")
-                    .withExpiresAt(expiresAt)
-                    .sign(algorithm());
-        }
+//        if (userProfile.equals("Admin")){
+//            return JWT.create()
+//                    .withIssuer(issuer)
+//                    .withClaim("principal",userProfile)
+//                    .withClaim("role","ADMIN")
+//                    .withExpiresAt(expiresAt)
+//                    .sign(algorithm());
+//        }
         return JWT.create()
                 .withIssuer(issuer)
-                .withClaim("principal",userProfile)
+                .withClaim("principal",emp.getEmpId())
                 .withClaim("role","USER")
                 .withExpiresAt(expiresAt)
                 .sign(algorithm());
@@ -64,18 +69,18 @@ public class TokenService {
     }
 
 
-//    public UserProfile checkTokenUser() throws BaseException {
-//        Optional<String> optUser = SecurityUtil.getCurrentUserId();
-//        if (optUser.isEmpty()) {
-//            throw UserException.unAuthorized();
-//        }
-//        String userId = optUser.get();
-//        Optional<UserProfile> byIdUser = userProfileService.findUserProfileById(userId);
-//        if (byIdUser.isEmpty()) {
-//            throw UserException.userNotFound();
-//        }
-//        return byIdUser.get();
-//    }
+    public Employee checkTokenEmp() throws BaseException {
+        Optional<String> optEmp = SecurityUtil.getCurrentUserId();
+        if (optEmp.isEmpty()) {
+            throw EmployeeException.accessDenied();
+        }
+        String empId = optEmp.get();
+        Optional<Employee> emp = employeeService.findEmpById(empId);
+        if (emp.isEmpty()) {
+            throw EmployeeException.accountNotFound();
+        }
+        return emp.get();
+    }
 //
 //    public Boolean checkAdmin() throws BaseException{
 //        Optional<String> optUser = SecurityUtil.getCurrentUserId();

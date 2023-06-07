@@ -1,10 +1,9 @@
 package com.example.cafebackend.mapper;
 
-import com.example.cafebackend.model.response.ProductCustomerResponse;
-import com.example.cafebackend.model.response.ProductResponse;
+import com.example.cafebackend.model.response.*;
 import com.example.cafebackend.table.Product;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -14,14 +13,40 @@ public interface ProductMapper {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    ProductResponse toProductResponse(Product product);
+    @Mapping(target = "baseProdId", source = "baseProduct.baseProdId")
+    //@Mapping(target = "prod", source = "product_detail.product")
+    ForProductOnlyResponse toProductOnlyResponse(Product pd);
 
-    ProductCustomerResponse toProductCustomerResponse(Product product);
+    List<ForProductOnlyResponse> toListProductOnlyResponse(List<Product> pd);
 
-    List<ProductResponse> toListProductResponse(List<Product> products);
+    ForProdAndListAddOnResponse toForProdAndListAddOnResponse (Product pd);
 
-    List<ProductCustomerResponse> toListProductCustomerResponse(List<Product> products);
+    ForProdAndListIngResponse toFoProdAndListIngResponse (Product pd);
 
+    ForProdAndListCategoryResponse toForProdAndListCategoryResponse (Product pd);
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    @Mapping(target = "baseProdId", source = "baseProduct.baseProdId")
+    @Mapping(target = "materials", source = "ingredients")
+    @Mapping(target = "categories", source = "category")
+    @Mapping(target = "addOn", source = "addOn")
+    ForProductInfoResponse toForProductInfoResponse (Product pd);
+
+    List<ForProductInfoResponse> toListForProductInfoResponse(List<Product> pd);
+
+    ///////////////////////////////////////////////////////////////////////////
+//    @Mapping(target = "additional", source = "productDetail.additional")
+//    @Mapping(target = "sweetness", source = "productDetail.sweetness")
+//    ProductCustomerResponse toProductCustomerResponse(ProductDetail productDetail);
+//
+//    ProductEmployeeResponse toProductEmployeeResponse(ProductDetail productDetail);
+//
+//    List<ProductDetailResponse> toListProductResponse(List<ProductDetail> productDetails);
+//
+//    List<ProductCustomerResponse> toListProductCustomerResponse(List<ProductDetail> productDetails);
+//
+//    List<ProductEmployeeResponse> toListProductEmployeeResponse(List<ProductDetail> productDetails);
 
 
 }

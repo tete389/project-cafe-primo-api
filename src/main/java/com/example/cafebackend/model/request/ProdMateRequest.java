@@ -1,15 +1,18 @@
-package com.example.cafebackend.model.request;
-
-import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-public class ProdMateRequest {
-
-    private List<Integer> prodId = new ArrayList<>();
-
-    private List<Integer> mateId = new ArrayList<>();
-
-}
+//package com.example.cafebackend.model.request;
+//
+//import com.example.cafebackend.table.Material;
+//import lombok.Data;
+//
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//@Data
+//public class ProdMateRequest {
+//
+//    private Integer prodId;
+//
+//    private String prodName;
+//
+//    private List<Material> mate = new ArrayList<>();
+//
+//}

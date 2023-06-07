@@ -1,19 +1,21 @@
 package com.example.cafebackend.api;
 
 import com.example.cafebackend.controller.MaterialController;
-import com.example.cafebackend.model.request.ProdCateRequest;
-import com.example.cafebackend.model.request.ProdMateRequest;
-import com.example.cafebackend.table.Category;
+import com.example.cafebackend.exception.BaseException;
+
+import com.example.cafebackend.exception.MaterialException;
+import com.example.cafebackend.model.response.MessageResponse;
+
 import com.example.cafebackend.table.Material;
-import com.example.cafebackend.table.Type;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @RestController
-@RequestMapping("/mate")
+@RequestMapping("/material")
 public class MaterialApi {
 
     private final MaterialController materialController;
@@ -25,39 +27,58 @@ public class MaterialApi {
 
     //////////////////////////////////////////////////////////
 
-    @PostMapping("/createMate")
-    public ResponseEntity<Material> createCate(@RequestBody Material request) {
-        Material res = materialController.createMaterial(request);
+    @PostMapping("/createMaterial")
+    public ResponseEntity<MessageResponse> createMate(@RequestParam("mateName") String mateName,
+                                                      @RequestParam("mateStock") Double mateStock) throws BaseException {
+        MessageResponse res = materialController.createMaterial(mateName, mateStock);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/getAllMate")
-    public ResponseEntity<List<Material>> getAllMate() {
-        List<Material> res = materialController.getAllMate();
+    @PostMapping("/getMaterialById")
+    public ResponseEntity<MessageResponse> getMateById(@RequestParam("mateId") String mateId) throws BaseException {
+        MessageResponse res = materialController.getMaterialById(mateId);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/getMateById")
-    public ResponseEntity<Material> getCateByCateId(@RequestBody Material request) {
-        Material res = materialController.getMateById(request);
+
+
+    @GetMapping("/getMaterialAll")
+    public ResponseEntity<MessageResponse> getMateAll() {
+        MessageResponse res = materialController.getMaterialAll();
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateMate")
-    public ResponseEntity<Material> updateMate(@RequestBody Material request) {
-        Material res = materialController.updateMate(request);
+    @PostMapping("/getListProductByMaterialId")
+    public ResponseEntity<MessageResponse> findListProductByMaterialId(@RequestParam("mateId") String mateId) throws BaseException {
+        MessageResponse res = materialController.findListProductByMaterialId(mateId);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/updateName")
+    public ResponseEntity<MessageResponse> updateName(@RequestParam("mateId") String mateId,
+                                                      @RequestParam("mateName") String mateName) throws BaseException {
+        MessageResponse res = materialController.setMaterialName(mateId, mateName);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/updateEnable")
+    public ResponseEntity<MessageResponse> updateEnable(@RequestParam("mateId") String mateId,
+                                                        @RequestParam("enable") Boolean enable) throws BaseException {
+        MessageResponse res = materialController.setMaterialEnable(mateId, enable);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/updateStock")
+    public ResponseEntity<MessageResponse> updateStock(@RequestParam("mateId") String mateId,
+                                                       @RequestParam("stock") Double stock)  throws BaseException {
+        MessageResponse res = materialController.setMaterialStock(mateId, stock);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/deleteMate")
-    public ResponseEntity<String> deleteMate(@RequestBody Material request) {
-        String res = materialController.deleteMate(request);
+    public ResponseEntity<MessageResponse> deleteMate(@RequestParam("mateId") String mateId) throws MaterialException {
+        MessageResponse res = materialController.deleteMate(mateId);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/addProdInMate")
-    public ResponseEntity<String> addProdInMate(@RequestBody ProdMateRequest request) {
-        String res = materialController.addProductInMate(request);
-        return ResponseEntity.ok(res);
-    }
 }

@@ -1,23 +1,22 @@
 package com.example.cafebackend.model.request;
 
-import com.example.cafebackend.table.Type;
+import com.example.cafebackend.table.AddOn;
+import com.example.cafebackend.table.Category;
+import com.example.cafebackend.table.Ingredient;
+import com.example.cafebackend.table.Option;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class ProdRequest {
 
-    private String prodName;
+    private String prodId;
 
-    private String prodImg;
+    private Integer amount;
 
-    private String prodStatus;
+    private List<Option> options = new ArrayList<>();
 
-    private Double prodPrice;
-
-    private Double prodTimeProcess;
-
-    private List<Type> prodType;
 
 }

@@ -13,26 +13,25 @@ import java.util.List;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cate_id", nullable = false, unique = true)
-    private Integer cateId;
+    @Column(name = "cate_id", length = 15, nullable = false, unique = true)
+    private String cateId;
 
-    @Column(name = "cate_name", length = 36, unique = true)
+    @Column(name = "cate_name", length = 60, unique = true)
     private String cateName;
 
-    @Column(name = "cate_status")
-    private String cateStatus;
-
-//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<Product> products;
-
+    @Column(name = "isEnable")
+    private Boolean isEnable;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "prod_cate",
-            joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
-            inverseJoinColumns = @JoinColumn(name = "prod_id", referencedColumnName = "prod_id"))
+    @ManyToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Product> product = new ArrayList<>();
+
+
+    @PreRemove
+    private void removeProductFromCategory() {
+        for (Product prod : product) {
+            prod.getCategory().remove(this);
+        }
+    }
 
 }
