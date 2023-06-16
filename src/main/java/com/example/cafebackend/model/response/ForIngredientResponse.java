@@ -1,6 +1,5 @@
 package com.example.cafebackend.model.response;
 
-import com.example.cafebackend.table.Ingredient;
 import lombok.Data;
 
 import java.util.ArrayList;

@@ -3,7 +3,6 @@ package com.example.cafebackend.controller;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.OptionException;
 import com.example.cafebackend.exception.OrderException;
-import com.example.cafebackend.model.request.OptionRequest;
 import com.example.cafebackend.model.request.ProdRequest;
 import com.example.cafebackend.service.*;
 import com.example.cafebackend.table.*;
@@ -24,7 +23,7 @@ public class ProductRecordController {
 
     private OptionRecordService optionRecordService;
 
-    private  ProductService productService;
+    private ProductFormService productFormService;
 
     private OptionService optionService;
 
@@ -45,9 +44,9 @@ public class ProductRecordController {
 
     public ProductRecord createProductRecord(Order order, ProdRequest request) throws BaseException {
         /// validate product
-        Optional<Product> product = productService.findProductById(request.getProdId());
+        Optional<ProductForm> product = productFormService.findProductFormById(request.getProdId());
         if(product.isEmpty()) throw OrderException.createFail();
-        Product prod = product.get();
+        ProductForm prod = product.get();
         /// add order
         ProductRecord productRecord = productRecordService.createProdRecord(order);
         /// price
@@ -74,13 +73,13 @@ public class ProductRecordController {
         /// check bonus point
         double bonusPoint = prod.getBonusPoint() * prodAmount;
         /// add data
-        productRecord.setProdName(prod.getProdName());
+        //productRecord.setProdName(prod.getProdForm());
         productRecord.setProdPrice(prod.getPrice());
         productRecord.setProdAmount(prodAmount);
         productRecord.setPrice(prices);
         productRecord.setTotalPrice(totalPrice);
         productRecord.setBonusPoint(bonusPoint);
-        productRecord.setProdId(prod.getProdId());
+        productRecord.setProdId(prod.getProdFormId());
 
         /// save
         return productRecordService.updateProdRecord(productRecord);

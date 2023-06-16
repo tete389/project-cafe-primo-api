@@ -2,17 +2,15 @@ package com.example.cafebackend.controller;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.MaterialException;
-import com.example.cafebackend.mapper.IngredientMapper;
 import com.example.cafebackend.mapper.MaterialMapper;
 import com.example.cafebackend.mapper.ProductMapper;
-import com.example.cafebackend.model.response.ForIngredientResponse;
 import com.example.cafebackend.model.response.ForMaterialResponse;
 import com.example.cafebackend.model.response.ForProductOnlyResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.MaterialService;
-import com.example.cafebackend.service.ProductService;
+import com.example.cafebackend.service.ProductFormService;
 import com.example.cafebackend.table.Material;
-import com.example.cafebackend.table.Product;
+import com.example.cafebackend.table.ProductForm;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,83 +25,49 @@ public class MaterialController {
 
     private MaterialService materialService;
 
-    private ProductService productService;
+    private ProductFormService productFormService;
 
     private MaterialMapper materialMapper;
 
     private ProductMapper productMapper;
 
-    private IngredientMapper ingredientMapper;
-
     //////////////////////////////////////////////////////////////////////
 
-    public MessageResponse createMaterial(String mateName, Double mateStock) throws BaseException {
+    public MessageResponse createMaterial(String mateName, Double mateStock, String unit) throws BaseException {
         /// validate
         if(Objects.isNull(mateName) || mateName.isEmpty()) throw MaterialException.createFailRequestNull();
         if(Objects.isNull(mateStock)) throw MaterialException.createFailRequestNull();
         /// verify
-        Material mate = materialService.createMaterial(mateName, mateStock);
+        Material mate = materialService.createMaterial(mateName, mateStock, unit);
         MessageResponse res = new MessageResponse();
-        res.setMessage("create Material complete");
+        res.setMessage("create Material success");
         res.setRes(mate);
         return res;
 
     }
-
     ////////////////////////////////////////
-    public MessageResponse getMaterialById(String mateId) throws BaseException {
+
+    public MessageResponse updateMaterial(String mateId, String mateName, String mateStock, String isEnable) throws BaseException {
         /// validate
         if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
+        if(Objects.isNull(mateName) || mateName.isEmpty()) throw MaterialException.findFailRequestNull();
+        if(Objects.isNull(mateStock) || mateStock.isEmpty()) throw MaterialException.findFailRequestNull();
+        if(Objects.isNull(isEnable) || isEnable.isEmpty()) throw MaterialException.findFailRequestNull();
         /// verify
         Optional<Material> mate =  materialService.findById(mateId);
         if(mate.isEmpty()) throw MaterialException.findFail();
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get Material By ID complete");
-        res.setRes(mate);
-        return res;
-    }
-
-
-    public MessageResponse getMaterialAll(){
-        List<Material> mateList = materialService.findAllMate();
-        List<ForMaterialResponse> mateResList = new ArrayList<>();
-        for (Material mate : mateList){
-            List<Product> prodList = productService.findProductByMaterialId(mate.getMateId());
-            ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, prodList);
-            mateResList.add(mateRes);
+        Material material = mate.get();
+        /// check mate name
+        if (!mateName.equals(material.getMateName())) {
+            if (materialService.existsByName(mateName)) throw MaterialException.updateFail();
+            material.setMateName(mateName);
         }
-        //List<ForMaterialResponse> mateRes = materialMapper.toListForMaterialResponse(materials);
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get Material All complete");
-        res.setRes(mateResList);
-        return res;
-    }
-
-    public MessageResponse findListProductByMaterialId(String mateId) throws BaseException {
-        /// validate
-        if(Objects.isNull(mateId) || mateId.isEmpty())throw MaterialException.findFail();
-        /// verify
-        Optional<Material> material = materialService.findById(mateId);
-        if(material.isEmpty()) throw MaterialException.findFail();
-        List<Product> products =  productService.findProductByMaterialId(mateId);
-        List<ForProductOnlyResponse> pdList = productMapper.toListProductOnlyResponse(products);
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get ListProducts By Material ID");
-        res.setRes(pdList);
-        return res;
-    }
-
-    ////////////////////////////////////////
-
-
-    public MessageResponse setMaterialName(String mateId, String newName) throws BaseException {
-        /// validate
-        if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
-        if(Objects.isNull(newName) || newName.isEmpty()) throw MaterialException.findFailRequestNull();
-        /// verify
-        Optional<Material> mate =  materialService.findById(mateId);
-        if(mate.isEmpty()) throw MaterialException.findFail();
-        mate.get().setMateName(newName);
+        /// check stock
+        if (!mateName.equals(material.getMateName())) {
+            if (materialService.existsByName(mateName)) throw MaterialException.updateFail();
+            material.setMateName(mateName);
+        }
+        mate.get().setMateName(mateName);
         Material mateRes = materialService.updateMaterial(mate.get());
         MessageResponse res = new MessageResponse();
         res.setMessage("update Name Material complete");
@@ -118,7 +82,7 @@ public class MaterialController {
         /// verify
         Optional<Material> mate =  materialService.findById(mateId);
         if(mate.isEmpty()) throw MaterialException.findFail();
-        mate.get().setMateStock(mateStock);
+        mate.get().setStock(mateStock);
         Material mateRes = materialService.updateMaterial(mate.get());
         MessageResponse res = new MessageResponse();
         res.setMessage("update Stock Material complete");
@@ -140,8 +104,49 @@ public class MaterialController {
         res.setRes(mateRes);
         return res;
     }
+    ////////////////////////////////////////
+
+    public MessageResponse getMaterialById(String mateId) throws BaseException {
+        /// validate
+        if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
+        /// verify
+        Optional<Material> mate =  materialService.findById(mateId);
+        if(mate.isEmpty()) throw MaterialException.findFail();
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get Material By ID complete");
+        res.setRes(mate);
+        return res;
+    }
 
 
+    public MessageResponse getMaterialAll(){
+        List<Material> mateList = materialService.findAllMate();
+        List<ForMaterialResponse> mateResList = new ArrayList<>();
+        for (Material mate : mateList){
+            List<ProductForm> prodList = productFormService.findProductByMaterialId(mate.getMateId());
+            ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, prodList);
+            mateResList.add(mateRes);
+        }
+        //List<ForMaterialResponse> mateRes = materialMapper.toListForMaterialResponse(materials);
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get Material All complete");
+        res.setRes(mateResList);
+        return res;
+    }
+
+    public MessageResponse findListProductByMaterialId(String mateId) throws BaseException {
+        /// validate
+        if(Objects.isNull(mateId) || mateId.isEmpty())throw MaterialException.findFail();
+        /// verify
+        Optional<Material> material = materialService.findById(mateId);
+        if(material.isEmpty()) throw MaterialException.findFail();
+        List<ProductForm> productForms =  productFormService.findProductByMaterialId(mateId);
+        List<ForProductOnlyResponse> pdList = productMapper.toListProductFormOnlyResponse(productForms);
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get ListProducts By Material ID");
+        res.setRes(pdList);
+        return res;
+    }
     ////////////////////////////////////////
 
     public MessageResponse deleteMate(String mateId) throws MaterialException {
@@ -151,7 +156,6 @@ public class MaterialController {
         res.setRes(mate);
         return res;
     }
-
     ////////////////////////////////////////
 
 

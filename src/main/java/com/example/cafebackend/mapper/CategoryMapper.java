@@ -2,7 +2,7 @@ package com.example.cafebackend.mapper;
 
 import com.example.cafebackend.model.response.ForCategoryResponse;
 import com.example.cafebackend.table.Category;
-import com.example.cafebackend.table.Product;
+import com.example.cafebackend.table.ProductForm;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,6 +15,6 @@ public interface CategoryMapper {
 
     //ForCategoryResponse toForCategoryResponse(Category category, Integer prodCount);
 
-    ForCategoryResponse toForCategoryResponse(Category category, List<Product> prods);
+    ForCategoryResponse toForCategoryResponse(Category category, List<ProductForm> prods);
 
 }

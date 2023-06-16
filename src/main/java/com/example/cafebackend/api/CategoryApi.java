@@ -54,17 +54,18 @@ public class CategoryApi {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateName")
-    public ResponseEntity<MessageResponse> updateName(@RequestParam("cateId") String cateId,
-                                                      @RequestParam("cateName") String name) throws BaseException {
-        MessageResponse res = categoryController.setCategoryName(cateId, name);
+    @PostMapping("/updateCategory")
+    public ResponseEntity<MessageResponse> updateCategory(@RequestParam("cateId") String cateId,
+                                                          @RequestParam("cateName") String name,
+                                                          @RequestParam("isEnable") String isEnable) throws BaseException {
+        MessageResponse res = categoryController.updateCategory(cateId, name, isEnable);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateEnable")
-    public ResponseEntity<MessageResponse> updateEnable(@RequestParam("cateId") String cateId,
-                                                        @RequestParam("enable") Boolean enable) throws BaseException {
-        MessageResponse res = categoryController.setEnableCategory(cateId, enable);
+    @PostMapping("/updateAddProduct")
+    public ResponseEntity<MessageResponse> updateAddProduct(@RequestParam("cateId") String cateId,
+                                                            @RequestParam("listProdFormId") List<String> prodFormId) throws BaseException {
+        MessageResponse res = categoryController.updateAddProduct(cateId, prodFormId);
         return ResponseEntity.ok(res);
     }
 

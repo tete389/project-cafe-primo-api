@@ -1,17 +1,16 @@
 package com.example.cafebackend.api;
 
 import com.example.cafebackend.controller.MaterialController;
+import com.example.cafebackend.controller.MaterialUsedController;
 import com.example.cafebackend.exception.BaseException;
 
 import com.example.cafebackend.exception.MaterialException;
+import com.example.cafebackend.model.request.MateUsedRequest;
+import com.example.cafebackend.model.request.UsedRequest;
 import com.example.cafebackend.model.response.MessageResponse;
-
-import com.example.cafebackend.table.Material;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
@@ -20,8 +19,11 @@ public class MaterialApi {
 
     private final MaterialController materialController;
 
-    public MaterialApi(MaterialController materialController) {
+    private final MaterialUsedController materialUsedController;
+
+    public MaterialApi(MaterialController materialController, MaterialUsedController materialUsedController) {
         this.materialController = materialController;
+        this.materialUsedController = materialUsedController;
     }
 
 
@@ -29,8 +31,9 @@ public class MaterialApi {
 
     @PostMapping("/createMaterial")
     public ResponseEntity<MessageResponse> createMate(@RequestParam("mateName") String mateName,
-                                                      @RequestParam("mateStock") Double mateStock) throws BaseException {
-        MessageResponse res = materialController.createMaterial(mateName, mateStock);
+                                                      @RequestParam("mateStock") Double mateStock,
+                                                      @RequestParam("mateUnit") String unit) throws BaseException {
+        MessageResponse res = materialController.createMaterial(mateName, mateStock, unit);
         return ResponseEntity.ok(res);
     }
 
@@ -54,10 +57,12 @@ public class MaterialApi {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateName")
-    public ResponseEntity<MessageResponse> updateName(@RequestParam("mateId") String mateId,
-                                                      @RequestParam("mateName") String mateName) throws BaseException {
-        MessageResponse res = materialController.setMaterialName(mateId, mateName);
+    @PostMapping("/updateMaterial")
+    public ResponseEntity<MessageResponse> updateMaterial(@RequestParam("mateId") String mateId,
+                                                          @RequestParam("mateName") String mateName,
+                                                          @RequestParam("stock") String stock,
+                                                          @RequestParam("enable") String enable) throws BaseException {
+        MessageResponse res = materialController.updateMaterial(mateId, mateName, stock, enable);
         return ResponseEntity.ok(res);
     }
 
@@ -72,6 +77,12 @@ public class MaterialApi {
     public ResponseEntity<MessageResponse> updateStock(@RequestParam("mateId") String mateId,
                                                        @RequestParam("stock") Double stock)  throws BaseException {
         MessageResponse res = materialController.setMaterialStock(mateId, stock);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/updateAddMaterialUseToForm")
+    public ResponseEntity<MessageResponse> updateAddMaterialUseToForm(@RequestBody UsedRequest usedRequest)  throws Exception {
+        MessageResponse res = materialUsedController.updateAddMaterialUsedToForm(usedRequest.getProdFormId(), usedRequest.getMateUsed());
         return ResponseEntity.ok(res);
     }
 

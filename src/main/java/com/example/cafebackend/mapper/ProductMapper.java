@@ -1,9 +1,8 @@
 package com.example.cafebackend.mapper;
 
 import com.example.cafebackend.model.response.*;
-import com.example.cafebackend.table.Product;
+import com.example.cafebackend.table.ProductForm;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -13,27 +12,33 @@ public interface ProductMapper {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    @Mapping(target = "baseProdId", source = "baseProduct.baseProdId")
+
     //@Mapping(target = "prod", source = "product_detail.product")
-    ForProductOnlyResponse toProductOnlyResponse(Product pd);
+    ForProductOnlyResponse toProductFormOnlyResponse(ProductForm pd);
 
-    List<ForProductOnlyResponse> toListProductOnlyResponse(List<Product> pd);
+    List<ForProductOnlyResponse> toListProductFormOnlyResponse(List<ProductForm> pd);
 
-    ForProdAndListAddOnResponse toForProdAndListAddOnResponse (Product pd);
+    ForProdAndListAddOnResponse toForProdAndListAddOnResponse (ProductForm pd);
 
-    ForProdAndListIngResponse toFoProdAndListIngResponse (Product pd);
+    //ForProdAndListIngResponse toFoProdAndListIngResponse (ProductForm pd);
 
-    ForProdAndListCategoryResponse toForProdAndListCategoryResponse (Product pd);
+    ForProdAndListCategoryResponse toForProdAndListCategoryResponse (ProductForm pd);
+
+//    @Mapping(target = "prodImg", source = "image")
+//    @Mapping(target = "point", source = "bonusPoint")
+//    @Mapping(target = "isEnableMaterial", source = "ingredients.material.isEnable")
+//    @Mapping(target = "des", source = "description")
+//    ProductCustomerResponse toProductCustomerResponse(ProductForm productForm);
     ///////////////////////////////////////////////////////////////////////////
 
 
-    @Mapping(target = "baseProdId", source = "baseProduct.baseProdId")
-    @Mapping(target = "materials", source = "ingredients")
-    @Mapping(target = "categories", source = "category")
-    @Mapping(target = "addOn", source = "addOn")
-    ForProductInfoResponse toForProductInfoResponse (Product pd);
+//    @Mapping(target = "baseProdId", source = "baseProduct.baseProdId")
+//    @Mapping(target = "materials", source = "ingredients")
+//    @Mapping(target = "categories", source = "category")
+//    @Mapping(target = "addOn", source = "addOn")
+//    ForProductInfoResponse toForProductInfoResponse (ProductForm pd);
 
-    List<ForProductInfoResponse> toListForProductInfoResponse(List<Product> pd);
+    //List<ForProductInfoResponse> toListForProductInfoResponse(List<ProductForm> pd);
 
     ///////////////////////////////////////////////////////////////////////////
 //    @Mapping(target = "additional", source = "productDetail.additional")

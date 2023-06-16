@@ -28,13 +28,9 @@ public class AddOn {
     @Column(name = "description")
     private String description;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "additional", cascade = CascadeType.ALL)
-//    private List<AdditionalDetail> additionalDetails;
-
     @JsonIgnore
     @ManyToMany(mappedBy = "addOn", fetch = FetchType.LAZY)
-    private List<Product> product = new ArrayList<>();
+    private List<ProductForm> productForm = new ArrayList<>();
 
     @OneToMany(mappedBy = "addOn", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();

@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class ProdNec {
 
-    private String prodId;
+    private String prodFormId;
 
-    private String prodName;
+    private String prodForm;
 
 
 }

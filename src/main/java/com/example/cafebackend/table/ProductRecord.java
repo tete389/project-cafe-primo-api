@@ -26,8 +26,6 @@ public class ProductRecord {
 //    @Column(name = "date")
 //    private String date;
 
-
-
     @Column(name = "prod_name", length = 36)
     private String prodName;
 

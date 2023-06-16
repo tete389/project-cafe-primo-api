@@ -10,6 +10,6 @@ public class MaterialRequest {
 
     private String prodId;
 
-    private List<IngredientRequest> ingredients = new ArrayList<>();
+    private List<MateUsedRequest> ingredients = new ArrayList<>();
 
 }

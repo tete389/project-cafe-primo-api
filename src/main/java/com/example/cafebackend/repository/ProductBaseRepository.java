@@ -1,17 +1,15 @@
 package com.example.cafebackend.repository;
 
-import com.example.cafebackend.table.BaseProduct;
+import com.example.cafebackend.table.ProductBase;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface BaseProductRepository extends JpaRepository<BaseProduct, String> {
+public interface ProductBaseRepository extends JpaRepository<ProductBase, String> {
 
-    @Query(value = "SELECT * FROM product p ORDER BY p.prod_title ASC", nativeQuery = true)
-    List<BaseProduct> findAllBaseProduct();
+//    @Query(value = "SELECT * FROM product p ORDER BY p.prod_title ASC", nativeQuery = true)
+//    List<ProductBase> findAllBaseProduct();
 
 
 //    @Query(value = "SELECT p FROM product_detail p WHERE p.prodName LIKE :name%")

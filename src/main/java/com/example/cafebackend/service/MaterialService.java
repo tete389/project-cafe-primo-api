@@ -22,7 +22,7 @@ public class MaterialService {
 
     //////////////////////////
 
-    public Material createMaterial(String mateName, Double mateStock) throws BaseException {
+    public Material createMaterial(String mateName, Double mateStock, String unit) throws BaseException {
         /// verify
         if(materialRepository.existsByMateName(mateName)) throw MaterialException.createFailNameDuplicate();
         Calendar now = Calendar.getInstance();
@@ -35,7 +35,8 @@ public class MaterialService {
         table.setMateId(Id);
         table.setMateName(mateName);
         table.setIsEnable(true);
-        table.setMateStock(mateStock);
+        table.setMateUnit(unit);
+        table.setStock(mateStock);
         return materialRepository.save(table);
     }
 
@@ -54,6 +55,11 @@ public class MaterialService {
         if(Objects.isNull(mate)) throw MaterialException.updateFail();
         /// save
         return materialRepository.save(mate);
+    }
+
+    public Boolean existsByName(String name) {
+        ///
+        return materialRepository.existsByMateName(name);
     }
 
 

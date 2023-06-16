@@ -11,15 +11,11 @@ import java.util.List;
 @Data
 public class ForProdAndListCategoryResponse {
 
-    private String prodId;
+    private String prodFormId;
 
     private String prodForm;
 
-    private String prodName;
-
     private Boolean isEnable;
-
-    private Boolean isForSale;
 
     private Double price;
 

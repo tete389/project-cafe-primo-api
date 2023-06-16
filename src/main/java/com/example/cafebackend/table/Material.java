@@ -20,15 +20,22 @@ public class Material {
     @Column(name = "mate_name", length = 36, nullable = false)
     private String mateName;
 
+    @Column(name = "mate_Unit", length = 36, nullable = false)
+    private String mateUnit;
+
     @Column(name = "is_enable")
     private Boolean isEnable;
 
-    @Column(name = "mate_stock", length = 36, nullable = false)
-    private Double mateStock;
+    @Column(name = "stock", length = 36, nullable = false)
+    private Double stock;
+
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "material", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<Ingredient> ingredients = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Ingredient> ingredients = new ArrayList<>();
+    private List<MaterialUsed> materialUsed = new ArrayList<>();
 
 
 }

@@ -22,14 +22,18 @@ public class Category {
     @Column(name = "isEnable")
     private Boolean isEnable;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private List<Product> product = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "cate_prod",
+            joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
+            inverseJoinColumns = @JoinColumn(name = "prod_form_id", referencedColumnName = "prod_form_id"))
+    private List<ProductForm> productForm = new ArrayList<>();
 
 
     @PreRemove
     private void removeProductFromCategory() {
-        for (Product prod : product) {
+        for (ProductForm prod : productForm) {
             prod.getCategory().remove(this);
         }
     }

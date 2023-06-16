@@ -42,8 +42,8 @@ public class ProductException extends BaseException{
         return new ProductException("findProduct.Fail.request Form Null");
     }
 
-    public static ProductException findFailRequestForSaleNull(){
-        return new ProductException("findProduct.Fail.request ForSale Null");
+    public static ProductException findFailRequestPointNull(){
+        return new ProductException("findProduct.Fail.request Bonus Point Null");
     }
 
     public static ProductException findFailRequestEnableNull(){
@@ -66,12 +66,20 @@ public class ProductException extends BaseException{
         return new ProductException("findProductFail.DataNull");
     }
 
+    public static ProductException updateFailTitleDuplicate(){
+        return new ProductException("updateBase.Fail.TitleDuplicate");
+    }
+
+    public static ProductException updateFailFormDuplicate(){
+        return new ProductException("updateForm.Fail.FormDuplicate");
+    }
+
     public static ProductException createFailTitleDuplicate(){
-        return new ProductException("CreateBaseProduct.Fail.TitleDuplicate");
+        return new ProductException("CreateBase.Fail.TitleDuplicate");
     }
 
     public static ProductException createFailFormDuplicate(){
-        return new ProductException("CreateProduct.Fail.FormDuplicate");
+        return new ProductException("CreateForm.Fail.FormDuplicate");
     }
 
 

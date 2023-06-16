@@ -1,8 +1,5 @@
 package com.example.cafebackend.model.request;
 
-import com.example.cafebackend.table.AddOn;
-import com.example.cafebackend.table.Category;
-import com.example.cafebackend.table.Ingredient;
 import com.example.cafebackend.table.Option;
 import lombok.Data;
 

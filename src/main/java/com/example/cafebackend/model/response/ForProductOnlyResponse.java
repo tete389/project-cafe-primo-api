@@ -1,22 +1,19 @@
 package com.example.cafebackend.model.response;//package com.example.cafebackend.model.response;
 
 
+import com.example.cafebackend.table.ProductBase;
 import lombok.Data;
 
 @Data
 public class ForProductOnlyResponse {
 
-    private String prodId;
+    private String prodFormId;
 
     private String prodForm;
-
-    private String prodName;
 
     private String image;
 
     private Boolean isEnable;
-
-    private Boolean isForSale;
 
     private Double price;
 
@@ -24,7 +21,7 @@ public class ForProductOnlyResponse {
 
     private String description;
 
-    private String baseProdId;
+    private ProductBase productBase;
 
 
 }

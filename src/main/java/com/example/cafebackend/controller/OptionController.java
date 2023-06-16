@@ -5,7 +5,7 @@ import com.example.cafebackend.exception.OptionException;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.AddOnService;
 import com.example.cafebackend.service.OptionService;
-import com.example.cafebackend.service.ProductService;
+import com.example.cafebackend.service.ProductFormService;
 import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.Option;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class OptionController {
 
     private AddOnService addOnService;
 
-    private ProductService productService;
+    private ProductFormService productFormService;
 
     //////////////////////////////////////////////////////////////////////
     public MessageResponse createOption(String addId, String optionName, Double price) throws BaseException {

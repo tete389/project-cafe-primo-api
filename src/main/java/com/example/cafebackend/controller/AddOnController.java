@@ -4,13 +4,11 @@ import com.example.cafebackend.exception.OptionException;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.mapper.AddOnMapper;
 import com.example.cafebackend.model.response.ForAddOnResponse;
-import com.example.cafebackend.model.response.ForMaterialResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.AddOnService;
-import com.example.cafebackend.service.ProductService;
+import com.example.cafebackend.service.ProductFormService;
 import com.example.cafebackend.table.AddOn;
-import com.example.cafebackend.table.Material;
-import com.example.cafebackend.table.Product;
+import com.example.cafebackend.table.ProductForm;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ public class AddOnController {
 
     private AddOnService addOnService;
 
-    private ProductService productService;
+    private ProductFormService productFormService;
 
     private AddOnMapper addOnMapper;
 
@@ -61,7 +59,7 @@ public class AddOnController {
         List<AddOn> addOnList =  addOnService.findListAddOn();
         List<ForAddOnResponse> addResList = new ArrayList<>();
         for (AddOn addOn : addOnList){
-            List<Product> prodList = productService.findProductByAddOnlId(addOn.getAddOnId());
+            List<ProductForm> prodList = productFormService.findProductByAddOnlId(addOn.getAddOnId());
             ForAddOnResponse addRes = addOnMapper.toForAddOnResponse(addOn, prodList);
             addResList.add(addRes);
         }

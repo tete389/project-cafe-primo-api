@@ -8,9 +8,9 @@ import com.example.cafebackend.model.response.ForCategoryResponse;
 import com.example.cafebackend.model.response.ForProductOnlyResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.CategoryService;
-import com.example.cafebackend.service.ProductService;
+import com.example.cafebackend.service.ProductFormService;
 import com.example.cafebackend.table.Category;
-import com.example.cafebackend.table.Product;
+import com.example.cafebackend.table.ProductForm;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,30 +25,89 @@ public class CategoryController {
 
     private CategoryService categoryService;
 
-    private ProductService productService;
+    private ProductFormService productFormService;
 
     private CategoryMapper categoryMapper;
 
     private ProductMapper productMapper;
 
     //////////////////////////////////////////////////////////////////////
+
     public MessageResponse createCategory(String cateName) throws BaseException {
         /// validate
         if(Objects.isNull(cateName) || cateName.isEmpty()) throw CategoryException.createFail();
         Category cate = categoryService.createCategory(cateName);
         MessageResponse res = new MessageResponse();
-        res.setMessage("create Category complete");
+        res.setMessage("create Category success");
         res.setRes(cate);
         return res;
     }
-
     ////////////////////////////////////////
+
+    public MessageResponse updateCategory(String cateId, String cateName, String isEnable) throws BaseException {
+        /// validate
+        if(Objects.isNull(cateId) || cateId.isEmpty()) throw CategoryException.updateFail();
+        if(Objects.isNull(cateName) || cateName.isEmpty()) throw CategoryException.updateFail();
+        if(Objects.isNull(isEnable) || isEnable.isEmpty()) throw CategoryException.updateFail();
+        /// verify
+        Optional<Category> category = categoryService.findById(cateId);
+        if(Objects.isNull(category) || category.isEmpty()) throw CategoryException.findFail();
+        Category cate =  category.get();
+        /// check category name
+        if(!cateName.equals(cate.getCateName())) {
+            if(categoryService.existsByName(cateName)) throw CategoryException.updateFail();
+            cate.setCateName(cateName);
+        }
+        /// check isEnable
+        if(isEnable.equals("true")){
+            if(cate.getIsEnable().equals(false)) cate.setIsEnable(true);
+        } else if (isEnable.equals("false")) {
+            if(cate.getIsEnable().equals(true)) cate.setIsEnable(false);
+        }
+        /// update category
+        Category resCate = categoryService.updateCategory(cate);
+        /// set response
+        MessageResponse res = new MessageResponse();
+        res.setMessage("update Category success");
+        res.setRes(resCate);
+        return res;
+    }
+
+    public MessageResponse updateAddProduct(String cateId, List<String> formId) throws BaseException {
+        /// validate
+        if(Objects.isNull(cateId) || cateId.isEmpty()) throw CategoryException.updateFail();
+        //if(Objects.isNull(formId) || formId.isEmpty()) throw CategoryException.updateFail();
+        /// verify
+        Optional<Category> cateOpt = categoryService.findById(cateId);
+        if(Objects.isNull(cateOpt) || cateOpt.isEmpty()) throw CategoryException.findFail();
+        Category category =  cateOpt.get();
+        List<ProductForm> formList = new ArrayList<>();
+        /// check product form
+        if (!(Objects.isNull(formId) || formId.isEmpty())) {
+            for (String form : formId) {
+                Optional<ProductForm> formOpt = productFormService.findProductFormById(form);
+                if (Objects.isNull(formOpt) || formOpt.isEmpty()) throw CategoryException.addInfoFailCategoryNull();
+                formList.add(formOpt.get());
+            }
+        }
+        /// set product form
+        category.getProductForm().clear();
+        category.getProductForm().addAll(formList);
+        /// response
+        Category resCategory = categoryService.updateCategory(category);
+        MessageResponse res = new MessageResponse();
+        res.setMessage("update Category success");
+        res.setRes(resCategory);
+        return res;
+    }
+    ////////////////////////////////////////
+
     public MessageResponse findCategoryById(String cateId) throws BaseException {
         /// validate
         Optional<Category> cate =  categoryService.findById(cateId);
         if(cate.isEmpty()) throw CategoryException.findFail();
         MessageResponse res = new MessageResponse();
-        res.setMessage("get Category By ID complete");
+        res.setMessage("get Category By ID success");
         res.setRes(cate);
         return res;
     }
@@ -58,50 +117,15 @@ public class CategoryController {
         List<Category> cateList = categoryService.findListCategory();
         List<ForCategoryResponse> cateResList = new ArrayList<>();
         for (Category cate : cateList){
-            List<Product> prodList = productService.findProductByCateId(cate.getCateId());
+            List<ProductForm> prodList = productFormService.findProductByCateId(cate.getCateId());
             ForCategoryResponse cateRes = categoryMapper.toForCategoryResponse(cate, prodList);
             cateResList.add(cateRes);
         }
         MessageResponse res = new MessageResponse();
-        res.setMessage("get all category ");
+        res.setMessage("get all category");
         res.setRes(cateResList);
         return res;
     }
-
-    ////////////////////////////////////////
-    public MessageResponse setCategoryName(String cateId, String cateName) throws BaseException {
-        /// validate
-        if(Objects.isNull(cateId) || cateId.isEmpty()) throw CategoryException.updateFail();
-        if(Objects.isNull(cateName) || cateName.isEmpty()) throw CategoryException.updateFail();
-        /// verify
-        Optional<Category> category = categoryService.findById(cateId);
-        if(Objects.isNull(category) || category.isEmpty()) throw CategoryException.findFail();
-        if(categoryService.existsByName(cateName)) throw CategoryException.updateFail();
-        category.get().setCateName(cateName);
-        Category cate = categoryService.updateCategory(category.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("set Name Category complete");
-        res.setRes(cate);
-        return res;
-    }
-
-    public MessageResponse setEnableCategory(String cateId, Boolean enable) throws BaseException {
-        /// validate
-        if(Objects.isNull(cateId) || cateId.isEmpty()) throw CategoryException.updateFail();
-        if(Objects.isNull(enable) ) throw CategoryException.updateFail();
-        /// verify
-        Optional<Category> category = categoryService.findById(cateId);
-        if(Objects.isNull(category) || category.isEmpty()) throw CategoryException.findFail();
-        category.get().setIsEnable(enable);
-        Category cate = categoryService.updateCategory(category.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("set enable complete");
-        res.setRes(cate);
-        return res;
-    }
-
-
-
     ////////////////////////////////////////
 
 
@@ -111,8 +135,8 @@ public class CategoryController {
         /// verify
         Optional<Category> category = categoryService.findById(cateId);
         if(category.isEmpty()) throw CategoryException.findFail();
-        List<Product> products =  productService.findProductByCateId(cateId);
-        List<ForProductOnlyResponse> pdList = productMapper.toListProductOnlyResponse(products);
+        List<ProductForm> productForms =  productFormService.findProductByCateId(cateId);
+        List<ForProductOnlyResponse> pdList = productMapper.toListProductFormOnlyResponse(productForms);
         MessageResponse res = new MessageResponse();
         res.setMessage("find ListProducts By Category ID");
         res.setRes(pdList);
@@ -125,7 +149,7 @@ public class CategoryController {
     public MessageResponse deleteCategory(String cateId) throws BaseException {
         Boolean cate =  categoryService.deleteCategory(cateId);
         MessageResponse res = new MessageResponse();
-        res.setMessage("delete Category complete");
+        res.setMessage("delete Category success");
         res.setRes(cate);
         return res;
     }

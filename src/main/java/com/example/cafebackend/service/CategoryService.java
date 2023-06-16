@@ -2,10 +2,8 @@ package com.example.cafebackend.service;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.CategoryException;
-import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.repository.CategoryRepository;
-import com.example.cafebackend.repository.ProductRepository;
-import com.example.cafebackend.table.AddOn;
+import com.example.cafebackend.repository.ProductFormRepository;
 import com.example.cafebackend.table.Category;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +14,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    private final ProductRepository productRepository;
+    private final ProductFormRepository productFormRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ProductFormRepository productFormRepository) {
         this.categoryRepository = categoryRepository;
-        this.productRepository = productRepository;
+        this.productFormRepository = productFormRepository;
     }
 
 

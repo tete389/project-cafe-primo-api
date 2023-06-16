@@ -1,7 +1,6 @@
 package com.example.cafebackend.model.response;//package com.example.cafebackend.model.response;
 
 
-import com.example.cafebackend.table.Ingredient;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -26,6 +25,6 @@ public class ForProdAndListIngResponse {
 
     private String description;
 
-    private List<Ingredient> ingredients = new ArrayList<>();
+    //private List<Ingredient> ingredients = new ArrayList<>();
 
 }

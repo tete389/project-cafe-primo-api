@@ -1,10 +1,8 @@
 package com.example.cafebackend.mapper;
 
 import com.example.cafebackend.model.response.ForAddOnResponse;
-import com.example.cafebackend.model.response.ForCategoryResponse;
 import com.example.cafebackend.table.AddOn;
-import com.example.cafebackend.table.Category;
-import com.example.cafebackend.table.Product;
+import com.example.cafebackend.table.ProductForm;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -17,6 +15,6 @@ public interface AddOnMapper {
 
     //ForCategoryResponse toForCategoryResponse(Category category, Integer prodCount);
 
-    ForAddOnResponse toForAddOnResponse(AddOn addOn, List<Product> prods);
+    ForAddOnResponse toForAddOnResponse(AddOn addOn, List<ProductForm> prods);
 
 }

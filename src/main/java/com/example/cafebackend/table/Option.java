@@ -30,4 +30,7 @@ public class Option {
     @JoinColumn(name = "add_on_id")
     private AddOn addOn;
 
+    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MaterialUsed> materialUsed = new ArrayList<>();
+
 }
