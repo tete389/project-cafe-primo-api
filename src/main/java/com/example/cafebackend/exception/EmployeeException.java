@@ -6,8 +6,8 @@ public class EmployeeException extends BaseException{
         super(code);
     }
 
-    public static EmployeeException createFailLoginIdDuplicated(){
-        return new EmployeeException("createEmployee.Fail.id.Duplicated");
+    public static EmployeeException createFailUsernameDuplicated(){
+        return new EmployeeException("createEmployee.Fail.Username.Duplicated");
     }
 
     public static EmployeeException createFailNameDuplicated(){

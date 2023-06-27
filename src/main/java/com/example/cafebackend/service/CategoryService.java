@@ -14,11 +14,9 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    private final ProductFormRepository productFormRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, ProductFormRepository productFormRepository) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.productFormRepository = productFormRepository;
     }
 
 
@@ -36,6 +34,7 @@ public class CategoryService {
         table.setCateId(cId);
         table.setCateName(cateName);
         table.setIsEnable(true);
+        table.setIsRecommend(false);
         return categoryRepository.save(table);
     }
 
@@ -44,9 +43,19 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
-    public List<Category> findListCategory() {
+    public List<Category> findListCategoryAll() {
         ///
-        return categoryRepository.findListCategory();
+        return categoryRepository.findListCategoryAll();
+    }
+
+    public List<Category> findListCategoryAllByNotRecommend() {
+        ///
+        return categoryRepository.findListCategoryAllByNotRecommend();
+    }
+
+    public List<Category> findListCategoryAllByRecommend() {
+        ///
+        return categoryRepository.findListCategoryAllByRecommend();
     }
 
     public Optional<Category> findByName(String cateName) {

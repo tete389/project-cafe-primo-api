@@ -62,6 +62,10 @@ public class ProductException extends BaseException{
 
     ////////////////
 
+    public static ProductException uploadFileFail(Exception e){
+        return new ProductException("Unsuccessfully Uploaded! : "+e);
+    }
+
     public static ProductException findProductFail(){
         return new ProductException("findProductFail.DataNull");
     }

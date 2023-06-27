@@ -34,6 +34,16 @@ public class AddOnApi {
         return ResponseEntity.ok(res);
     }
 
+    @PostMapping("/updateAddOn")
+    public ResponseEntity<MessageResponse> updateAddOn(@RequestParam("addOnId") String addOnId,
+                                                       @RequestParam("addOnTitle") String addOnTitle,
+                                                       @RequestParam("isManyOptions") String isManyOptions,
+                                                       @RequestParam("isEnable") String isEnable,
+                                                       @RequestParam("description") String description) throws BaseException {
+        MessageResponse res = addOnController.updateAddOn(addOnId, addOnTitle, isManyOptions, isEnable, description);
+        return ResponseEntity.ok(res);
+    }
+
     @GetMapping("/getAddOnAll")
     public ResponseEntity<MessageResponse> getAddOnAll() {
         MessageResponse res = addOnController.findAllAddOn();
@@ -46,33 +56,6 @@ public class AddOnApi {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateTitle")
-    public ResponseEntity<MessageResponse> updateTitle(@RequestParam("addOnId") String addOnId,
-                                                       @RequestParam("title") String newTitle) throws BaseException {
-        MessageResponse res = addOnController.setAddOnTitle(addOnId, newTitle);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/updateManyOptions")
-    public ResponseEntity<MessageResponse> updateManyOptions(@RequestParam("addOnId") String addOnId,
-                                                             @RequestParam("manyOptions") Boolean manyOptions) throws BaseException {
-        MessageResponse res = addOnController.setAddOnManyOptions(addOnId, manyOptions);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/updateEnable")
-    public ResponseEntity<MessageResponse> updateEnable(@RequestParam("addOnId") String addOnId,
-                                                        @RequestParam("enable") Boolean enable) throws BaseException {
-        MessageResponse res = addOnController.setAddOnEnable(addOnId, enable);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/updateDescription")
-    public ResponseEntity<MessageResponse> updateDescription(@RequestParam("addOnId") String addOnId,
-                                                             @RequestParam("description") String description) throws BaseException {
-        MessageResponse res = addOnController.setAddOnDescription(addOnId, description);
-        return ResponseEntity.ok(res);
-    }
 
     @PostMapping("/deleteAddOn")
     public ResponseEntity<MessageResponse> deleteAdd(@RequestParam("addOnId") String addOnId) throws BaseException {
@@ -92,38 +75,27 @@ public class AddOnApi {
         return ResponseEntity.ok(res);
     }
 
+    @PostMapping("/option/updateOption")
+    public ResponseEntity<MessageResponse> updateOptionInfo(@RequestParam("optionId") String optionId,
+                                                            @RequestParam("optionName") String optionName,
+                                                            @RequestParam("price") String price,
+                                                            @RequestParam("isEnable") String isEnable) throws BaseException {
+        MessageResponse res = optionController.updateOption(optionId, optionName, price, isEnable);
+        return ResponseEntity.ok(res);
+    }
+
     @PostMapping("/option/getOptionById")
     public ResponseEntity<MessageResponse> getOptionById(@RequestParam("optionId") String optionId) throws BaseException {
         MessageResponse res = optionController.findOptionById(optionId);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/option/getOptionAll")
+    @GetMapping("/option/getOptionAll")
     public ResponseEntity<MessageResponse> getOptionAll() throws BaseException {
         MessageResponse res = optionController.findAllOption();
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/option/updateOptionInfo")
-    public ResponseEntity<MessageResponse> updateOptionInfo(@RequestParam("optionId") String optionId,
-                                                            @RequestParam("optionName") String optionName) throws BaseException {
-        MessageResponse res = optionController.setOptionInfo(optionId, optionName);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/option/updatePrice")
-    public ResponseEntity<MessageResponse> updatePrice(@RequestParam("optionId") String optionId,
-                                                       @RequestParam("price") Double price) throws BaseException {
-        MessageResponse res = optionController.setOptionPrice(optionId, price);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/option/updateForSale")
-    public ResponseEntity<MessageResponse> updateForSale(@RequestParam("optionId") String optionId,
-                                                         @RequestParam("forSale") Boolean forSale) throws BaseException {
-        MessageResponse res = optionController.setForSale(optionId, forSale);
-        return ResponseEntity.ok(res);
-    }
 
     @PostMapping("/option/deleteOption")
     public ResponseEntity<MessageResponse> deleteOption(@RequestParam("optionId") String optionId) throws BaseException {

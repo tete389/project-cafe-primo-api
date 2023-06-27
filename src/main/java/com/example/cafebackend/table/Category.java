@@ -19,10 +19,13 @@ public class Category {
     @Column(name = "cate_name", length = 60, unique = true)
     private String cateName;
 
-    @Column(name = "isEnable")
+    @Column(name = "is_enable")
     private Boolean isEnable;
 
+    @Column(name = "is_recommend")
+    private Boolean isRecommend;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "cate_prod",

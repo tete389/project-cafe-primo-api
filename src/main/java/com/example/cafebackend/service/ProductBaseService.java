@@ -42,17 +42,23 @@ public class ProductBaseService {
     }
     //////////////////////////////////
 
+    public ProductBase updateProductBase(ProductBase productBase) throws BaseException {
+        /// verify
+        if(Objects.isNull(productBase)) throw ProductException.findBaseFail();
+        /// save
+        return productBaseRepository.save(productBase);
+    }
+    //////////////////////////////////
+
     public Optional<ProductBase> findBaseById(String id){
         ///
         return productBaseRepository.findById(id);
     }
     //////////////////////////////////
 
-    public ProductBase updateBaseProduct(ProductBase productBase) throws BaseException {
-        /// verify
-        if(Objects.isNull(productBase)) throw ProductException.findBaseFail();
-        /// save
-        return productBaseRepository.save(productBase);
+    public List<ProductBase> findBaseAll(){
+        ///
+        return productBaseRepository.findAll();
     }
     //////////////////////////////////
 

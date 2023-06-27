@@ -1,7 +1,9 @@
 package com.example.cafebackend.controller;
 
+import com.example.cafebackend.appString.EString;
 import com.example.cafebackend.exception.OptionException;
 import com.example.cafebackend.exception.BaseException;
+import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.mapper.AddOnMapper;
 import com.example.cafebackend.model.response.ForAddOnResponse;
 import com.example.cafebackend.model.response.MessageResponse;
@@ -32,16 +34,56 @@ public class AddOnController {
         /// validate
         if(Objects.isNull(title) || title.isEmpty()) throw OptionException.createFail();
         if(Objects.isNull(manyOptions)) manyOptions = false;
-        if(Objects.isNull(description) || description.isEmpty()) description = "none";
+        if(Objects.isNull(description) || description.isEmpty()) description = EString.NONE.getValue();
         /// verify
         AddOn add = addOnService.createAddOn(title, description, manyOptions);
         MessageResponse res = new MessageResponse();
-        res.setMessage("create AddOn complete");
+        res.setMessage("create AddOn success");
         res.setRes(add);
         return res;
     }
-
     ////////////////////////////////////////
+
+    public MessageResponse updateAddOn(String addId, String title, String isManyOptions, String isEnable, String description) throws BaseException {
+        /// validate
+        if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
+        if(Objects.isNull(title) || title.isEmpty()) throw OptionException.findFailRequestNull();
+        if(Objects.isNull(isManyOptions) || isManyOptions.isEmpty()) throw OptionException.findFailRequestNull();
+        if(Objects.isNull(isEnable) || isEnable.isEmpty()) throw OptionException.findFailRequestNull();
+        if(Objects.isNull(description) || description.isEmpty()) throw OptionException.findFailRequestNull();
+        /// verify
+        Optional<AddOn> addOpt =  addOnService.findAddOnById(addId);
+        if(addOpt.isEmpty()) throw OptionException.findFail();
+        AddOn addOn = addOpt.get();
+        /// check title
+        if(!title.equals(addOn.getAddOnTitle())) {
+            if(addOnService.existsByTitle(title)) throw OptionException.updateFail();
+            addOn.setAddOnTitle(title);
+        }
+        /// check description
+        if(!description.equals(addOn.getDescription())) {
+            addOn.setDescription(description);
+        }
+        /// check isEnable
+        String enable = String.valueOf(addOn.getIsEnable());
+        if(!isEnable.equals(enable)){
+            addOn.setIsEnable(Boolean.valueOf(isEnable));
+        }
+        /// check isManyOptions
+        String manyOptions = String.valueOf(addOn.getIsManyOptions());
+        if(!isManyOptions.equals(manyOptions)){
+            addOn.setIsManyOptions(Boolean.valueOf(isManyOptions));
+        }
+        /// update addon
+        AddOn addRes = addOnService.updateAddOn(addOn);
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("update addOn success");
+        res.setRes(addRes);
+        return res;
+    }
+    /////////////////////////////////
+
     public MessageResponse findAddOnById(String addId) throws BaseException {
         /// validate
         if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
@@ -49,101 +91,34 @@ public class AddOnController {
         Optional<AddOn> add =  addOnService.findAddOnById(addId);
         if(add.isEmpty()) throw OptionException.findFail();
         MessageResponse res = new MessageResponse();
-        res.setMessage("get AddOn complete");
+        res.setMessage("get AddOn success");
         res.setRes(add);
         return res;
     }
-
     ////////////////////////////////////////
+
     public MessageResponse findAllAddOn(){
         List<AddOn> addOnList =  addOnService.findListAddOn();
         List<ForAddOnResponse> addResList = new ArrayList<>();
-        for (AddOn addOn : addOnList){
-            List<ProductForm> prodList = productFormService.findProductByAddOnlId(addOn.getAddOnId());
-            ForAddOnResponse addRes = addOnMapper.toForAddOnResponse(addOn, prodList);
-            addResList.add(addRes);
-        }
+//        for (AddOn addOn : addOnList){
+//            List<ProductForm> prodList = productFormService.findProductByAddOnlId(addOn.getAddOnId());
+//            ForAddOnResponse addRes = addOnMapper.toForAddOnResponse(addOn, prodList);
+//            addResList.add(addRes);
+//        }
         MessageResponse res = new MessageResponse();
-        res.setMessage("get AddOn complete");
-        res.setRes(addResList);
-        return res;
-    }
-
-
-    ////////////////////////////////////////
-
-    public MessageResponse setAddOnTitle(String addId, String newTitle) throws BaseException {
-        /// validate
-        if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
-        if(Objects.isNull(newTitle) || newTitle.isEmpty()) throw OptionException.findFailRequestNull();
-        /// verify
-        Optional<AddOn> add =  addOnService.findAddOnById(addId);
-        if(add.isEmpty()) throw OptionException.findFail();
-        if (addOnService.existsByTitle(newTitle)) throw OptionException.updateFail();
-        add.get().setAddOnTitle(newTitle);
-        AddOn addRes = addOnService.updateAddOn(add.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update title complete");
-        res.setRes(addRes);
-        return res;
-    }
-
-    ////////////////////////////////////////
-    public MessageResponse setAddOnManyOptions(String addId, Boolean isOptions) throws BaseException {
-        /// validate
-        if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
-        if(Objects.isNull(isOptions)) throw OptionException.findFailRequestNull();
-        /// verify
-        Optional<AddOn> add =  addOnService.findAddOnById(addId);
-        if(add.isEmpty()) throw OptionException.findFail();
-        add.get().setIsManyOptions(isOptions);
-        AddOn addRes = addOnService.updateAddOn(add.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update IsManyOptions complete");
-        res.setRes(addRes);
-        return res;
-    }
-
-    ////////////////////////////////////////
-    public MessageResponse setAddOnEnable(String addId, Boolean isEnable) throws BaseException {
-        /// validate
-        if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
-        if(Objects.isNull(isEnable)) throw OptionException.findFailRequestNull();
-        /// verify
-        Optional<AddOn> add =  addOnService.findAddOnById(addId);
-        if(add.isEmpty()) throw OptionException.findFail();
-        add.get().setIsEnable(isEnable);
-        AddOn addRes = addOnService.updateAddOn(add.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update IsEnable complete");
-        res.setRes(addRes);
+        res.setMessage("get AddOn success");
+        res.setRes(addOnList);
         return res;
     }
     ////////////////////////////////////////
-    public MessageResponse setAddOnDescription(String addId, String description) throws BaseException {
-        /// validate
-        if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
-        if(Objects.isNull(description) || description.isEmpty()) throw OptionException.findFailRequestNull();
-        /// verify
-        Optional<AddOn> add =  addOnService.findAddOnById(addId);
-        if(add.isEmpty()) throw OptionException.findFail();
-        add.get().setDescription(description);
-        AddOn addRes = addOnService.updateAddOn(add.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update Description complete");
-        res.setRes(addRes);
-        return res;
-    }
 
-    ////////////////////////////////////////
     public MessageResponse deleteAddOn(String addId) throws BaseException {
         Boolean addOn =  addOnService.deleteAddOn(addId);
         MessageResponse res = new MessageResponse();
-        res.setMessage("delete AddOn complete");
+        res.setMessage("delete AddOn success");
         res.setRes(addOn);
         return res;
     }
-
     ////////////////////////////////////////
 
 

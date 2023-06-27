@@ -5,16 +5,16 @@ import com.example.cafebackend.exception.MaterialException;
 import com.example.cafebackend.mapper.MaterialMapper;
 import com.example.cafebackend.mapper.ProductMapper;
 import com.example.cafebackend.model.response.ForMaterialResponse;
-import com.example.cafebackend.model.response.ForProductOnlyResponse;
+import com.example.cafebackend.model.response.ForMaterialUseResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.MaterialService;
+import com.example.cafebackend.service.MaterialUsedService;
 import com.example.cafebackend.service.ProductFormService;
 import com.example.cafebackend.table.Material;
-import com.example.cafebackend.table.ProductForm;
+import com.example.cafebackend.table.MaterialUsed;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,6 +26,8 @@ public class MaterialController {
     private MaterialService materialService;
 
     private ProductFormService productFormService;
+
+    private MaterialUsedService materialUsedService;
 
     private MaterialMapper materialMapper;
 
@@ -47,7 +49,7 @@ public class MaterialController {
     }
     ////////////////////////////////////////
 
-    public MessageResponse updateMaterial(String mateId, String mateName, String mateStock, String isEnable) throws BaseException {
+    public MessageResponse updateMaterial(String mateId, String mateName, String mateStock, String isEnable, String unit) throws BaseException {
         /// validate
         if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
         if(Objects.isNull(mateName) || mateName.isEmpty()) throw MaterialException.findFailRequestNull();
@@ -63,47 +65,32 @@ public class MaterialController {
             material.setMateName(mateName);
         }
         /// check stock
-        if (!mateName.equals(material.getMateName())) {
-            if (materialService.existsByName(mateName)) throw MaterialException.updateFail();
-            material.setMateName(mateName);
+        Double stock = Double.valueOf(mateStock);
+        if (!stock.equals(material.getStock())) {
+            material.setStock(stock);
         }
-        mate.get().setMateName(mateName);
-        Material mateRes = materialService.updateMaterial(mate.get());
+        /// check isEnable
+        String enable = String.valueOf(material.getIsEnable());
+        if (!isEnable.equals(enable)) {
+            material.setIsEnable(Boolean.valueOf(isEnable));
+            for (MaterialUsed mateUse : material.getMaterialUsed()) {
+                Optional<MaterialUsed> opt =  materialUsedService.findById(mateUse.getMateUsedId());
+                if(opt.isEmpty()) throw MaterialException.findFail();
+                opt.get().setIsEnable(Boolean.valueOf(isEnable));
+            }
+        }
+        /// check unit
+        if (!unit.equals(material.getMateUnit())) {
+            material.setMateUnit(unit);
+        }
+        ///
+        Material mateRes = materialService.updateMaterial(material);
         MessageResponse res = new MessageResponse();
-        res.setMessage("update Name Material complete");
+        res.setMessage("update Material success");
         res.setRes(mateRes);
         return res;
     }
 
-    public MessageResponse setMaterialStock(String mateId, Double mateStock) throws BaseException {
-        /// validate
-        if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
-        if(Objects.isNull(mateStock)) throw MaterialException.findFailRequestNull();
-        /// verify
-        Optional<Material> mate =  materialService.findById(mateId);
-        if(mate.isEmpty()) throw MaterialException.findFail();
-        mate.get().setStock(mateStock);
-        Material mateRes = materialService.updateMaterial(mate.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update Stock Material complete");
-        res.setRes(mateRes);
-        return res;
-    }
-
-    public MessageResponse setMaterialEnable(String mateId, Boolean enable) throws BaseException {
-        /// validate
-        if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
-        if(Objects.isNull(enable)) throw MaterialException.findFailRequestNull();
-        /// verify
-        Optional<Material> mate =  materialService.findById(mateId);
-        if(mate.isEmpty()) throw MaterialException.findFail();
-        mate.get().setIsEnable(enable);
-        Material mateRes = materialService.updateMaterial(mate.get());
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update Enable complete");
-        res.setRes(mateRes);
-        return res;
-    }
     ////////////////////////////////////////
 
     public MessageResponse getMaterialById(String mateId) throws BaseException {
@@ -112,8 +99,9 @@ public class MaterialController {
         /// verify
         Optional<Material> mate =  materialService.findById(mateId);
         if(mate.isEmpty()) throw MaterialException.findFail();
+        /// res
         MessageResponse res = new MessageResponse();
-        res.setMessage("get Material By ID complete");
+        res.setMessage("get Material By ID");
         res.setRes(mate);
         return res;
     }
@@ -121,30 +109,33 @@ public class MaterialController {
 
     public MessageResponse getMaterialAll(){
         List<Material> mateList = materialService.findAllMate();
-        List<ForMaterialResponse> mateResList = new ArrayList<>();
-        for (Material mate : mateList){
-            List<ProductForm> prodList = productFormService.findProductByMaterialId(mate.getMateId());
-            ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, prodList);
-            mateResList.add(mateRes);
-        }
+//        List<ForMaterialResponse> mateResList = new ArrayList<>();
+//        for (Material mate : mateList){
+//            List<ProductForm> prodList = productFormService.findProductByMaterialId(mate.getMateId());
+//            ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, prodList);
+//            mateResList.add(mateRes);
+//        }
         //List<ForMaterialResponse> mateRes = materialMapper.toListForMaterialResponse(materials);
+        /// res
         MessageResponse res = new MessageResponse();
-        res.setMessage("get Material All complete");
-        res.setRes(mateResList);
+        res.setMessage("get Material All");
+        res.setRes(mateList);
         return res;
     }
 
-    public MessageResponse findListProductByMaterialId(String mateId) throws BaseException {
+    public MessageResponse findListMateUseByMateId(String mateId) throws BaseException {
         /// validate
         if(Objects.isNull(mateId) || mateId.isEmpty())throw MaterialException.findFail();
         /// verify
         Optional<Material> material = materialService.findById(mateId);
         if(material.isEmpty()) throw MaterialException.findFail();
-        List<ProductForm> productForms =  productFormService.findProductByMaterialId(mateId);
-        List<ForProductOnlyResponse> pdList = productMapper.toListProductFormOnlyResponse(productForms);
+        Material mate = material.get();
+
+        List<ForMaterialUseResponse> mateUseMap = materialMapper.toListForMaterialUseResponse(mate.getMaterialUsed());
+        ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, mateUseMap);
         MessageResponse res = new MessageResponse();
-        res.setMessage("get ListProducts By Material ID");
-        res.setRes(pdList);
+        res.setMessage("get List MaterialUsed By Material ID");
+        res.setRes(mateRes);
         return res;
     }
     ////////////////////////////////////////
@@ -152,7 +143,7 @@ public class MaterialController {
     public MessageResponse deleteMate(String mateId) throws MaterialException {
         Boolean mate =  materialService.deleteMaterial(mateId);
         MessageResponse res = new MessageResponse();
-        res.setMessage("delete Material complete");
+        res.setMessage("delete Material success");
         res.setRes(mate);
         return res;
     }

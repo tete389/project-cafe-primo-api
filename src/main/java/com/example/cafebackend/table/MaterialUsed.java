@@ -17,8 +17,11 @@ public class MaterialUsed {
     @Column(name = "mate_used_id", length = 36 ,nullable = false, updatable = false, unique = true)
     private String mateUsedId;
 
-    @Column(name = "used_count", length = 36)
-    private Double usedCount;
+    @Column(name = "amount_used", length = 36)
+    private Double amountUsed;
+
+    @Column(name = "is_enable", length = 36)
+    private Boolean isEnable;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

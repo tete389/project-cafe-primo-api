@@ -1,9 +1,8 @@
 package com.example.cafebackend.model.response;
 
-import com.example.cafebackend.model.response.ForListIdName.ProdNec;
+import com.example.cafebackend.table.ProductForm;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,6 +14,8 @@ public class ForCategoryResponse {
 
     private Boolean isEnable;
 
-    private List<ProdNec> prods = new ArrayList<>();
+    private Boolean isRecommend;
+
+    private List<ProductForm> products;
 
 }

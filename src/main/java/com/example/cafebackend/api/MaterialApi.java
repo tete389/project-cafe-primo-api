@@ -37,13 +37,21 @@ public class MaterialApi {
         return ResponseEntity.ok(res);
     }
 
+    @PostMapping("/updateMaterial")
+    public ResponseEntity<MessageResponse> updateMaterial(@RequestParam("mateId") String mateId,
+                                                          @RequestParam("mateName") String mateName,
+                                                          @RequestParam("stock") String stock,
+                                                          @RequestParam("enable") String enable,
+                                                          @RequestParam("unit") String unit) throws BaseException {
+        MessageResponse res = materialController.updateMaterial(mateId, mateName, stock, enable, unit);
+        return ResponseEntity.ok(res);
+    }
+
     @PostMapping("/getMaterialById")
     public ResponseEntity<MessageResponse> getMateById(@RequestParam("mateId") String mateId) throws BaseException {
         MessageResponse res = materialController.getMaterialById(mateId);
         return ResponseEntity.ok(res);
     }
-
-
 
     @GetMapping("/getMaterialAll")
     public ResponseEntity<MessageResponse> getMateAll() {
@@ -51,44 +59,53 @@ public class MaterialApi {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/getListProductByMaterialId")
-    public ResponseEntity<MessageResponse> findListProductByMaterialId(@RequestParam("mateId") String mateId) throws BaseException {
-        MessageResponse res = materialController.findListProductByMaterialId(mateId);
+    @PostMapping("/getListMateUseByMateId")
+    public ResponseEntity<MessageResponse> findListMateUseByMateId(@RequestParam("mateId") String mateId) throws BaseException {
+        MessageResponse res = materialController.findListMateUseByMateId(mateId);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateMaterial")
-    public ResponseEntity<MessageResponse> updateMaterial(@RequestParam("mateId") String mateId,
-                                                          @RequestParam("mateName") String mateName,
-                                                          @RequestParam("stock") String stock,
-                                                          @RequestParam("enable") String enable) throws BaseException {
-        MessageResponse res = materialController.updateMaterial(mateId, mateName, stock, enable);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/updateEnable")
-    public ResponseEntity<MessageResponse> updateEnable(@RequestParam("mateId") String mateId,
-                                                        @RequestParam("enable") Boolean enable) throws BaseException {
-        MessageResponse res = materialController.setMaterialEnable(mateId, enable);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/updateStock")
-    public ResponseEntity<MessageResponse> updateStock(@RequestParam("mateId") String mateId,
-                                                       @RequestParam("stock") Double stock)  throws BaseException {
-        MessageResponse res = materialController.setMaterialStock(mateId, stock);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/updateAddMaterialUseToForm")
-    public ResponseEntity<MessageResponse> updateAddMaterialUseToForm(@RequestBody UsedRequest usedRequest)  throws Exception {
-        MessageResponse res = materialUsedController.updateAddMaterialUsedToForm(usedRequest.getProdFormId(), usedRequest.getMateUsed());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/deleteMate")
+    @PostMapping("/deleteMaterial")
     public ResponseEntity<MessageResponse> deleteMate(@RequestParam("mateId") String mateId) throws MaterialException {
         MessageResponse res = materialController.deleteMate(mateId);
+        return ResponseEntity.ok(res);
+    }
+
+
+    ////////////////////////////////////// mate use
+    @PostMapping("/updateMaterialUseInBase")
+    public ResponseEntity<MessageResponse> updateMaterialUseOfBase(@RequestBody UsedRequest usedRequest)  throws Exception {
+        MessageResponse res = materialUsedController.updateAddMaterialUsedInBase(usedRequest.getProdFormId(), usedRequest.getMateUsed());
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/updateMaterialUseInForm")
+    public ResponseEntity<MessageResponse> updateMaterialUseOfForm(@RequestBody UsedRequest usedRequest)  throws Exception {
+        MessageResponse res = materialUsedController.updateAddMaterialUsedInForm(usedRequest.getProdFormId(), usedRequest.getMateUsed());
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/updateMaterialUseInOption")
+    public ResponseEntity<MessageResponse> updateMaterialUseOfOption(@RequestBody UsedRequest usedRequest)  throws Exception {
+        MessageResponse res = materialUsedController.updateAddMaterialUsedInOption(usedRequest.getProdFormId(), usedRequest.getMateUsed());
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/getMaterialUseInBase")
+    public ResponseEntity<MessageResponse> findMaterialUseInBase(@RequestParam("baseId") String baseId)  throws Exception {
+        MessageResponse res = materialUsedController.findMaterialUsedInBaseId(baseId);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/getMaterialUseInForm")
+    public ResponseEntity<MessageResponse> findMaterialUseInForm(@RequestParam("formId") String formId)  throws Exception {
+        MessageResponse res = materialUsedController.findMaterialUsedInFormId(formId);
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/getMaterialUseInOption")
+    public ResponseEntity<MessageResponse> findMaterialUseInOption(@RequestParam("optionId") String optionId)  throws Exception {
+        MessageResponse res = materialUsedController.findMaterialUsedInOptionId(optionId);
         return ResponseEntity.ok(res);
     }
 

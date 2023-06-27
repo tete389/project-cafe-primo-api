@@ -29,6 +29,7 @@ public class ProductBase {
     @OneToMany(mappedBy = "productBase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductForm> productForms = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "productBase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MaterialUsed> materialUsed = new ArrayList<>();
 

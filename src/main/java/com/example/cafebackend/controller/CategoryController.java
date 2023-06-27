@@ -5,7 +5,6 @@ import com.example.cafebackend.exception.CategoryException;
 import com.example.cafebackend.mapper.CategoryMapper;
 import com.example.cafebackend.mapper.ProductMapper;
 import com.example.cafebackend.model.response.ForCategoryResponse;
-import com.example.cafebackend.model.response.ForProductOnlyResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.CategoryService;
 import com.example.cafebackend.service.ProductFormService;
@@ -44,11 +43,12 @@ public class CategoryController {
     }
     ////////////////////////////////////////
 
-    public MessageResponse updateCategory(String cateId, String cateName, String isEnable) throws BaseException {
+    public MessageResponse updateCategory(String cateId, String cateName, String isEnable, String isRecommend) throws BaseException {
         /// validate
         if(Objects.isNull(cateId) || cateId.isEmpty()) throw CategoryException.updateFail();
         if(Objects.isNull(cateName) || cateName.isEmpty()) throw CategoryException.updateFail();
         if(Objects.isNull(isEnable) || isEnable.isEmpty()) throw CategoryException.updateFail();
+        if(Objects.isNull(isRecommend) || isRecommend.isEmpty()) throw CategoryException.updateFail();
         /// verify
         Optional<Category> category = categoryService.findById(cateId);
         if(Objects.isNull(category) || category.isEmpty()) throw CategoryException.findFail();
@@ -59,10 +59,14 @@ public class CategoryController {
             cate.setCateName(cateName);
         }
         /// check isEnable
-        if(isEnable.equals("true")){
-            if(cate.getIsEnable().equals(false)) cate.setIsEnable(true);
-        } else if (isEnable.equals("false")) {
-            if(cate.getIsEnable().equals(true)) cate.setIsEnable(false);
+        String enable = String.valueOf(cate.getIsEnable());
+        if(!isEnable.equals(enable)){
+            cate.setIsEnable(Boolean.valueOf(isEnable));
+        }
+        /// check isRecommend
+        String recommend = String.valueOf(cate.getIsRecommend());
+        if(!isRecommend.equals(recommend)){
+            cate.setIsRecommend(Boolean.valueOf(isRecommend));
         }
         /// update category
         Category resCate = categoryService.updateCategory(cate);
@@ -72,11 +76,11 @@ public class CategoryController {
         res.setRes(resCate);
         return res;
     }
+    ////////////////////////////////////////
 
-    public MessageResponse updateAddProduct(String cateId, List<String> formId) throws BaseException {
+    public MessageResponse updateProductInCategory(String cateId, List<String> formId) throws BaseException {
         /// validate
         if(Objects.isNull(cateId) || cateId.isEmpty()) throw CategoryException.updateFail();
-        //if(Objects.isNull(formId) || formId.isEmpty()) throw CategoryException.updateFail();
         /// verify
         Optional<Category> cateOpt = categoryService.findById(cateId);
         if(Objects.isNull(cateOpt) || cateOpt.isEmpty()) throw CategoryException.findFail();
@@ -106,54 +110,65 @@ public class CategoryController {
         /// validate
         Optional<Category> cate =  categoryService.findById(cateId);
         if(cate.isEmpty()) throw CategoryException.findFail();
+        /// response
         MessageResponse res = new MessageResponse();
-        res.setMessage("get Category By ID success");
-        res.setRes(cate);
-        return res;
-    }
-
-    public MessageResponse findCategoryAll()  {
-        /// validate
-        List<Category> cateList = categoryService.findListCategory();
-        List<ForCategoryResponse> cateResList = new ArrayList<>();
-        for (Category cate : cateList){
-            List<ProductForm> prodList = productFormService.findProductByCateId(cate.getCateId());
-            ForCategoryResponse cateRes = categoryMapper.toForCategoryResponse(cate, prodList);
-            cateResList.add(cateRes);
-        }
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get all category");
-        res.setRes(cateResList);
+        res.setMessage("get Category By ID");
+        res.setRes(cate.get());
         return res;
     }
     ////////////////////////////////////////
 
+    public MessageResponse findCategoryAll()  {
+        /// validate
+        List<Category> cateList = categoryService.findListCategoryAllByRecommend();
+        cateList.addAll(categoryService.findListCategoryAllByNotRecommend());
+        /// response
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get all category");
+        res.setRes(cateList);
+        return res;
+    }
+    ////////////////////////////////////////
 
     public MessageResponse findListProductByCategoryId(String cateId) throws BaseException {
         /// validate
         if(Objects.isNull(cateId) || cateId.isEmpty())throw CategoryException.findFail();
         /// verify
-        Optional<Category> category = categoryService.findById(cateId);
-        if(category.isEmpty()) throw CategoryException.findFail();
-        List<ProductForm> productForms =  productFormService.findProductByCateId(cateId);
-        List<ForProductOnlyResponse> pdList = productMapper.toListProductFormOnlyResponse(productForms);
+        Optional<Category> cateOpt = categoryService.findById(cateId);
+        if(cateOpt.isEmpty()) throw CategoryException.findFail();
+        Category category = cateOpt.get();
+        /// set response
+        ForCategoryResponse cateRes = categoryMapper.toForCategoryResponse(category);
+        /// response
         MessageResponse res = new MessageResponse();
-        res.setMessage("find ListProducts By Category ID");
-        res.setRes(pdList);
+        res.setMessage("get Products By Category ID");
+        res.setRes(cateRes);
         return res;
     }
-
-
-
     ////////////////////////////////////////////////
+
+    public MessageResponse findListProductByCategoryAll() throws BaseException {
+        /// verify
+        List<Category> cateList = categoryService.findListCategoryAllByRecommend();
+        cateList.addAll(categoryService.findListCategoryAllByNotRecommend());
+        /// set response
+        List<ForCategoryResponse> cateRes = categoryMapper.toListForCategoryResponse(cateList);
+        /// response
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get Products By All Category");
+        res.setRes(cateRes);
+        return res;
+    }
+    ////////////////////////////////////////////////
+
     public MessageResponse deleteCategory(String cateId) throws BaseException {
         Boolean cate =  categoryService.deleteCategory(cateId);
+        /// response
         MessageResponse res = new MessageResponse();
         res.setMessage("delete Category success");
         res.setRes(cate);
         return res;
     }
-
     ////////////////////////////////////////
 
 }

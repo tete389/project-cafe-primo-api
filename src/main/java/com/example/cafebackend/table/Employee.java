@@ -1,5 +1,6 @@
 package com.example.cafebackend.table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -16,15 +17,17 @@ public class Employee {
     @Column(name = "emp_id", length = 36, nullable = false, updatable = false, unique = true)
     private String empId;
 
-    @Column(name = "emp_login_id", length = 36, nullable = false, updatable = false, unique = true )
-    private String empLoginId;
+    @Column(name = "username", length = 36, nullable = false, updatable = false, unique = true )
+    private String username;
 
-    @Column(name = "emp_password", length = 36, nullable = false)
-    private String empPassword;
+    @JsonIgnore
+    @Column(name = "password", length = 36, nullable = false)
+    private String password;
 
     @Column(name = "emp_name", length = 24, nullable = false)
     private String empName;
 
-    @Column(name = "emp_tel", length = 12)
-    private String empTel;
+    @Column(name = "phone_number", length = 12)
+    private String phoneNumber;
+
 }

@@ -33,4 +33,13 @@ public class OrderException extends BaseException{
     }
 
 
+    public static OrderException unpaid(){
+        return new OrderException("collect.Fail.Unpaid");
+    }
+
+    public static OrderException CannotSpend(){
+        return new OrderException("spend.Fail.PointNotEnough");
+    }
+
+
 }

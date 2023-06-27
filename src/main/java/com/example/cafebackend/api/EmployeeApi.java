@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/Emp")
+@RequestMapping("/employee")
 public class EmployeeApi {
 
     private final EmployeeController employeeController;
@@ -23,37 +23,37 @@ public class EmployeeApi {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerEmp(@RequestBody Employee request) throws BaseException {
-        ApiResponse res = employeeController.createEmployee(request);
+        ApiResponse res = employeeController.createEmployee(request.getUsername(), request.getPassword(), request.getEmpName(), request.getPhoneNumber());
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> loginEmp(@RequestBody Employee request) throws BaseException {
-        ApiResponse res = employeeController.loginEmployee(request);
+        ApiResponse res = employeeController.loginEmployee(request.getUsername(), request.getPassword());
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/getAllEmp")
-    public ResponseEntity<EmployeeResponse> getAllEmp() throws BaseException {
-        EmployeeResponse res = employeeController.getAllEmployee();
+    @GetMapping("/getEmployeeAll")
+    public ResponseEntity<EmployeeResponse> getEmployeeAll() throws BaseException {
+        EmployeeResponse res = employeeController.getEmployeeAll();
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/getEmp")
-    public ResponseEntity<EmployeeResponse> getEmp() throws BaseException {
-        EmployeeResponse res = employeeController.getEmployee();
+    @GetMapping("/getEmployeeDetail")
+    public ResponseEntity<EmployeeResponse> getEmployeeDetail() throws BaseException {
+        EmployeeResponse res = employeeController.getEmployeeDetail();
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateEmp")
-    public ResponseEntity<EmployeeResponse> updateEmp(@RequestBody Employee request) throws BaseException {
-        EmployeeResponse res = employeeController.updateEmployee(request);
+    @PostMapping("/updateEmployee")
+    public ResponseEntity<EmployeeResponse> updateEmployee(@RequestBody Employee request) throws BaseException {
+        EmployeeResponse res = employeeController.updateEmployee(request.getPassword(), request.getEmpName(), request.getPhoneNumber());
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/deleteEmp")
-    public ResponseEntity<EmployeeResponse> deleteEmp(@RequestBody Employee request) throws BaseException {
-        EmployeeResponse res = employeeController.deleteEmployee(request);
+    @PostMapping("/deleteEmployee")
+    public ResponseEntity<EmployeeResponse> deleteEmployee(@RequestBody Employee request) throws BaseException {
+        EmployeeResponse res = employeeController.deleteEmployee(request.getEmpId());
         return ResponseEntity.ok(res);
     }
 }

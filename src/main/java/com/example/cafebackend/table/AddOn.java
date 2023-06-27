@@ -32,6 +32,7 @@ public class AddOn {
     @ManyToMany(mappedBy = "addOn", fetch = FetchType.LAZY)
     private List<ProductForm> productForm = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "addOn", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();
 

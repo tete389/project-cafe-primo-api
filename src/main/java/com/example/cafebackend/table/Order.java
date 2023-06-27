@@ -1,12 +1,12 @@
 package com.example.cafebackend.table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,12 +21,16 @@ public class Order {
     @Column(name = "order_id", length = 36 ,nullable = false, updatable = false, unique = true)
     private String orderId;
 
-    @Column(name = "number", length = 36)
-    private String number;
+    @Column(name = "order_number", length = 36)
+    private String OrderNumber;
+
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    @Column(name = "order_date")
+//    private Date orderDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "create_date")
-    private String createDate;
+    @Column(name = "order_date")
+    private LocalDateTime orderDate;
 
     @Column(name = "status")
     private String status;
@@ -43,11 +47,21 @@ public class Order {
     @Column(name = "responsible")
     private String responsible;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProductRecord> productRecords = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderDetailProduct> orderDetailProducts = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderDetailMaterial> orderDetailMaterials = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private PointDetail pointDetail;
 
     public Order() {
-        createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        //orderDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        orderDate = LocalDateTime.now();
     }
+
 }

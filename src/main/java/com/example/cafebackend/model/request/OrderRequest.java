@@ -12,4 +12,6 @@ public class OrderRequest {
     private List<ProdRequest> prodRequests;
 
     private String note;
+
+    private String spendPoint;
 }

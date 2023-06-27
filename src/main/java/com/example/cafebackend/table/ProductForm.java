@@ -41,19 +41,21 @@ public class ProductForm {
 //    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private List<Ingredient> ingredients = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "productForm", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MaterialUsed> materialUsed;
+    private List<MaterialUsed> materialUsed = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(mappedBy = "productForm", fetch = FetchType.LAZY)
-    private List<Category> category;
+    private List<Category> category = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "prod_add",
             joinColumns = @JoinColumn(name = "prod_form_id", referencedColumnName = "prod_form_id"),
             inverseJoinColumns = @JoinColumn(name = "add_on_id", referencedColumnName = "add_on_id"))
-    private List<AddOn> addOn ;
+    private List<AddOn> addOn = new ArrayList<>();
 
 
     @PreRemove

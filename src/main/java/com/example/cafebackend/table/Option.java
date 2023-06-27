@@ -16,20 +16,21 @@ public class Option {
     @Column(name = "option_id", length = 15, nullable = false, unique = true)
     private String optionId;
 
-    @Column(name = "option_Name", length = 36, unique = true)
+    @Column(name = "option_Name", length = 36)
     private String optionName;
 
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "is_for_sale")
-    private Boolean isForSale;
+    @Column(name = "is_enable")
+    private Boolean isEnable;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "add_on_id")
     private AddOn addOn;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MaterialUsed> materialUsed = new ArrayList<>();
 

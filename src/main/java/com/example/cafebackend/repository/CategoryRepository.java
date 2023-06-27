@@ -14,5 +14,11 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     Optional<Category> findByCateName(String name);
 
     @Query(value = "SELECT * FROM category c ORDER BY c.cate_name ASC", nativeQuery = true)
-    List<Category> findListCategory();
+    List<Category> findListCategoryAll();
+
+    @Query(value = "SELECT * FROM category c WHERE c.is_recommend = false ORDER BY c.cate_name ASC", nativeQuery = true)
+    List<Category> findListCategoryAllByNotRecommend();
+
+    @Query(value = "SELECT * FROM category c WHERE c.is_recommend = true ORDER BY c.cate_name ASC", nativeQuery = true)
+    List<Category> findListCategoryAllByRecommend();
 }

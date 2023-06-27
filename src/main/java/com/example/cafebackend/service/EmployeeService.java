@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -33,42 +34,34 @@ public class EmployeeService {
     }
     //////////////////////////////////
 
-    public Optional<Employee> findAllLoginId(String LoginId){
-        return employeeRepository.findByEmpLoginId(LoginId);
+    public Optional<Employee> findUsername(String LoginId){
+        return employeeRepository.findByUsername(LoginId);
     }
     //////////////////////////////////
 
-    public Employee createEmp(String loginId, String pass, String name, String tel) throws BaseException {
-        /// verify
-        if(employeeRepository.existsByEmpLoginId(loginId)){
-            throw EmployeeException.createFailLoginIdDuplicated();
-        }
-        if(employeeRepository.existsByEmpName(name)){
-            throw EmployeeException.createFailNameDuplicated();
-        }
+    public Employee createEmployee(String username, String pass, String name, String phone) throws BaseException {
         /// save
         Employee table = new Employee();
-        table.setEmpName(loginId);
-        table.setEmpPassword(pass);
+        table.setUsername(username);
+        table.setPassword(pass);
         table.setEmpName(name);
-        table.setEmpTel(tel);
+        table.setPhoneNumber(phone);
         return employeeRepository.save(table);
     }
     //////////////////////////////////
 
-    public Employee updateEmp(Employee emp, String name, String tel) throws EmployeeException {
+    public Employee updateEmployee(Employee emp) throws EmployeeException {
         /// verify
-        if(employeeRepository.existsByEmpName(name)){
-            if(!emp.getEmpName().equals(name)){
-                throw EmployeeException.updateFailDataNull();
-            }
-        }
+        if (Objects.isNull(emp)) throw EmployeeException.updateFailDataNull();
         /// save
-        emp.setEmpName(name);
-        emp.setEmpTel(tel);
         return employeeRepository.save(emp);
     }
     //////////////////////////////////
+
+    public Boolean existsByUsername(String username) throws EmployeeException {
+        /// verify
+        return employeeRepository.existsByUsername(username);
+    }
 
     public void deleteEmp(String empId) {
          employeeRepository.deleteById(empId);

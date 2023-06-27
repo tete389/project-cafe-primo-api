@@ -2,7 +2,6 @@ package com.example.cafebackend.service;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.OrderException;
-import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.repository.OrderRepository;
 import com.example.cafebackend.table.Order;
 import org.springframework.stereotype.Service;
@@ -22,31 +21,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-
-    //////////////////////////
-
-    public Optional<Order> findById(String id){
-        ///
-        return orderRepository.findById(id);
-    }
-    /////////////////////////
-
-    public List<Order> findAllOrder() {
-        ///
-        return orderRepository.findAll();
-    }
-    /////////////////////////
-
-    public String findByOrderCreateDateAsc() {
-        ///
-        return orderRepository.findByOrderCreateDateAsc();
-    }
-    /////////////////////////
-
-    public Integer findByOrderToDay(String timeStamp) {
-        return orderRepository.findByOrderToDay(timeStamp);
-    }
-    /////////////////////////
+    ////////////////////////////////////////////////////
 
     public Order createOrder(String noOrder, String status) {
         /// set Order id
@@ -57,7 +32,7 @@ public class OrderService {
         /// save
         Order table = new Order();
         table.setOrderId(ordId);
-        table.setNumber(noOrder);
+        table.setOrderNumber(noOrder);
         table.setStatus(status);
         return orderRepository.save(table);
     }
@@ -71,13 +46,49 @@ public class OrderService {
     }
     /////////////////////////
 
+    public Optional<Order> findById(String id){
+        ///
+        return orderRepository.findById(id);
+    }
+    /////////////////////////
+
+    public List<Order> findAllOrder() {
+        ///
+        return orderRepository.findAll();
+    }
+    /////////////////////////
+
+    public List<Order> findByOrderBetweenDate(String start, String end) {
+        ///
+        return orderRepository.findOrderBetweenDate(start, end);
+    }
+    /////////////////////////
+
+    public List<Order> findByOrderBetweenDateByStatus(String start, String end, String status) {
+        ///
+        return orderRepository.findOrderBetweenDateByStats(start, end, status);
+    }
+    /////////////////////////
+
+    public Integer findCountByOrderToDay() {
+        ///
+        return orderRepository.findCountByOrderToDay();
+    }
+    /////////////////////////
+
+    public List<Order> findByOrderToDay() {
+        ///
+        return orderRepository.findByOrderToDay();
+    }
+    /////////////////////////
+
     public Order clearOrder(Order order, String status) throws OrderException {
         /// verify
         if(Objects.isNull(order)) throw OrderException.updateFailNotFound();
         order.setStatus(status);
         order.setTotalPrice(0.0);
         order.setTotalBonusPoint(0.0);
-        order.getProductRecords().clear();
+        order.getOrderDetailProducts().clear();
         /// save
         return orderRepository.save(order);
     }

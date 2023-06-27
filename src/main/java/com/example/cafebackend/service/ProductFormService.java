@@ -40,16 +40,10 @@ public class ProductFormService {
         table.setDescription(description);
         return productFormRepository.save(table);
     }
-
-
     //////////////////////////////////
-    public List<ProductForm> findListProduct(){
-        /// search
-        return productFormRepository.findAllProduct();
-    }
 
-    //////////////////////////////////////////////////////// update
-    public ProductForm updateProduct(ProductForm prod) throws Exception {
+
+    public ProductForm updateProductForm(ProductForm prod) throws Exception {
         try {
             /// verify
             if(Objects.isNull(prod)) throw ProductException.updateFailProductNull();
@@ -79,43 +73,42 @@ public class ProductFormService {
         /// validate
         return productFormRepository.existsByProdForm(form);
     }
+    ////////////////////////////////////////////////////////
 
-
-
-    //////////////////////////////////////////////////////// find Product By **
-    public List<ProductForm> findProductByBaseId(String baseId){
-        ///
-        return productFormRepository.findByProductBaseId(baseId);
+    public List<ProductForm> findListProduct(){
+        /// search
+        return productFormRepository.findAllProduct();
     }
 
-    public List<ProductForm> findProductByCateId(String cateId){
+    public List<ProductForm> findFormByBaseId(String baseId){
         ///
-        return productFormRepository.findByCategoryCateId(cateId);
+        return productFormRepository.findFormByBaseId(baseId);
     }
+
+//    public List<ProductForm> findProductByCateId(String cateId){
+//        ///
+//        return productFormRepository.findByCategoryCateId(cateId);
+//    }
 
     public Optional<ProductForm> findProductFormById(String prodId){
         ///
         return productFormRepository.findById(prodId);
     }
 
-    public Optional<ProductForm> findProductByIdIsEnable(String prodId){
-        ///
-        return productFormRepository.findByProductId(prodId);
-    }
 
-    public List<ProductForm> findProductByMaterialId(String mateId){
-        ///
-        return productFormRepository.findByIngredientsIdMateId(mateId);
-    }
+//    public List<ProductForm> findProductByMaterialId(String mateId){
+//        ///
+//        return productFormRepository.findByIngredientsIdMateId(mateId);
+//    }
 
-    public List<ProductForm> findProductByAddOnlId(String mateId){
-        ///
-        return productFormRepository.findByIngredientsIdMateId(mateId);
-    }
+//    public List<ProductForm> findProductByAddOnlId(String mateId){
+//        ///
+//        return productFormRepository.findByIngredientsIdMateId(mateId);
+//    }
 
     ////////////////////////////////////////////////////////
 
-    public Boolean deleteProduct(String id) throws BaseException {
+    public Boolean deleteFormById(String id) throws BaseException {
         /// verify
         productFormRepository.deleteById(id);
         Optional<ProductForm> product = productFormRepository.findById(id);
@@ -124,21 +117,5 @@ public class ProductFormService {
     }
 
     //////////////////////////////////
-
-//    public void deleteProductById(String prodId) throws ProductException {
-//        Optional<ProductDetail> prodOpt = productDetailRepository.findById(prodId);
-//        if(prodOpt.isEmpty()){
-//            throw ProductException.deleteFail();
-//        }
-//        ProductDetail prod = prodOpt.get();
-//        prod.setProdStatus("disable");
-//        prod.setProdName("disable/"+prod.getProdName()+"/"+prod.getProdId());
-//        productDetailRepository.save(prod);
-//        //productRepository.deleteById(prodId);
-//    }
-
-
-
-
 
 }

@@ -9,11 +9,11 @@ import java.util.List;
 @Data
 public class ProdRequest {
 
-    private String prodId;
+    private String prodFormId;
 
-    private Integer amount;
+    private String quantity;
 
-    private List<Option> options = new ArrayList<>();
+    private List<Option> options;
 
 
 }

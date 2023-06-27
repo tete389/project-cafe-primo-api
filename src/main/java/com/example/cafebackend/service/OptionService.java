@@ -23,8 +23,6 @@ public class OptionService {
     //////////////////////////
     public Option createOption(AddOn addOn, String optionName, Double price) throws BaseException {
         /// verify
-        if(optionRepository.existsByOptionName(optionName)) for (Option listOpt : addOn.getOptions())
-            if (listOpt.getOptionName().equals(optionName)) throw OptionException.createFail();
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
@@ -35,7 +33,7 @@ public class OptionService {
         table.setOptionId(Id);
         table.setOptionName(optionName);
         table.setPrice(price);
-        table.setIsForSale(true);
+        table.setIsEnable(true);
         table.setAddOn(addOn);
         return optionRepository.save(table);
     }

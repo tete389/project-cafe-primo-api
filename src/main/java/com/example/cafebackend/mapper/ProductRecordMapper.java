@@ -1,7 +1,6 @@
 package com.example.cafebackend.mapper;
 
 
-import com.example.cafebackend.table.ProductRecord;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -37,9 +37,9 @@ public class MaterialUsedService {
     }
     /////////////////////////
 
-    public Optional<MaterialUsed> findByBaseIdAndMateId(String formId, String mateId) {
+    public Optional<MaterialUsed> findByBaseIdAndMateId(String baseId, String mateId) {
         /// find
-        return materialUsedRepository.findByProdBaseIdAndMateId(formId, mateId);
+        return materialUsedRepository.findByProdBaseIdAndMateId(baseId, mateId);
     }
     /////////////////////////
 
@@ -49,41 +49,37 @@ public class MaterialUsedService {
     }
     /////////////////////////
 
-    public Optional<MaterialUsed> findByOptionIdAndMateId(String formId, String mateId) {
+    public Optional<MaterialUsed> findByOptionIdAndMateId(String optionId, String mateId) {
         /// find
-        return materialUsedRepository.findByOptionIdAndMateId(formId, mateId);
+        return materialUsedRepository.findByOptionIdAndMateId(optionId, mateId);
     }
     /////////////////////////
 
-    public void deleteMaterialUsedByFormId(String formId, String mateId) throws BaseException {
+    public void deleteMaterialUsedByFormId(String formId) throws Exception {
         /// verify
-        if(Objects.isNull(formId)) throw MaterialException.updateFail();
-        materialUsedRepository.deleteByProdFormId(formId, mateId);
+        try {
+            if(Objects.isNull(formId) || formId.isEmpty()) throw MaterialException.updateFail();
+            materialUsedRepository.deleteByProdFormId(formId);
+            materialUsedRepository.flush();
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
     /////////////////////////
 
-    public void deleteMaterialUsed(String Id) throws BaseException {
+    public void deleteMaterialUsed(String Id) throws Exception {
         /// verify
-        if(Objects.isNull(Id)) throw MaterialException.updateFail();
-        materialUsedRepository.deleteById(Id);
-        //materialUsedRepository.flush();
+        try {
+            if(Objects.isNull(Id) || Id.isEmpty()) throw MaterialException.updateFail();
+            materialUsedRepository.deleteById(Id);
+            materialUsedRepository.flush();
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
 //        Optional<MaterialUsed> mate = materialUsedRepository.findById(Id);
 //        if(mate.isEmpty()) return true;
 //        throw MaterialException.deleteFail();
     }
     /////////////////////////
-
-//    public void addProductInMate(Material mate, List<Product> prod){
-//
-//        mate.setProduct(prod);
-//        materialRepository.save(mate);
-//    }
-
-    /////////////////////////
-//    public void addMateInProd(Material mate, Product prod){
-//
-//        mate.getProduct().add(prod);
-//        materialRepository.save(mate);
-//    }
 
 }

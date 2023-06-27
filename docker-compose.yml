@@ -2,24 +2,25 @@ version: '3.1'
 
 services:
   db:
-    image: 'postgres:latest'
     container_name: postgres_cafe
+    image: 'postgres:latest'
     networks:
       - order-pgsql
     ports:
       - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=syspass
-#    volumes:
-#      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
-#      - ./postgres-data:/var/lib/postgresql/data
+
   app:
     container_name: spring_cafe
     image: docker-spring-boot
-    build: ./
-    depends_on:
-      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     networks:
@@ -29,10 +30,12 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=syspass
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-    volumes:
-      - ./images/:/src/main/resources/static/images
+    depends_on:
+      - db
 
-volumes:
-  db-data:
 networks:
   order-pgsql:
+
+#volumes:
+#  db-data:
+

@@ -1,6 +1,7 @@
 package com.example.cafebackend.mapper;
 
 
+import com.example.cafebackend.model.response.OrderResponse;
 import com.example.cafebackend.table.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,10 +12,8 @@ public interface OrderMapper {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    //OrderCustomerResponse toOrderCustomerResponse(Order order);
+    OrderResponse toOrderResponse(Order order);
 
-//    @Mapping(target = "productDetails", source = "order.productDetails")
-//    OrderCustomerResponse toOrderCustomerResponse(OrderResponse order);
 
 
 }
