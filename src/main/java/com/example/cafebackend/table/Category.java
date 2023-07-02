@@ -25,20 +25,33 @@ public class Category {
     @Column(name = "is_recommend")
     private Boolean isRecommend;
 
+//    @JsonIgnore
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "cate_prod",
+//            joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
+//            inverseJoinColumns = @JoinColumn(name = "prod_form_id", referencedColumnName = "prod_form_id"))
+//    private List<ProductForm> productForm = new ArrayList<>();
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "cate_prod",
+            name = "cate_prod_B",
             joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
-            inverseJoinColumns = @JoinColumn(name = "prod_form_id", referencedColumnName = "prod_form_id"))
-    private List<ProductForm> productForm = new ArrayList<>();
+            inverseJoinColumns = @JoinColumn(name = "prod_base_id", referencedColumnName = "prod_base_id"))
+    private List<ProductBase> productBase = new ArrayList<>();
 
 
     @PreRemove
-    private void removeProductFromCategory() {
-        for (ProductForm prod : productForm) {
+    private void removeProductCategory() {
+//        for (ProductForm prod : productForm) {
+//            prod.getCategory().remove(this);
+//        }
+
+        for (ProductBase prod : productBase) {
             prod.getCategory().remove(this);
         }
     }
+
 
 }

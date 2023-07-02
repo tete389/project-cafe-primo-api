@@ -1,15 +1,19 @@
 package com.example.cafebackend.controller;
 
 import com.example.cafebackend.exception.BaseException;
+import com.example.cafebackend.exception.FileException;
 import com.example.cafebackend.exception.ProductException;
 
 import com.example.cafebackend.mapper.ProductMapper;
-import com.example.cafebackend.model.response.ForProductBaseResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForFindMateEnableAndAddOnInPFResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProdBaseAndProdFormInfoResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.*;
 import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -20,6 +24,8 @@ public class ProductBaseController {
     private ProductBaseService productBaseService;
 
     private ProductMapper productMapper;
+
+    private FileService fileService;
 
     ////////////////////////////////////////////////
 
@@ -70,6 +76,53 @@ public class ProductBaseController {
     }
     ////////////////////////////////////////////////
 
+    public MessageResponse uploadImage(String baseId, MultipartFile image) throws Exception {
+        /// validate
+        if(Objects.isNull(baseId) || baseId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
+        if(image == null) throw FileException.fileNull();
+        if(image.getSize() > 1048576 * 5 ) throw FileException.fileMaxSize();
+        String contentType = image.getContentType();
+        if (contentType == null) throw FileException.createFail();
+        List<String> supportTypes = Arrays.asList("image/jpeg", "image/png");
+        if(!supportTypes.contains(contentType)) throw FileException.updateFailTypes();
+
+        /// upload to sever
+        //logger.info("HIT -/upload | File Name : {}", image.getOriginalFilename());
+        String filePath =  fileService.upload(image);
+        if(filePath == null) {
+            throw ProductException.createProductFail();
+        }
+
+        /// verify
+        Optional<ProductBase> prodOpt = productBaseService.findBaseById(baseId);
+        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+        ProductBase base = prodOpt.get();
+        base.setImage(filePath);
+        ProductBase productForm = productBaseService.updateProductBase(base);
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("update ProductBase success");
+        res.setRes(productForm);
+        return res;
+    }
+
+    public MessageResponse deleteImage(String baseId) throws Exception {
+        /// validate
+        if(Objects.isNull(baseId) || baseId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
+        /// verify
+        Optional<ProductBase> prodOpt = productBaseService.findBaseById(baseId);
+        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+        ProductBase base = prodOpt.get();
+        base.setImage("none");
+        ProductBase productForm = productBaseService.updateProductBase(base);
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("update ProductBase success");
+        res.setRes(productForm);
+        return res;
+    }
+    //////////////////////////////////////////////////////////////////////////
+
     public MessageResponse findBaseById(String baseId) throws BaseException{
         /// validate
         if(Objects.isNull(baseId) ||  baseId.isEmpty()) throw ProductException.findBaseFail();
@@ -84,7 +137,7 @@ public class ProductBaseController {
     }
     ////////////////////////////////////////////////
 
-    public MessageResponse findBaseAll() throws BaseException{
+    public MessageResponse findBaseAll() {
         /// verify
         List<ProductBase> baseList = productBaseService.findBaseAll();
         /// response
@@ -105,7 +158,38 @@ public class ProductBaseController {
         ForProductBaseResponse baseRes = productMapper.toForProductBaseResponse(productBase);
         /// res
         MessageResponse res = new MessageResponse();
-        res.setMessage("get ProductForms By Base ID");
+        res.setMessage("get ProductBase info By ID");
+        res.setRes(baseRes);
+        return res;
+    }
+    ////////////////////////////////////////////////
+
+    public MessageResponse findFormInBaseAll() throws BaseException {
+        /// verify
+        List<ProductBase> baseOpt =  productBaseService.findBaseAll();
+        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
+        //ProductBase productBase = baseOpt.get();
+        List<ForProductBaseResponse> baseRes = productMapper.toListForProductBaseResponse(baseOpt);
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get ProductBase info All");
+        res.setRes(baseRes);
+        return res;
+    }
+    ////////////////////////////////////////////////
+
+    public MessageResponse findFormInfoInBaseId(String baseId) throws BaseException {
+        /// validate
+        if(Objects.isNull(baseId) || baseId.isEmpty())throw ProductException.findBaseFail();
+        /// verify
+        Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
+        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
+        ProductBase productBase = baseOpt.get();
+        List<ForFindMateEnableAndAddOnInPFResponse> listCheck = productMapper.toListForFindMateEnableAndAddOnInPFResponse(productBase.getProductForms());
+        ForProdBaseAndProdFormInfoResponse  baseRes = productMapper.toForProdBaseAndProdFormInfoResponse(productBase, listCheck);
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get info ProductBase info By ID");
         res.setRes(baseRes);
         return res;
     }

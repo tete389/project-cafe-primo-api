@@ -72,41 +72,7 @@ public class MaterialApi {
     }
 
 
-    ////////////////////////////////////// mate use
-    @PostMapping("/updateMaterialUseInBase")
-    public ResponseEntity<MessageResponse> updateMaterialUseOfBase(@RequestBody UsedRequest usedRequest)  throws Exception {
-        MessageResponse res = materialUsedController.updateAddMaterialUsedInBase(usedRequest.getProdFormId(), usedRequest.getMateUsed());
-        return ResponseEntity.ok(res);
-    }
 
-    @PostMapping("/updateMaterialUseInForm")
-    public ResponseEntity<MessageResponse> updateMaterialUseOfForm(@RequestBody UsedRequest usedRequest)  throws Exception {
-        MessageResponse res = materialUsedController.updateAddMaterialUsedInForm(usedRequest.getProdFormId(), usedRequest.getMateUsed());
-        return ResponseEntity.ok(res);
-    }
 
-    @PostMapping("/updateMaterialUseInOption")
-    public ResponseEntity<MessageResponse> updateMaterialUseOfOption(@RequestBody UsedRequest usedRequest)  throws Exception {
-        MessageResponse res = materialUsedController.updateAddMaterialUsedInOption(usedRequest.getProdFormId(), usedRequest.getMateUsed());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getMaterialUseInBase")
-    public ResponseEntity<MessageResponse> findMaterialUseInBase(@RequestParam("baseId") String baseId)  throws Exception {
-        MessageResponse res = materialUsedController.findMaterialUsedInBaseId(baseId);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getMaterialUseInForm")
-    public ResponseEntity<MessageResponse> findMaterialUseInForm(@RequestParam("formId") String formId)  throws Exception {
-        MessageResponse res = materialUsedController.findMaterialUsedInFormId(formId);
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getMaterialUseInOption")
-    public ResponseEntity<MessageResponse> findMaterialUseInOption(@RequestParam("optionId") String optionId)  throws Exception {
-        MessageResponse res = materialUsedController.findMaterialUsedInOptionId(optionId);
-        return ResponseEntity.ok(res);
-    }
 
 }

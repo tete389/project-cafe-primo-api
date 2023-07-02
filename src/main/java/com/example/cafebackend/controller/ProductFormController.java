@@ -3,7 +3,9 @@ package com.example.cafebackend.controller;
 import com.example.cafebackend.exception.*;
 import com.example.cafebackend.mapper.ProductMapper;
 import com.example.cafebackend.model.response.*;
-import com.example.cafebackend.model.response.ForFind.ForFindAddOnInProdFormResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForFindAddOnInPFResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForFindMateEnableAndCateInPFResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductFormResponse;
 import com.example.cafebackend.service.*;
 import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.io.IOException;
 import java.util.*;
 
 @AllArgsConstructor
@@ -107,52 +108,52 @@ public class ProductFormController {
     }
 
 
-    public MessageResponse uploadImage(String formId, MultipartFile image) throws Exception {
-        /// validate
-        if(Objects.isNull(formId) || formId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
-        if(image == null) throw FileException.fileNull();
-        if(image.getSize() > 1048576 * 5 ) throw FileException.fileMaxSize();
-        String contentType = image.getContentType();
-        if (contentType == null) throw FileException.createFail();
-        List<String> supportTypes = Arrays.asList("image/jpeg", "image/png");
-        if(!supportTypes.contains(contentType)) throw FileException.updateFailTypes();
+//    public MessageResponse uploadImage(String formId, MultipartFile image) throws Exception {
+//        /// validate
+//        if(Objects.isNull(formId) || formId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
+//        if(image == null) throw FileException.fileNull();
+//        if(image.getSize() > 1048576 * 5 ) throw FileException.fileMaxSize();
+//        String contentType = image.getContentType();
+//        if (contentType == null) throw FileException.createFail();
+//        List<String> supportTypes = Arrays.asList("image/jpeg", "image/png");
+//        if(!supportTypes.contains(contentType)) throw FileException.updateFailTypes();
+//
+//        /// upload to sever
+//        //logger.info("HIT -/upload | File Name : {}", image.getOriginalFilename());
+//        String filePath =  fileService.upload(image);
+//        if(filePath == null) {
+//            throw ProductException.createProductFail();
+//        }
+//
+//        /// verify
+//        Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
+//        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+//        ProductForm form = prodOpt.get();
+//        form.setImage(filePath);
+//        ProductForm productForm = productFormService.updateProductForm(form);
+//        /// res
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("update ProductForm success");
+//        res.setRes(productForm);
+//        return res;
+//    }
 
-        /// upload to sever
-        //logger.info("HIT -/upload | File Name : {}", image.getOriginalFilename());
-        String filePath =  fileService.upload(image);
-        if(filePath == null) {
-            throw ProductException.createProductFail();
-        }
-
-        /// verify
-        Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
-        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
-        ProductForm form = prodOpt.get();
-        form.setImage(filePath);
-        ProductForm productForm = productFormService.updateProductForm(form);
-        /// res
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update ProductForm success");
-        res.setRes(productForm);
-        return res;
-    }
-
-    public MessageResponse deleteImage(String formId) throws Exception {
-        /// validate
-        if(Objects.isNull(formId) || formId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
-        /// verify
-        Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
-        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
-        ProductForm form = prodOpt.get();
-        form.setImage("none");
-        ProductForm productForm = productFormService.updateProductForm(form);
-        /// res
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update ProductForm success");
-        res.setRes(productForm);
-        return res;
-    }
-    //////////////////////////////////////////////////////////////////////////
+//    public MessageResponse deleteImage(String formId) throws Exception {
+//        /// validate
+//        if(Objects.isNull(formId) || formId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
+//        /// verify
+//        Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
+//        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+//        ProductForm form = prodOpt.get();
+//        form.setImage("none");
+//        ProductForm productForm = productFormService.updateProductForm(form);
+//        /// res
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("update ProductForm success");
+//        res.setRes(productForm);
+//        return res;
+//    }
+//    //////////////////////////////////////////////////////////////////////////
 
     public MessageResponse updateAddOnInProductForm(String prodId, List<String> listAddOnId) throws Exception{
         /// validate
@@ -173,7 +174,7 @@ public class ProductFormController {
         productForm.getAddOn().clear();
         productForm.getAddOn().addAll(addOnList);
         ProductForm prod = productFormService.updateProductForm(productForm);
-        ForFindAddOnInProdFormResponse prodAddon = productMapper.toForProdAndListAddOnResponse(prod);
+        ForFindAddOnInPFResponse prodAddon = productMapper.toForFindAddOnInPFResponse(prod);
         /// res
         MessageResponse res = new MessageResponse();
         res.setMessage("add AddOn success");
@@ -186,10 +187,11 @@ public class ProductFormController {
         /// validate
         Optional<ProductForm> productForm =  productFormService.findProductFormById(prodId);
         if(productForm.isEmpty()) throw ProductException.findProductFail();
+        ForProductFormResponse response = productMapper.toForProductFormResponse(productForm.get());
         /// res
         MessageResponse res = new MessageResponse();
-        res.setMessage("get Product By ID");
-        res.setRes(productForm.get());
+        res.setMessage("get ProductForm By ID");
+        res.setRes(response);
         return res;
     }
     ////////////////////////////////////////////////////////////////
@@ -197,10 +199,11 @@ public class ProductFormController {
     public MessageResponse findProductFormAll() {
         /// verify
         List<ProductForm> productForm =  productFormService.findListProduct();
+        List<ForProductFormResponse> response = productMapper.toListForProductFormResponse(productForm);
         /// res
         MessageResponse res = new MessageResponse();
-        res.setMessage("get Product All");
-        res.setRes(productForm);
+        res.setMessage("get ProductForm All");
+        res.setRes(response);
         return res;
     }
     ////////////////////////////////////////////////////////////////
@@ -210,7 +213,7 @@ public class ProductFormController {
         Optional<ProductForm> productForm =  productFormService.findProductFormById(prodId);
         if(productForm.isEmpty()) throw ProductException.findProductFail();
         /// get res
-        ForProductInfoResponse prodRes = productMapper.toForProductInfoResponse(productForm.get());
+        ForFindMateEnableAndCateInPFResponse prodRes = productMapper.toForFindMateEnableAndCateInPFResponse(productForm.get());
         /// res
         MessageResponse res = new MessageResponse();
         res.setMessage("get Product info By ID");
@@ -223,7 +226,7 @@ public class ProductFormController {
     public MessageResponse findProductInFoAll() {
         /// verify
         List<ProductForm> productForm =  productFormService.findListProduct();
-        List<ForProductInfoResponse> pdList = productMapper.toListForProductInfoResponse(productForm);
+        List<ForFindMateEnableAndCateInPFResponse> pdList = productMapper.toListForFindMateEnableAndCateInPFResponse(productForm);
         /// res
         MessageResponse res = new MessageResponse();
         res.setMessage("get Product info All");
@@ -236,7 +239,7 @@ public class ProductFormController {
         /// validate
         Optional<ProductForm> p =  productFormService.findProductFormById(prodId);
         if(p.isEmpty()) throw ProductException.findProductFail();
-        ForFindAddOnInProdFormResponse prodRes = productMapper.toForProdAndListAddOnResponse(p.get());
+        ForFindAddOnInPFResponse prodRes = productMapper.toForFindAddOnInPFResponse(p.get());
         /// res
         MessageResponse res = new MessageResponse();
         res.setMessage("get AddOn In ProductForm");

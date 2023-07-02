@@ -275,18 +275,18 @@ public class OrderController {
         double totalBonusPoint = 0;
         /// List mate Used
         List<OrderDetailMaterial> listODTMate = new ArrayList<>();
-        Order keepMateUse = new Order();
+        List<OrderDetailMaterial> keepMateUse = new ArrayList<>();
         /// check prod request
         for(ProdRequest prodRequest : request.getProdRequests()){
             /// create odt prod
             OrderDetailProduct orderDetailProduct = orderDetailProductController.createOrderDetailProduct(order, prodRequest, keepMateUse);
             /// keep odt material
-            listODTMate.addAll(keepMateUse.getOrderDetailMaterials());
-            keepMateUse.getOrderDetailMaterials().clear();
+            listODTMate.addAll(keepMateUse);
+            keepMateUse.clear();
             /// check prod price
             totalPrices = totalPrices + orderDetailProduct.getDetailPrice();
             /// check prod bonus point
-            totalBonusPoint = totalBonusPoint + orderDetailProduct.getBonusPoint();
+            totalBonusPoint = totalBonusPoint + orderDetailProduct.getDetailPrice();
             /// add odt prod
             order.getOrderDetailProducts().add(orderDetailProduct);
         }

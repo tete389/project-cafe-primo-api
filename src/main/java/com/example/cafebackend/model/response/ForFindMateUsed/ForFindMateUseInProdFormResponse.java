@@ -1,12 +1,9 @@
-package com.example.cafebackend.model.response.ForFind;
+package com.example.cafebackend.model.response.ForFindMateUsed;
 
 import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
-import com.example.cafebackend.table.AddOn;
-import com.example.cafebackend.table.MaterialUsed;
 import com.example.cafebackend.table.ProductBase;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

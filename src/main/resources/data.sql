@@ -14,8 +14,8 @@
 --DELETE FROM material;
 
 
-
-
+insert into setting_value(sett_Id, point_rate, vat_rate, is_open_shop, open_date, closed_date)
+values ('eOiJIUzI1NiJGefWsSyJ0eXAiOiJKV1QiLCJhbGci', 100.0, 7.0, true, '09:00:00', '17:00:00');
 
 
 insert into employee(emp_id, username, password, emp_name, phone_number )
@@ -23,114 +23,113 @@ values ('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9', 'Admin123', 'Admin123', 'Admin',
 
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000001' , 'อเมริกาโน่', true, 'none');
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000001' , 'อเมริกาโน่', true, 'none', 'none');
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000002' , 'ลาเต้', true, 'none');
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000002' , 'ลาเต้', true, 'none', 'none');
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000003' , 'มอคค่า', true, 'none');
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000003' , 'มอคค่า', true, 'none', 'none');
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000004' , 'เอสเปรสโซ่', true, 'none');
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000004' , 'เอสเปรสโซ่', true, 'none', 'none');
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000005' , 'คาปูชิโน่', true, 'none');
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000005' , 'คาปูชิโน่', true, 'none', 'none');
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000006' , 'กาแฟส้ม', true, 'none');
-
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000006' , 'กาแฟส้ม', true, 'none', 'none');
 
 insert into product_base
-(prod_base_id, prod_title, is_enable, description)
-values ( 'PB0000007' , 'เค้กส้ม', true, 'none');
+(prod_base_id, prod_title, is_enable, image, description)
+values ( 'PB0000007' , 'เค้กส้ม', true, 'none', 'none');
 
 
 
 
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000001' , 'ร้อน', 'none', 40.0, true, 0.0, 'none', 'PB0000001');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000001' , 'ร้อน', 40.0, true, 'none', 'PB0000001');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000002' , 'เย็น', 'none', 50.0, true, 0.0, 'none', 'PB0000001');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000002' , 'เย็น',  50.0, true, 'none', 'PB0000001');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000003' , 'ปั่น', 'none', 60.0, true, 0.0, 'none', 'PB0000001');
-
-
-insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000004' , 'ร้อน', 'none', 40.0, true, 0.0, 'none', 'PB0000002');
-
-insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000005' , 'เย็น', 'none', 50.0, true, 0.0, 'none', 'PB0000002');
-
-insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000006' , 'ปั่น', 'none', 60.0, true, 0.0, 'none', 'PB0000002');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000003' , 'ปั่น', 60.0, true, 'none', 'PB0000001');
 
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000007' , 'ร้อน', 'none', 40.0, true, 0.0, 'none', 'PB0000003');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000004' , 'ร้อน', 40.0, true, 'none', 'PB0000002');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000008' , 'เย็น', 'none', 50.0, true, 0.0, 'none', 'PB0000003');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000005' , 'เย็น', 50.0, true, 'none', 'PB0000002');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000009' , 'ปั่น', 'none', 60.0, true, 0.0, 'none', 'PB0000003');
-
-
-insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000010' , 'ร้อน', 'none', 40.0, true, 0.0, 'none', 'PB0000004');
-
-insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000011' , 'เย็น', 'none', 50.0, true, 0.0, 'none', 'PB0000004');
-
-insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF00000012' , 'ปั่น', 'none', 60.0, true, 0.0, 'none', 'PB0000004');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000006' , 'ปั่น', 60.0, true, 'none', 'PB0000002');
 
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000013' , 'ร้อน', 'none', 40.0, true, 0.0, 'none', 'PB0000005');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000007' , 'ร้อน', 40.0, true, 'none', 'PB0000003');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000014' , 'เย็น', 'none', 50.0, true, 0.0, 'none', 'PB0000005');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000008' , 'เย็น', 50.0, true, 'none', 'PB0000003');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000015' , 'ปั่น', 'none', 60.0, true, 0.0, 'none', 'PB0000005');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000009' , 'ปั่น', 60.0, true, 'none', 'PB0000003');
 
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000016' , 'ร้อน', 'none', 40.0, true, 0.0, 'none', 'PB0000005');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000010' , 'ร้อน', 40.0, true, 'none', 'PB0000004');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000017' , 'เย็น', 'none', 50.0, true, 0.0, 'none', 'PB0000005');
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000011' , 'เย็น', 50.0, true, 'none', 'PB0000004');
 
 insert into product_form
-(prod_form_id, prod_form, image, price, is_enable, bonus_point, description, prod_base_id)
-values ( 'PF0000018' , 'ปั่น', 'none', 60.0, true, 0.0, 'none', 'PB0000005');
+(prod_form_id, prod_form, price, is_enable,description, prod_base_id)
+values ( 'PF00000012' , 'ปั่น', 60.0, true, 'none', 'PB0000004');
+
+
+insert into product_form
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000013' , 'ร้อน', 40.0, true, 'none', 'PB0000005');
+
+insert into product_form
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000014' , 'เย็น', 50.0, true, 'none', 'PB0000005');
+
+insert into product_form
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000015' , 'ปั่น', 60.0, true,  'none', 'PB0000005');
+
+
+insert into product_form
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000016' , 'ร้อน', 40.0, true, 'none', 'PB0000005');
+
+insert into product_form
+(prod_form_id, prod_form, price, is_enable, description, prod_base_id)
+values ( 'PF0000017' , 'เย็น', 50.0, true,  'none', 'PB0000005');
+
+insert into product_form
+(prod_form_id, prod_form, price, is_enable,  description, prod_base_id)
+values ( 'PF0000018' , 'ปั่น', 60.0, true,  'none', 'PB0000005');
 
 
 

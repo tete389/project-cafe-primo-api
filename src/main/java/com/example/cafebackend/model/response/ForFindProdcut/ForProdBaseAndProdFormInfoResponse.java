@@ -1,14 +1,13 @@
-package com.example.cafebackend.model.response;
+package com.example.cafebackend.model.response.ForFindProdcut;
 
 
-import com.example.cafebackend.table.ProductBase;
 import com.example.cafebackend.table.ProductForm;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ForProductBaseResponse {
+public class ForProdBaseAndProdFormInfoResponse {
 
     private String prodBaseId;
 
@@ -18,7 +17,7 @@ public class ForProductBaseResponse {
 
     private String description;
 
-    private List<ProductForm> productForms;
+    private List<ForFindMateEnableAndAddOnInPFResponse> productFormList;
 
 
 }

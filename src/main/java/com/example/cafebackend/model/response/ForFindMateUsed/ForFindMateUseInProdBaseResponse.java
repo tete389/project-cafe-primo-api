@@ -1,8 +1,7 @@
-package com.example.cafebackend.model.response.ForFind;
+package com.example.cafebackend.model.response.ForFindMateUsed;
 
 
 import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
-import com.example.cafebackend.table.MaterialUsed;
 import lombok.Data;
 
 import java.util.List;

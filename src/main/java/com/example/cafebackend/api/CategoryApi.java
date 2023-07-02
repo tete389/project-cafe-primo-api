@@ -37,12 +37,20 @@ public class CategoryApi {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateProductInCategory")
-    public ResponseEntity<MessageResponse> updateProductInCategory(@RequestParam("cateId") String cateId,
-                                                                   @RequestParam("listProdFormId") List<String> prodFormId) throws BaseException {
-        MessageResponse res = categoryController.updateProductInCategory(cateId, prodFormId);
+//    @PostMapping("/updateProductFormInToCategory")
+//    public ResponseEntity<MessageResponse> updateProductFormInToCategory(@RequestParam("cateId") String cateId,
+//                                                                         @RequestParam("listProdFormId") List<String> prodFormId) throws BaseException {
+//        MessageResponse res = categoryController.updateProductFormInCategory(cateId, prodFormId);
+//        return ResponseEntity.ok(res);
+//    }
+
+    @PostMapping("/updateProductBaseIntoCategory")
+    public ResponseEntity<MessageResponse> updateProductBaseInToCategory(@RequestParam("cateId") String cateId,
+                                                                         @RequestParam("listProdBaseId") List<String> prodBaseId) throws BaseException {
+        MessageResponse res = categoryController.updateProductBaseInCategory(cateId, prodBaseId);
         return ResponseEntity.ok(res);
     }
+    ////////////////////////
 
     @PostMapping("/getCategoryById")
     public ResponseEntity<MessageResponse> getCategoryById(@RequestParam("cateId") String cateId) throws BaseException {
@@ -55,18 +63,45 @@ public class CategoryApi {
         MessageResponse res = categoryController.findCategoryAll();
         return ResponseEntity.ok(res);
     }
+    ////////////////////////
 
-    @PostMapping("/getProductInCategoryById")
-    public ResponseEntity<MessageResponse> findProductInCategoryById(@RequestParam("cateId") String cateId) throws BaseException {
-        MessageResponse res = categoryController.findListProductByCategoryId(cateId);
+//    @PostMapping("/getProductFormByCategoryId")
+//    public ResponseEntity<MessageResponse> findProductFormByCategoryId(@RequestParam("cateId") String cateId) throws BaseException {
+//        MessageResponse res = categoryController.findListProductFormByCategoryId(cateId);
+//        return ResponseEntity.ok(res);
+//    }
+//
+//    @GetMapping("/getProductFormByCategoryAll")
+//    public ResponseEntity<MessageResponse> findProductFormByCategoryAll() throws BaseException {
+//        MessageResponse res = categoryController.findListProductFormByCategoryAll();
+//        return ResponseEntity.ok(res);
+//    }
+//
+//    @PostMapping("/getProductFormInFoByCategoryId")
+//    public ResponseEntity<MessageResponse> findProductFormInFoByCategoryId(@RequestParam("cateId") String cateId) throws BaseException {
+//        MessageResponse res = categoryController.findListProductFormInfoByCategoryId(cateId);
+//        return ResponseEntity.ok(res);
+//    }
+    ////////////////////////
+
+    @GetMapping("/getProductBaseByCategoryId")
+    public ResponseEntity<MessageResponse> findProductBaseByCategoryId(@RequestParam("cateId") String cateId) throws BaseException {
+        MessageResponse res = categoryController.findListProductBaseByCategoryId(cateId);
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/getProductInCategoryAll")
-    public ResponseEntity<MessageResponse> findProductInCategoryAll() throws BaseException {
-        MessageResponse res = categoryController.findListProductByCategoryAll();
+    @GetMapping("/getProductBaseByCategoryAll")
+    public ResponseEntity<MessageResponse> findProductBaseByCategoryAll() throws BaseException {
+        MessageResponse res = categoryController.findListProductBaseByCategoryAll();
         return ResponseEntity.ok(res);
     }
+
+    @PostMapping("/getProductBaseInFoByCategoryId")
+    public ResponseEntity<MessageResponse> findProductBaseInFoByCategoryId(@RequestParam("cateId") String cateId) throws BaseException {
+        MessageResponse res = categoryController.findListProductBaseInfoByCategoryId(cateId);
+        return ResponseEntity.ok(res);
+    }
+    ////////////////////////
 
     @PostMapping("/deleteCategory")
     public ResponseEntity<MessageResponse> deleteCategory(@RequestParam("cateId") String cateId) throws BaseException {

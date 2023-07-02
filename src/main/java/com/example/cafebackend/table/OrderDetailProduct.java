@@ -34,8 +34,8 @@ public class OrderDetailProduct {
     @Column(name = "detail_price", length = 12)
     private Double detailPrice;
 
-    @Column(name = "bonus_point", length = 12)
-    private Double bonusPoint;
+//    @Column(name = "bonus_point", length = 12)
+//    private Double bonusPoint;
 
     @Column(name = "prod_form_id", length = 36)
     private String prodFormId;

@@ -29,7 +29,7 @@ public class OrderDetailProductController {
 
     ////////////////////////////////////////////////
 
-    public OrderDetailProduct createOrderDetailProduct(Order order, ProdRequest request, Order keepMateUse) throws BaseException {
+    public OrderDetailProduct createOrderDetailProduct(Order order, ProdRequest request, List<OrderDetailMaterial> keepMateUse) throws BaseException {
         /// validate product
         Optional<ProductForm> product = productFormService.findProductFormById(request.getProdFormId());
         if(product.isEmpty()) throw OrderException.createFail();
@@ -42,14 +42,14 @@ public class OrderDetailProductController {
         if (!prod.getProductBase().getMaterialUsed().isEmpty()) {
             OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
             for (MaterialUsed mateUse : prod.getProductBase().getMaterialUsed()){
-                keepMateUse.getOrderDetailMaterials().add(setMateUse(orderDetailMaterial, mateUse));
+                keepMateUse.add(setMateUse(orderDetailMaterial, mateUse));
             }
         }
         /// check material used prod form
         if (!prod.getMaterialUsed().isEmpty()) {
             OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
             for (MaterialUsed mateUse : prod.getMaterialUsed()){
-                keepMateUse.getOrderDetailMaterials().add(setMateUse(orderDetailMaterial, mateUse));
+                keepMateUse.add(setMateUse(orderDetailMaterial, mateUse));
             }
         }
         /// check options
@@ -68,18 +68,18 @@ public class OrderDetailProductController {
                 if (!opt.getMaterialUsed().isEmpty()) {
                     OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
                     for (MaterialUsed mateUse : opt.getMaterialUsed()){
-                        keepMateUse.getOrderDetailMaterials().add(setMateUse(orderDetailMaterial, mateUse));
+                        keepMateUse.add(setMateUse(orderDetailMaterial, mateUse));
                     }
                 }
             }
         }
         /// check quantity
-        Double quantity = Double.valueOf(request.getQuantity());
+        double quantity = Double.parseDouble(request.getQuantity());
         if(quantity <= 0 ) quantity = 1.0;
         /// check detail price
-        double detailPrice = prodOptionPrice * quantity;
+        Double detailPrice = prodOptionPrice * quantity;
         /// check bonus point
-        double bonusPoint = prod.getBonusPoint() * quantity;
+        //double bonusPoint = prod.getBonusPoint() * quantity;
         /// check product name
         String prodName =  prod.getProductBase().getProdTitle() + prod.getProdForm();
         /// add data
@@ -88,7 +88,7 @@ public class OrderDetailProductController {
         orderDetailProduct.setQuantity(quantity);
         orderDetailProduct.setProdOptionPrice(prodOptionPrice);
         orderDetailProduct.setDetailPrice(detailPrice);
-        orderDetailProduct.setBonusPoint(bonusPoint);
+        //orderDetailProduct.setBonusPoint(bonusPoint);
         orderDetailProduct.setProdFormId(prod.getProdFormId());
         return orderDetailProductService.updaterOderDetailProduct(orderDetailProduct);
     }

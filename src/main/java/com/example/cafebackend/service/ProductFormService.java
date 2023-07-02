@@ -35,7 +35,7 @@ public class ProductFormService {
         table.setProdForm(prodForm);
         table.setIsEnable(true);
         table.setPrice(prodPrice);
-        table.setImage("none");
+        //table.setImage("none");
         table.setBonusPoint(bonusPoint);
         table.setDescription(description);
         return productFormRepository.save(table);

@@ -19,8 +19,8 @@ public class ProductForm {
     @Column(name = "prod_form", length = 60, nullable = false)
     private String prodForm;
 
-    @Column(name = "image")
-    private String image;
+//    @Column(name = "image")
+//    private String image;
 
     @Column(name = "price", length = 12)
     private Double price;
@@ -28,18 +28,17 @@ public class ProductForm {
     @Column(name = "is_enable")
     private Boolean isEnable;
 
-    @Column(name = "bonus_point", length = 12)
-    private Double bonusPoint;
+//    @Column(name = "bonus_point", length = 12)
+//    private Double bonusPoint;
 
     @Column(name = "description")
     private String description;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "prod_base_id")
     private ProductBase productBase;
 
-//    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Ingredient> ingredients = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "productForm", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

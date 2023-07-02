@@ -100,14 +100,34 @@ public class AddOnController {
     public MessageResponse findAllAddOn(){
         List<AddOn> addOnList =  addOnService.findListAddOn();
         List<ForAddOnResponse> addResList = new ArrayList<>();
-//        for (AddOn addOn : addOnList){
-//            List<ProductForm> prodList = productFormService.findProductByAddOnlId(addOn.getAddOnId());
-//            ForAddOnResponse addRes = addOnMapper.toForAddOnResponse(addOn, prodList);
-//            addResList.add(addRes);
-//        }
         MessageResponse res = new MessageResponse();
-        res.setMessage("get AddOn success");
+        res.setMessage("get AddOn All success");
         res.setRes(addOnList);
+        return res;
+    }
+    ////////////////////////////////////////
+
+    public MessageResponse findAddOnInfoById(String addId) throws BaseException {
+        /// validate
+        if(Objects.isNull(addId) || addId.isEmpty()) throw OptionException.findFailRequestNull();
+        /// verify
+        Optional<AddOn> add =  addOnService.findAddOnById(addId);
+        if(add.isEmpty()) throw OptionException.findFail();
+        ForAddOnResponse addRes = addOnMapper.toForAddOnResponse(add.get());
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get AddOn Info success");
+        res.setRes(addRes);
+        return res;
+    }
+    ////////////////////////////////////////
+
+    public MessageResponse findAllAddOnInfo(){
+        List<AddOn> addOnList =  addOnService.findListAddOn();
+
+        List<ForAddOnResponse> addRes = addOnMapper.toListForAddOnResponse(addOnList);
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get AddOn Info All success");
+        res.setRes(addRes);
         return res;
     }
     ////////////////////////////////////////

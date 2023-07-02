@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class MaterialEnableNec {
 
-
     private Boolean isEnable;
 
 

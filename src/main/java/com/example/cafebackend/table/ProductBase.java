@@ -19,6 +19,9 @@ public class ProductBase {
     @Column(name = "prod_title", length = 60, nullable = false)
     private String prodTitle;
 
+    @Column(name = "image")
+    private String image;
+
     @Column(name = "is_enable")
     private Boolean isEnable;
 
@@ -28,6 +31,10 @@ public class ProductBase {
     @JsonIgnore
     @OneToMany(mappedBy = "productBase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductForm> productForms = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "productBase", fetch = FetchType.LAZY)
+    private List<Category> category = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "productBase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

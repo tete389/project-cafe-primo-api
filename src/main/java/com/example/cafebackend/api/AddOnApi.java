@@ -1,9 +1,11 @@
 package com.example.cafebackend.api;
 
 import com.example.cafebackend.controller.AddOnController;
+import com.example.cafebackend.controller.MaterialUsedController;
 import com.example.cafebackend.controller.OptionController;
 import com.example.cafebackend.exception.BaseException;
 
+import com.example.cafebackend.model.request.UsedRequest;
 import com.example.cafebackend.model.response.MessageResponse;
 
 import org.springframework.http.ResponseEntity;
@@ -18,9 +20,12 @@ public class AddOnApi {
 
     private final OptionController optionController;
 
-    public AddOnApi(AddOnController addOnController, OptionController optionController) {
+    private final MaterialUsedController materialUsedController;
+
+    public AddOnApi(AddOnController addOnController, OptionController optionController, MaterialUsedController materialUsedController) {
         this.addOnController = addOnController;
         this.optionController = optionController;
+        this.materialUsedController = materialUsedController;
     }
 
 
@@ -43,6 +48,7 @@ public class AddOnApi {
         MessageResponse res = addOnController.updateAddOn(addOnId, addOnTitle, isManyOptions, isEnable, description);
         return ResponseEntity.ok(res);
     }
+    //////////////////////////////////////////
 
     @GetMapping("/getAddOnAll")
     public ResponseEntity<MessageResponse> getAddOnAll() {
@@ -56,6 +62,18 @@ public class AddOnApi {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/getAddOnInfoAll")
+    public ResponseEntity<MessageResponse> getAddOnInfoAll() {
+        MessageResponse res = addOnController.findAllAddOnInfo();
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/getAddOnInfoById")
+    public ResponseEntity<MessageResponse> getAddInfoById(@RequestParam("addOnId") String AddOnId) throws BaseException {
+        MessageResponse res = addOnController.findAddOnInfoById(AddOnId);
+        return ResponseEntity.ok(res);
+    }
+    //////////////////////////////////////////
 
     @PostMapping("/deleteAddOn")
     public ResponseEntity<MessageResponse> deleteAdd(@RequestParam("addOnId") String addOnId) throws BaseException {
@@ -84,6 +102,13 @@ public class AddOnApi {
         return ResponseEntity.ok(res);
     }
 
+    @PostMapping("/option/updateMaterialUseIntoOption")
+    public ResponseEntity<MessageResponse> updateMaterialUseOfOption(@RequestBody UsedRequest usedRequest)  throws Exception {
+        MessageResponse res = materialUsedController.updateAddMaterialUsedInOption(usedRequest.getProdFormId(), usedRequest.getMateUsed());
+        return ResponseEntity.ok(res);
+    }
+    //////////////////////////////////////////
+
     @PostMapping("/option/getOptionById")
     public ResponseEntity<MessageResponse> getOptionById(@RequestParam("optionId") String optionId) throws BaseException {
         MessageResponse res = optionController.findOptionById(optionId);
@@ -96,6 +121,12 @@ public class AddOnApi {
         return ResponseEntity.ok(res);
     }
 
+    @PostMapping("/option/getMaterialUseByOption")
+    public ResponseEntity<MessageResponse> findMaterialUseInOption(@RequestParam("optionId") String optionId)  throws Exception {
+        MessageResponse res = materialUsedController.findMaterialUsedInOptionId(optionId);
+        return ResponseEntity.ok(res);
+    }
+    //////////////////////////////////////////
 
     @PostMapping("/option/deleteOption")
     public ResponseEntity<MessageResponse> deleteOption(@RequestParam("optionId") String optionId) throws BaseException {

@@ -1,19 +1,16 @@
 version: '3.1'
 
 services:
-  db:
-    container_name: postgres_cafe
-    image: 'postgres:latest'
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://spring_cafe:8080
     networks:
-      - order-pgsql
+      - my-network
     ports:
-      - "5432:5432"
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=syspass
+      - '80:80'
+    depends_on:
+      - app
 
   app:
     container_name: spring_cafe
@@ -24,18 +21,9 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - order-pgsql
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=syspass
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-    depends_on:
-      - db
+      - my-network
+
 
 networks:
-  order-pgsql:
-
-#volumes:
-#  db-data:
+  my-network:
 

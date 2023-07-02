@@ -1,15 +1,14 @@
-package com.example.cafebackend.model.response.ForFind;
+package com.example.cafebackend.model.response.ForFindProdcut;
 
 
 import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.ProductBase;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class ForFindAddOnInProdFormResponse {
+public class ForFindAddOnInPFResponse {
 
     private String prodFormId;
 
