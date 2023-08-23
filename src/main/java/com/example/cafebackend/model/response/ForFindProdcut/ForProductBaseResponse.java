@@ -1,7 +1,6 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
 
-import com.example.cafebackend.table.ProductBase;
 import com.example.cafebackend.table.ProductForm;
 import lombok.Data;
 
@@ -14,7 +13,11 @@ public class ForProductBaseResponse {
 
     private String prodTitle;
 
+    private String image;
+
     private Boolean isEnable;
+
+    private Boolean isMaterialEnable;
 
     private String description;
 

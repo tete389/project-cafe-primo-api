@@ -25,11 +25,14 @@ public class ProductBase {
     @Column(name = "is_enable")
     private Boolean isEnable;
 
+    @Column(name = "is_material_enable")
+    private Boolean isMaterialEnable;
+
     @Column(name = "description")
     private String description;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "productBase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productBase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductForm> productForms = new ArrayList<>();
 
     @JsonIgnore
@@ -37,8 +40,18 @@ public class ProductBase {
     private List<Category> category = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "productBase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productBase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MaterialUsed> materialUsed = new ArrayList<>();
 
+    @PreRemove
+    private void removeCategoryProduct() {
+        if (!category.isEmpty()) {
+            for (Category category1 : category) {
+                category1.getProductBase().remove(this);
+            }
+        }
+
+
+    }
 
 }

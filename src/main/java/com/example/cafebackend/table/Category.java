@@ -36,7 +36,7 @@ public class Category {
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "cate_prod_B",
+            name = "cate_prod",
             joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
             inverseJoinColumns = @JoinColumn(name = "prod_base_id", referencedColumnName = "prod_base_id"))
     private List<ProductBase> productBase = new ArrayList<>();
@@ -44,13 +44,12 @@ public class Category {
 
     @PreRemove
     private void removeProductCategory() {
-//        for (ProductForm prod : productForm) {
-//            prod.getCategory().remove(this);
-//        }
-
-        for (ProductBase prod : productBase) {
-            prod.getCategory().remove(this);
+        if (!productBase.isEmpty()) {
+            for (ProductBase prod : productBase) {
+                prod.getCategory().remove(this);
+            }
         }
+
     }
 
 

@@ -2,7 +2,6 @@ package com.example.cafebackend.table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -12,8 +11,6 @@ import javax.persistence.*;
 public class OrderDetailOption {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "odt_option_id", length = 36 ,nullable = false, updatable = false, unique = true)
     private String odtOptionId;
 
@@ -23,6 +20,9 @@ public class OrderDetailOption {
     @Column(name = "option_price", length = 12)
     private Double optionPrice;
 
+    @Column(name = "option_Id", length = 12)
+    private String optionId;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "odt_prod_id")
@@ -30,8 +30,8 @@ public class OrderDetailOption {
 
     @PreRemove
     private void removeDetailProductFromOrderDetailOption() {
-        OrderDetailProduct ord  =  orderDetailProduct;
-        ord.getOrderDetailOptions().remove(this);
+//        OrderDetailProduct ord  =  orderDetailProduct;
+//        ord.getOrderDetailOptions().remove(this);
     }
 
 }

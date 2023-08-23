@@ -25,13 +25,16 @@ public class Option {
     @Column(name = "is_enable")
     private Boolean isEnable;
 
+    @Column(name = "is_material_enable")
+    private Boolean isMaterialEnable;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "add_on_id")
     private AddOn addOn;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MaterialUsed> materialUsed = new ArrayList<>();
 
 }

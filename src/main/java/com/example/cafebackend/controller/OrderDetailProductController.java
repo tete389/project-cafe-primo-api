@@ -36,8 +36,8 @@ public class OrderDetailProductController {
         ProductForm prod = product.get();
         /// add order
         OrderDetailProduct orderDetailProduct = orderDetailProductService.createOrderDetailProduct(order);
-        /// price
-        double prodOptionPrice = prod.getPrice();
+        /// option price
+        double optionPrice = 0.0;
         /// check material used prod base
         if (!prod.getProductBase().getMaterialUsed().isEmpty()) {
             OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
@@ -59,9 +59,9 @@ public class OrderDetailProductController {
                 if(option.isEmpty()) throw OptionException.findFail();
                 Option opt = option.get();
                 /// create odt option and add odt prod
-                OrderDetailOption orderDetailOption = orderDetailOptionService.createOrderDetailOption(orderDetailProduct, opt.getOptionName(), opt.getPrice());
+                OrderDetailOption orderDetailOption = orderDetailOptionService.createOrderDetailOption(orderDetailProduct, opt.getOptionName(), opt.getPrice(), opt.getOptionId());
                 /// check options price
-                prodOptionPrice = prodOptionPrice + opt.getPrice();
+                optionPrice = optionPrice + opt.getPrice();
                 /// add odt option
                 orderDetailProduct.getOrderDetailOptions().add(orderDetailOption);
                 /// check material used option
@@ -77,18 +77,15 @@ public class OrderDetailProductController {
         double quantity = Double.parseDouble(request.getQuantity());
         if(quantity <= 0 ) quantity = 1.0;
         /// check detail price
-        Double detailPrice = prodOptionPrice * quantity;
-        /// check bonus point
-        //double bonusPoint = prod.getBonusPoint() * quantity;
+        Double detailPrice = (optionPrice + prod.getPrice()) * quantity;
         /// check product name
         String prodName =  prod.getProductBase().getProdTitle() + prod.getProdForm();
         /// add data
         orderDetailProduct.setProdName(prodName);
         orderDetailProduct.setProdPrice(prod.getPrice());
         orderDetailProduct.setQuantity(quantity);
-        orderDetailProduct.setProdOptionPrice(prodOptionPrice);
+        orderDetailProduct.setOptionPrice(optionPrice);
         orderDetailProduct.setDetailPrice(detailPrice);
-        //orderDetailProduct.setBonusPoint(bonusPoint);
         orderDetailProduct.setProdFormId(prod.getProdFormId());
         return orderDetailProductService.updaterOderDetailProduct(orderDetailProduct);
     }

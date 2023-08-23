@@ -18,9 +18,10 @@ public class ForFindMateEnableInPFResponse {
 
     private Boolean isEnable;
 
+    private Boolean isMaterialEnable;
+
     private Double price;
 
-    private Double bonusPoint;
 
     private String description;
 

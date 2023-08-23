@@ -33,8 +33,16 @@ public class AddOn {
     private List<ProductForm> productForm = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "addOn", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "addOn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option> options = new ArrayList<>();
 
+    @PreRemove
+    private void removeAddOnProductFrom() {
+        if (!productForm.isEmpty()){
+            for (ProductForm form : productForm) {
+                form.getAddOn().remove(this);
+            }
+        }
 
+    }
 }

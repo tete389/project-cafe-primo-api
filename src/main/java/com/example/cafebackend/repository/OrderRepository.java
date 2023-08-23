@@ -12,8 +12,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Query(value = "SELECT MAX(o.order_date) FROM order o", nativeQuery = true)
     String findByOrderCreateDateAsc();
 
-    @Query(value = "SELECT COUNT(o.order_number) FROM \"order\"  o WHERE cast(o.order_date as date) = current_date", nativeQuery = true)
-    Integer findCountByOrderToDay();
+    @Query(value = "SELECT COUNT(o.order_number) FROM \"order\"  o WHERE cast(o.order_date as date) = current_date AND o.status =:status", nativeQuery = true)
+    Integer findCountByOrderToDay(@Param("status") String status);
 
     @Query(value = "SELECT * FROM \"order\"  o WHERE cast(o.order_date as date) = current_date ORDER BY o.order_date ASC", nativeQuery = true)
     List<Order> findByOrderToDay();

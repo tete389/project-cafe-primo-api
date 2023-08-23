@@ -28,37 +28,43 @@ public class TokenFilter extends GenericFilterBean {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
+
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String authorization = request.getHeader("Authorization");
 
-        if (ObjectUtils.isEmpty(authorization)){
+        if (ObjectUtils.isEmpty(authorization)) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
 
-        if (!authorization.startsWith("Bearer ")){
+        if (!authorization.startsWith("Bearer ")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
 
         String token = authorization.substring(7);
         DecodedJWT decoded = tokenService.verify(token);
-        if (decoded == null){
+        if (decoded == null) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
+
         String principal = decoded.getClaim("principal").asString();
         String role = decoded.getClaim("role").asString();
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(role));
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal,"(protected)",authorities);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal,
+                "(protected)", authorities);
 
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(authentication);
 
         filterChain.doFilter(servletRequest, servletResponse);
+
+
     }
 }

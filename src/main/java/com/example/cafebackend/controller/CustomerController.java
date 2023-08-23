@@ -3,19 +3,14 @@ package com.example.cafebackend.controller;
 
 import com.example.cafebackend.appString.EString;
 import com.example.cafebackend.exception.BaseException;
-import com.example.cafebackend.exception.EmployeeException;
 import com.example.cafebackend.exception.OrderException;
-import com.example.cafebackend.model.response.ApiResponse;
-import com.example.cafebackend.model.response.EmployeeResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.service.*;
-import com.example.cafebackend.table.Customer;
-import com.example.cafebackend.table.Employee;
-import com.example.cafebackend.table.Order;
-import com.example.cafebackend.table.PointDetail;
+import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,25 +24,26 @@ public class CustomerController {
 
     //private OrderDetailPointController orderDetailPointController;
 
-    private PointDetailService pointDetailService;
+    private OrderDetailPointService orderDetailPointService;
 
     private OrderService orderService;
 
-    private TokenService tokenService;
+    private SettingShopService shopService;
+
 
     ////////////////////////////////////////////////
 
-    public MessageResponse collectPoints(String phoneNumber, String point, String orderId) throws BaseException {
+    public MessageResponse collectPoints(String phoneNumber, String orderId) throws BaseException {
         /// validate
         if(Objects.isNull(phoneNumber) ||  phoneNumber.isEmpty()) throw OrderException.findFail();
         if(Objects.isNull(orderId) ||  orderId.isEmpty()) throw OrderException.findFail();
-        if(Objects.isNull(point) ||  point.isEmpty()) throw OrderException.findFail();
+        //if(Objects.isNull(point) ||  point.isEmpty()) throw OrderException.findFail();
         /// check order
         Optional<Order> orderOpt = orderService.findById(orderId);
         if(Objects.isNull(orderOpt) || orderOpt.isEmpty()) throw OrderException.findFail();
         Order order = orderOpt.get();
         /// check order payment success ?
-        if(order.getStatus().equals(EString.PAYMENT_SUCCESS.getValue()) ) throw OrderException.unpaid();
+        if(!order.getStatus().equals(EString.PAYMENT_SUCCESS.getValue())) throw OrderException.unpaid();
         /// check phoneNumber if not have go crete customer
         Customer customer;
         if(!customerService.existsByPhoneNumber(phoneNumber)) {
@@ -57,10 +53,15 @@ public class CustomerController {
             if(Objects.isNull(customerOpt) || customerOpt.isEmpty()) throw OrderException.findFail();
             customer = customerOpt.get();
         }
+
+        List<SettingShop> setting = shopService.findAll();
+        double bonus = order.getOrderPrice() * setting.get(0).getPointCollectRate();
         /// create  point detail
-        PointDetail detailPoint = pointDetailService.createPointDetail(customer, order, Double.valueOf(point), EString.COLLECT_POINT.getValue());
+        OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(order, phoneNumber, EString.COLLECT_POINT.getValue() , bonus);
+        order.getOrderDetailPoint().add(detailPoint);
+        orderService.updateOrder(order);
         /// update point
-        customer.setPointCount(Double.valueOf(customer.getPointCount() + point));
+        customer.setPointCount(customer.getPointCount() + bonus);
         Customer resCus =  customerService.updateCustomer(customer);
         /// response
         MessageResponse res = new MessageResponse();
@@ -83,7 +84,7 @@ public class CustomerController {
         double result =  customer.getPointCount() - spendPoint;
         if (result <= 0) throw OrderException.CannotSpend();
         /// create  point detail
-        PointDetail detailPoint = pointDetailService.createPointDetail(customer, null, Double.valueOf(point), EString.SPEND_POINT.getValue());
+        //OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(customer,  Double.valueOf(point), EString.SPEND_POINT.getValue());
         /// update point
         customer.setPointCount(result);
         Customer resCus =  customerService.updateCustomer(customer);
@@ -111,6 +112,22 @@ public class CustomerController {
     }
     ////////////////////////////////////////////////
 
-
-
+    public boolean clearDetailPointInOrder(Order order) throws BaseException {
+        /// validate
+        List<OrderDetailPoint> orderDetailPoint = order.getOrderDetailPoint();
+        if(orderDetailPoint.isEmpty()) return true;
+        ///
+        List<String> OdtPointIdList = new ArrayList<>();
+        for (OrderDetailPoint detailPoint : orderDetailPoint) {
+            OdtPointIdList.add(detailPoint.getOdtPointId());
+        }
+        for (String OdtPoint : OdtPointIdList) {
+            orderDetailPointService.deletePointDetail(OdtPoint);
+            Optional<OrderDetailPoint> detailMaterial = orderDetailPointService.findById(OdtPoint);
+            if (!(Objects.isNull(detailMaterial) || detailMaterial.isEmpty())) return false;
+        }
+        return true;
+    }
 }
+
+

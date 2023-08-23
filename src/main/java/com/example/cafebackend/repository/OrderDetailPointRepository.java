@@ -1,9 +1,9 @@
 package com.example.cafebackend.repository;
 
-import com.example.cafebackend.table.PointDetail;
+import com.example.cafebackend.table.OrderDetailPoint;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PointDetailRepository extends JpaRepository<PointDetail, String> {
+public interface OrderDetailPointRepository extends JpaRepository<OrderDetailPoint, String> {
 
     //List<OrderDetailOption> findAllByOrderOrderId(String orderId);
 

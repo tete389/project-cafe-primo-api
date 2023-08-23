@@ -98,6 +98,7 @@ public class EmployeeController {
     ////////////////////////////////////////////////
 
     public EmployeeResponse getEmployeeAll() throws BaseException {
+        System.out.println("1");
         Employee emp = tokenService.checkTokenEmp();
         ///
         EmployeeResponse res = new EmployeeResponse();

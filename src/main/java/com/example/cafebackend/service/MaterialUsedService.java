@@ -3,7 +3,6 @@ package com.example.cafebackend.service;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.MaterialException;
 import com.example.cafebackend.repository.MaterialUsedRepository;
-import com.example.cafebackend.table.Material;
 import com.example.cafebackend.table.MaterialUsed;
 import org.springframework.stereotype.Service;
 
@@ -41,13 +40,11 @@ public class MaterialUsedService {
         /// find
         return materialUsedRepository.findByProdBaseIdAndMateId(baseId, mateId);
     }
-    /////////////////////////
 
     public Optional<MaterialUsed> findByFormIdAndMateId(String formId, String mateId) {
         /// find
         return materialUsedRepository.findByProdFormIdAndMateId(formId, mateId);
     }
-    /////////////////////////
 
     public Optional<MaterialUsed> findByOptionIdAndMateId(String optionId, String mateId) {
         /// find
@@ -55,15 +52,19 @@ public class MaterialUsedService {
     }
     /////////////////////////
 
-    public void deleteMaterialUsedByFormId(String formId) throws Exception {
-        /// verify
-        try {
-            if(Objects.isNull(formId) || formId.isEmpty()) throw MaterialException.updateFail();
-            materialUsedRepository.deleteByProdFormId(formId);
-            materialUsedRepository.flush();
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
+    public List<Boolean> findEnableByBaseId(String baseId) {
+        /// find
+        return materialUsedRepository.findByProdBaseId(baseId);
+    }
+
+    public List<Boolean> findEnableByFormId(String formId) {
+        /// find
+        return materialUsedRepository.findByProdFormId(formId);
+    }
+
+    public List<Boolean> findEnableByOptionId(String opId) {
+        /// find
+        return materialUsedRepository.findByOptionId(opId);
     }
     /////////////////////////
 

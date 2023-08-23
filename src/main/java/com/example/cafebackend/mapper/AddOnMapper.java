@@ -1,11 +1,8 @@
 package com.example.cafebackend.mapper;
 
-import com.example.cafebackend.model.response.ForAddOnResponse;
-import com.example.cafebackend.model.response.ForFindMateUsed.ForFindMateUseInOptionResponse;
-import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
+
+import com.example.cafebackend.model.response.ForFindAddOnOpion.ForAddOnResponse;
 import com.example.cafebackend.table.AddOn;
-import com.example.cafebackend.table.Option;
-import com.example.cafebackend.table.ProductForm;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -16,13 +13,24 @@ public interface AddOnMapper {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    //ForCategoryResponse toForCategoryResponse(Category category, Integer prodCount);
-
     ForAddOnResponse toForAddOnResponse(AddOn addOn);
 
-    List<ForAddOnResponse> toListForAddOnResponse(List<AddOn> addOn);
+//    ForAddOnOptionInfoResponse toForFindMateUseInOptionResponse(AddOn addOn, List<ForOptionInfoResponse> optionsInfo);
 
 
-    ForFindMateUseInOptionResponse toForFindMateUseInOptionResponse(Option option, List<MaterialUsedNec> materialInfoUsed);
 
+    /////////////////// list
+
+    List<ForAddOnResponse> toListForAddOnResponse(List<AddOn> addOnList);
+
+    //List<ForAddOnOptionInfoResponse> toListForAddOnOptionInfoResponse(List<AddOn> addOnList);
+
+
+    ////////////////////////////////////////  option
+
+//    ForOptionInfoResponse toForOptionInfoResponse(Option option, List<Boolean> materialUsedEnable);
+
+    /////////////////// list
+
+//    List<ForOptionInfoResponse> toListForOptionInfoResponse(List<Option> optionList);
 }

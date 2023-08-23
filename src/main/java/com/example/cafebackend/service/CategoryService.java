@@ -3,7 +3,6 @@ package com.example.cafebackend.service;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.CategoryException;
 import com.example.cafebackend.repository.CategoryRepository;
-import com.example.cafebackend.repository.ProductFormRepository;
 import com.example.cafebackend.table.Category;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +23,11 @@ public class CategoryService {
     public Category createCategory(String cateName) throws BaseException {
         /// verify
         if(categoryRepository.existsByCateName(cateName)) throw CategoryException.createFail();
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
-        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
-        String cId = "C"+n1+n2;
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "C"+uuid.substring(0, 14);
         /// save
         Category table = new Category();
-        table.setCateId(cId);
+        table.setCateId(uuid);
         table.setCateName(cateName);
         table.setIsEnable(true);
         table.setIsRecommend(false);

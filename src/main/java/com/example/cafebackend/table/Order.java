@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,33 +36,33 @@ public class Order {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "total_price", length = 12)
-    private Double totalPrice;
+    @Column(name = "total_detail_price", length = 12)
+    private Double totalDetailPrice;
 
-    @Column(name = "total_bonus_point", length = 12)
-    private Double totalBonusPoint;
+    @Column(name = "discount", length = 12)
+    private Double discount;
+
+    @Column(name = "order_price", length = 12)
+    private Double orderPrice;
 
     @Column(name = "note")
     private String note;
 
-    @Column(name = "responsible")
-    private String responsible;
-
     @JsonIgnore
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderDetailProduct> orderDetailProducts = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderDetailMaterial> orderDetailMaterials = new ArrayList<>();
 
     @JsonIgnore
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private PointDetail pointDetail;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<OrderDetailPoint> orderDetailPoint = new ArrayList<>();
 
     public Order() {
         //orderDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        orderDate = LocalDateTime.now();
+        orderDate = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
     }
 
 }

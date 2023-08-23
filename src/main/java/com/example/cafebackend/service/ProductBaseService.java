@@ -22,21 +22,15 @@ public class ProductBaseService {
     public ProductBase createProductBase(String prodTitle) throws BaseException {
         /// verify
         if(productBaseRepository.existsByProdTitle(prodTitle)) throw ProductException.createFailTitleDuplicate();
-//        String timeStamp = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(new Date());
-//        String[] arrOfStr = timeStamp.split(" ", 5);
-//        String[] arrOfStr2 = arrOfStr[0].split("-",5);
-//        String[] arrOfStr3 = arrOfStr[1].split(":",5);
-//        String id = "P"+arrOfStr3[2]+arrOfStr3[1]+arrOfStr3[0]+arrOfStr2[0]+arrOfStr2[1];
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
-        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
-        String Id = "PB"+n1+n2;
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "PB"+uuid.substring(0, 13);
         /// save
         ProductBase table = new ProductBase();
-        table.setProdBaseId(Id);
+        table.setProdBaseId(uuid);
         table.setProdTitle(prodTitle);
+        table.setImage("none");
         table.setIsEnable(true);
+        table.setIsMaterialEnable(true);
         table.setDescription("none");
         return productBaseRepository.save(table);
     }
@@ -59,6 +53,12 @@ public class ProductBaseService {
     public List<ProductBase> findBaseAll(){
         ///
         return productBaseRepository.findAll();
+    }
+    //////////////////////////////////
+
+    public List<ProductBase> findBaseByMateId(String mateId){
+        ///
+        return productBaseRepository.findProdBaseByMateId(mateId);
     }
     //////////////////////////////////
 

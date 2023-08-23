@@ -1,16 +1,18 @@
-version: '3.1'
-
+version: '3.8'
 services:
-  cloudflared:
-    container_name: cloudflared
-    image: cloudflare/cloudflared:latest
-    command: tunnel --no-autoupdate --url http://spring_cafe:8080
+  db:
+    container_name: postgres_cafe
+    image: 'postgres:latest'
     networks:
-      - my-network
+      - backend
     ports:
-      - '80:80'
-    depends_on:
-      - app
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=syspass
+    volumes:
+      - ../../database/postgresql/data:/var/lib/postgresql/data
 
   app:
     container_name: spring_cafe
@@ -21,9 +23,24 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - my-network
+      - backend
+    depends_on:
+      - db
 
+  cloudflared:
+    container_name: cloudflared-cafe
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://spring_cafe:8080
+    networks:
+      - backend
+    ports:
+      - '80:80'
+    depends_on:
+      - app
 
 networks:
-  my-network:
+  backend:
+    driver: bridge
+    name: backend-network
+
 

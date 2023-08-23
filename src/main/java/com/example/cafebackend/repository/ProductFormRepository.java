@@ -6,12 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductFormRepository extends JpaRepository<ProductForm, String> {
 
-    @Query(value = "SELECT * FROM product_form pf INNER JOIN base_product pb ON pf.base_prod_id=pb.base_prod_id WHERE pf.base_prod_id= :baseId ORDER BY pf.prod_form ASC", nativeQuery = true)
-    List<ProductForm> findFormByBaseId(@Param("baseId") String cateId);;
+    @Query(value = "SELECT * FROM product_form pf INNER JOIN product_base pb ON pf.prod_base_id=pb.prod_base_id WHERE pf.prod_base_id= :baseId ORDER BY pf.prod_form ASC", nativeQuery = true)
+    List<ProductForm> findProductFormByBaseId(@Param("baseId") String baseId);
+
+    @Query(value = "SELECT pf.prod_form FROM product_form pf INNER JOIN product_base pb ON pf.prod_base_id=pb.prod_base_id WHERE pf.prod_base_id= :baseId ORDER BY pf.prod_form ASC", nativeQuery = true)
+    List<String> findFormByBaseId(@Param("baseId") String baseId);
 
     @Query(value = "SELECT * FROM product_form p INNER JOIN add_on ad ON p.prod_form_id=ad.prod_id WHERE ad.add_on_id= :addId ORDER BY p.prod_form ASC", nativeQuery = true)
     List<ProductForm> findByAddOnId(@Param("addId") String addId);
@@ -20,22 +22,19 @@ public interface ProductFormRepository extends JpaRepository<ProductForm, String
     List<ProductForm> findAllProduct();
 
 
+    @Query(value = "SELECT min(pf.price) FROM product_form pf INNER JOIN product_base pb ON pf.prod_base_id=pb.prod_base_id WHERE pf.prod_base_id= :baseId", nativeQuery = true)
+    Double findMinPrice(@Param("baseId") String cateId);
+
     //boolean existsByProdName(String name);
 
-    boolean existsByCategoryCateId(String cateId);
+    @Query(value = "SELECT * FROM product_form pf INNER JOIN material_used mu ON pf.prod_form_id = mu.prod_form_id INNER JOIN material m ON mu.mate_id = m.mate_id WHERE mu.mate_id= :mateId ", nativeQuery = true)
+    List<ProductForm> findProdFormByMateId(String mateId);
 
     boolean existsByAddOnAddOnId(String addId);
 
     boolean existsByProdForm(String form);
 
     boolean existsByMaterialUsedMaterialMateId(String mateId);
-
-
-    @Query(value = "SELECT COUNT(p.prod_id) FROM product p INNER JOIN combine c ON p.prod_id=c.prod_id WHERE p.prod_status='enable' AND c.cate_id= :cateId", nativeQuery = true)
-    Integer findCountProductOfCategory(@Param("cateId") String cate);
-
-
-
 
 
 

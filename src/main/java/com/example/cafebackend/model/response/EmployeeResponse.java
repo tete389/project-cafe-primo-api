@@ -1,6 +1,5 @@
 package com.example.cafebackend.model.response;
 
-import com.example.cafebackend.table.Employee;
 import lombok.Data;
 
 @Data

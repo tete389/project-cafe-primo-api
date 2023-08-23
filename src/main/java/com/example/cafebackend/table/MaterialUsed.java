@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -20,7 +21,7 @@ public class MaterialUsed {
     @Column(name = "amount_used", length = 36)
     private Double amountUsed;
 
-    @Column(name = "is_enable", length = 36)
+    @Column(name = "is_enable")
     private Boolean isEnable;
 
     @JsonIgnore
@@ -45,8 +46,29 @@ public class MaterialUsed {
 
     @PreRemove
     private void removeProductFromMaterialUsed() {
-        ProductForm prod  =  productForm;
-        prod.getMaterialUsed().remove(this);
+        if (!Objects.isNull(productForm)) {
+            System.out.println("MU1");
+            ProductForm prodForm  =  productForm;
+            prodForm.getMaterialUsed().remove(this);
+        }
+
+        if (!Objects.isNull(productBase)) {
+            System.out.println("MU2");
+            ProductBase prodBase  =  productBase;
+            prodBase.getMaterialUsed().remove(this);
+        }
+
+        if (!Objects.isNull(option)) {
+            System.out.println("MU3");
+            Option op  =  option;
+            op.getMaterialUsed().remove(this);
+        }
+
+        if (!Objects.isNull(material)) {
+            System.out.println("MU4");
+            Material mate  =  material;
+            mate.getMaterialUsed().remove(this);
+        }
     }
 //
 //    @PreRemove

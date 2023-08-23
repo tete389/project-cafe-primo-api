@@ -21,15 +21,12 @@ public class AddOnService {
     //////////////////////////
     public AddOn createAddOn(String title, String description, Boolean isManyOptions) throws BaseException {
         /// verify
-        if(addOnRepository.existsByAddOnTitle(title)) throw OptionException.createFail();
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
-        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
-        String Id = "Ad"+n1+n2;
+        if(addOnRepository.existsByAddOnTitle(title)) throw OptionException.updateFailDuplicate();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "AD"+uuid.substring(0, 13);
         /// save
         AddOn table = new AddOn();
-        table.setAddOnId(Id);
+        table.setAddOnId(uuid);
         table.setAddOnTitle(title);
         table.setIsManyOptions(isManyOptions);
         table.setDescription(description);

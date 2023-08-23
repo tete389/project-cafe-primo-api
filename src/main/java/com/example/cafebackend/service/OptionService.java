@@ -2,7 +2,6 @@ package com.example.cafebackend.service;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.OptionException;
-import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.repository.OptionRepository;
 import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.Option;
@@ -22,18 +21,16 @@ public class OptionService {
 
     //////////////////////////
     public Option createOption(AddOn addOn, String optionName, Double price) throws BaseException {
-        /// verify
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
-        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
-        String Id = "Op"+n1+n2;
+
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "OP"+uuid.substring(0, 13);
         /// save
         Option table = new Option();
-        table.setOptionId(Id);
+        table.setOptionId(uuid);
         table.setOptionName(optionName);
         table.setPrice(price);
         table.setIsEnable(true);
+        table.setIsMaterialEnable(true);
         table.setAddOn(addOn);
         return optionRepository.save(table);
     }
@@ -53,6 +50,11 @@ public class OptionService {
         return optionRepository.findByAddOnAddOnId(id);
     }
 
+    public List<String> findOptionNameByAddOnId(String name) {
+        ///
+        return optionRepository.findOptionNameByAddOnId(name);
+    }
+
     public Boolean existsByOptionName(String info) {
         ///
         return optionRepository.existsByOptionName(info);
@@ -63,6 +65,11 @@ public class OptionService {
         if(Objects.isNull(option)) throw OptionException.updateFail();
         /// save
         return optionRepository.save(option);
+    }
+
+    public List<Option> findOptionByMateId(String mateId) {
+        ///
+        return optionRepository.findOptionByMateId(mateId);
     }
 
     public Boolean deleteOption(String id) throws BaseException {

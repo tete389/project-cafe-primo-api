@@ -15,9 +15,9 @@ public class ForFindMateUseInProdFormResponse {
 
     private Boolean isEnable;
 
-    private Double price;
+    private Boolean isMaterialEnable;
 
-    private Double bonusPoint;
+    private Double price;
 
     private String description;
 

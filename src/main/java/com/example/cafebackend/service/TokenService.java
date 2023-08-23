@@ -25,51 +25,42 @@ public class TokenService {
     @Value("${app.token.issuer}")
     private String issuer;
 
-
-
     public TokenService(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
-    private Algorithm algorithm(){
+    private Algorithm algorithm() {
         return Algorithm.HMAC256(secret);
     }
 
-    public String tokenize(Employee emp){
+    public String tokenize(Employee emp) {
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR,24);
+        calendar.add(Calendar.HOUR, 24);
         Date expiresAt = calendar.getTime();
 
-//        if (userProfile.equals("Admin")){
-//            return JWT.create()
-//                    .withIssuer(issuer)
-//                    .withClaim("principal",userProfile)
-//                    .withClaim("role","ADMIN")
-//                    .withExpiresAt(expiresAt)
-//                    .sign(algorithm());
-//        }
         return JWT.create()
                 .withIssuer(issuer)
-                .withClaim("principal",emp.getEmpId())
-                .withClaim("role","USER")
+                .withClaim("principal", emp.getEmpId())
+                .withClaim("role", "USER")
                 .withExpiresAt(expiresAt)
                 .sign(algorithm());
     }
-    public DecodedJWT verify(String token){
+
+    public DecodedJWT verify(String token) {
         try {
             JWTVerifier verifier = JWT.require(algorithm())
                     .withIssuer(issuer)
                     .build();
             return verifier.verify(token);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-
     public Employee checkTokenEmp() throws BaseException {
+
         Optional<String> optEmp = SecurityUtil.getCurrentUserId();
         if (optEmp.isEmpty()) {
             throw EmployeeException.accessDenied();
@@ -81,12 +72,12 @@ public class TokenService {
         }
         return emp.get();
     }
-//
-//    public Boolean checkAdmin() throws BaseException{
-//        Optional<String> optUser = SecurityUtil.getCurrentUserId();
-//        if (optUser.isEmpty()) {
-//            throw UserException.accessDenied();
-//        }
-//        return optUser.get().equals("Admin");
-//    }
+    //
+    // public Boolean checkAdmin() throws BaseException{
+    // Optional<String> optUser = SecurityUtil.getCurrentUserId();
+    // if (optUser.isEmpty()) {
+    // throw UserException.accessDenied();
+    // }
+    // return optUser.get().equals("Admin");
+    // }
 }

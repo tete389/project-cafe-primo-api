@@ -6,10 +6,7 @@ import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -47,7 +44,12 @@ public class OrderDetailMaterialController {
             }
         }
         orderDetailMaterial.removeAll(removeMateRc);
+
+        /// save order
         saveMateRc.setOrder(order);
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "ODM"+uuid.substring(0, 14);
+        saveMateRc.setOdtMateId(uuid);
         /// save
         return orderDetailMaterialService.updateOrderDetailMaterial(saveMateRc);
     }

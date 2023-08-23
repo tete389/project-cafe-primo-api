@@ -1,9 +1,7 @@
 package com.example.cafebackend.mapper;
 
+import com.example.cafebackend.model.response.ForFindAddOnOpion.ForAddOnResponse;
 import com.example.cafebackend.model.response.ForFindProdcut.*;
-import com.example.cafebackend.model.response.ForFindMateUsed.ForFindMateUseInProdBaseResponse;
-import com.example.cafebackend.model.response.ForFindMateUsed.ForFindMateUseInProdFormResponse;
-import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
 import com.example.cafebackend.table.ProductBase;
 import com.example.cafebackend.table.ProductForm;
 import org.mapstruct.Mapper;
@@ -15,50 +13,45 @@ public interface ProductMapper {
     //ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
     ///////////////////////////////////////////////////////////////////////////
-
     /////// product base
+
+    ForProductBaseMinPriceResponse toForProductBaseMinPriceResponse(ProductBase productBase, Double productMinPrice);
+
+    ForProductBaseMinPriceFormResponse toForProductBaseMinPriceFormResponse(ProductBase productBase, Double productMinPrice);
+
     ForProductBaseResponse toForProductBaseResponse(ProductBase productBase);
 
     List<ForProductBaseResponse> toListForProductBaseResponse(List<ProductBase> productBaseList);
 
-    ForFindMateUseInProdBaseResponse toForFindMateUseInProdBaseResponse(ProductBase productBase, List<MaterialUsedNec> materialInfoUsed);
 
-    ForProdBaseAndProdFormInfoResponse toForProdBaseAndProdFormInfoResponse(ProductBase productBase, List<ForFindMateEnableAndAddOnInPFResponse> productFormList);
+    ///// list
 
-    ForFindMateEnableInPBResponse toForFindMateEnableInPBResponse(ProductBase productBase);
 
-    List<ForFindMateEnableInPBResponse> toListForFindMateEnableInPBResponse(List<ProductBase> productBaseList);
 
+
+
+    ///////////////////////////////////////////////////////////////////////////
     /////// product form
 
-    ForProductFormResponse toForProductFormResponse(ProductForm productForm);
+//    ForProductFormResponse toForProductFormResponse(ProductForm productForm);
+//
+//    List<ForProductFormResponse> toListForProductFormResponse(List<ProductForm> productFormList);
 
-    List<ForProductFormResponse> toListForProductFormResponse(List<ProductForm> productFormList);
+    ForProductFormInfoResponse toForProductFormInfoResponse(ProductForm productForm);
 
-    ForFindAddOnInPFResponse toForFindAddOnInPFResponse(ProductForm pd);
+    List<ForProductFormInfoResponse> toListForProductFormInfoResponse(List<ProductForm> productFormList);
 
-    ForFindMateEnableAndCateInPFResponse toForFindMateEnableAndCateInPFResponse(ProductForm pd);
+    ForProductFormAddOnResponse toForProductFormAddOnResponse(ProductForm productForm);
 
-    List<ForFindMateEnableAndCateInPFResponse> toListForFindMateEnableAndCateInPFResponse(List<ProductForm> productFormList);
+    List<ForProductFormAddOnResponse> toListForProductFormAddOnResponse(List<ProductForm> productForm);
 
-    ForFindMateUseInProdFormResponse toForFindMateUseInProdFormResponse(ProductForm productForm, List<MaterialUsedNec> materialInfoUsed);
+    ForProductFormInfoAddOnResponse toForProductFormInfoAddOnResponse(ProductForm productForm);
 
-    ForFindMateEnableInPFResponse toForFindMateEnableInPFResponse(ProductForm productForm);
+    ForProductFormAddOnOptionResponse toForProductFormAddOnOptionResponse(ProductForm productForm, List<ForAddOnResponse> addOnOption);
 
-    List<ForFindMateEnableInPFResponse> toListForFindMateEnableInPFResponse(List<ProductForm> productFormList);
-
-
-    ForFindMateEnableAndAddOnInPFResponse toForFindMateEnableAndAddOnInPFResponse(ProductForm productForm);
-
-    List<ForFindMateEnableAndAddOnInPFResponse> toListForFindMateEnableAndAddOnInPFResponse(List<ProductForm> productFormList);
+    ForProductFormInfoAddOnOptionResponse toForProductFormInfoAddOnOptionResponse(ProductForm productForm, List<ForAddOnResponse> addOnOption);
 
 
     //////////////////////////
-    //ForProdAndListCategoryResponse toForProdAndListCategoryResponse (ProductForm pd);
-
-//    ForProductOnlyResponse toProductFormOnlyResponse(ProductForm pd);
-//
-//    List<ForProductOnlyResponse> toListProductFormOnlyResponse(List<ProductForm> pd);
-
 
 }

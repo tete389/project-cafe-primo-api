@@ -1,12 +1,11 @@
-package com.example.cafebackend.model.response;
+package com.example.cafebackend.model.response.ForFindAddOnOpion;
 
-import com.example.cafebackend.table.Option;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ForAddOnResponse {
+public class ForAddOnOptionInfoResponse {
 
     private String AddOnId;
 
@@ -18,6 +17,6 @@ public class ForAddOnResponse {
 
     private String description;
 
-    private List<Option> options;
+    private List<ForOptionInfoResponse> optionsInfo;
 
 }

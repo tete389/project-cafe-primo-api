@@ -1,4 +1,4 @@
-package com.example.cafebackend.model.response;
+package com.example.cafebackend.model.response.ForFindMateUsed;
 
 import lombok.Data;
 
@@ -12,6 +12,8 @@ public class ForMaterialResponse {
     private String mateName;
 
     private Boolean isEnable;
+
+    private Boolean isMaterialEnable;
 
     private Double stock;
 

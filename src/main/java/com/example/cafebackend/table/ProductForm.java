@@ -19,8 +19,6 @@ public class ProductForm {
     @Column(name = "prod_form", length = 60, nullable = false)
     private String prodForm;
 
-//    @Column(name = "image")
-//    private String image;
 
     @Column(name = "price", length = 12)
     private Double price;
@@ -28,8 +26,8 @@ public class ProductForm {
     @Column(name = "is_enable")
     private Boolean isEnable;
 
-//    @Column(name = "bonus_point", length = 12)
-//    private Double bonusPoint;
+    @Column(name = "is_material_enable")
+    private Boolean isMaterialEnable;
 
     @Column(name = "description")
     private String description;
@@ -41,12 +39,9 @@ public class ProductForm {
 
 
     @JsonIgnore
-    @OneToMany(mappedBy = "productForm", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productForm", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MaterialUsed> materialUsed = new ArrayList<>();
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "productForm", fetch = FetchType.LAZY)
-    private List<Category> category = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -59,8 +54,10 @@ public class ProductForm {
 
     @PreRemove
     private void removeAddOnProductFrom() {
-        for (AddOn add : addOn) {
-            add.getProductForm().remove(this);
+        if (!addOn.isEmpty()){
+            for (AddOn add : addOn) {
+                add.getProductForm().remove(this);
+            }
         }
 
     }

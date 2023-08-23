@@ -18,6 +18,8 @@ public class ForFindMateUseInOptionResponse {
 
     private Boolean isEnable;
 
+    private Boolean isMaterialEnable;
+
     private AddOn addOn;
 
     private List<MaterialUsedNec>  materialInfoUsed;

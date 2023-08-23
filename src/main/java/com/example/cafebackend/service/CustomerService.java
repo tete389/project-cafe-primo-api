@@ -1,19 +1,16 @@
 package com.example.cafebackend.service;
 
-import com.example.cafebackend.appString.EString;
 import com.example.cafebackend.exception.BaseException;
-import com.example.cafebackend.exception.EmployeeException;
 import com.example.cafebackend.exception.OrderException;
 import com.example.cafebackend.repository.CustomerRepository;
-import com.example.cafebackend.repository.EmployeeRepository;
 import com.example.cafebackend.table.Customer;
-import com.example.cafebackend.table.Employee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -28,8 +25,11 @@ public class CustomerService {
         /// verify
         //if(customerRepository.existsByPhoneNumber(PhoneNumber)) throw OrderException.createFail();
         if(Objects.isNull(PhoneNumber)) throw OrderException.createFail();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "C"+uuid.substring(0, 14);
         /// save
         Customer table = new Customer();
+        table.setCusId(uuid);
         table.setPhoneNumber(PhoneNumber);
         return customerRepository.save(table);
     }

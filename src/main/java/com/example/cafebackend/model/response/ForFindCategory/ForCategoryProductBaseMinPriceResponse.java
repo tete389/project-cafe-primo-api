@@ -1,13 +1,12 @@
 package com.example.cafebackend.model.response.ForFindCategory;
 
-import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseResponse;
-import com.example.cafebackend.table.ProductBase;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseMinPriceResponse;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ForProdBaseOfCategoryResponse {
+public class ForCategoryProductBaseMinPriceResponse {
 
     private String cateId;
 
@@ -17,6 +16,6 @@ public class ForProdBaseOfCategoryResponse {
 
     private Boolean isRecommend;
 
-    private List<ProductBase> products;
+    private List<ForProductBaseMinPriceResponse> productBasePrice;
 
 }

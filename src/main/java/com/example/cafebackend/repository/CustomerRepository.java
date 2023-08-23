@@ -1,7 +1,6 @@
 package com.example.cafebackend.repository;
 
 import com.example.cafebackend.table.Customer;
-import com.example.cafebackend.table.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

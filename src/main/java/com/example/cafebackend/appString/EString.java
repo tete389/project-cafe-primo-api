@@ -6,6 +6,7 @@ public enum EString {
     WAIT_PAYMENT("Wait Payment"),
     CANCEL_ORDER("Cancel Order"),
     PAYMENT_SUCCESS("Payment Success"),
+    ORDER_SUCCESS("Order Success"),
     EDITING("Editing"),
     CREATING("Creating"),
     NONE("none"),

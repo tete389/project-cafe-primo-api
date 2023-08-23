@@ -30,6 +30,10 @@ public class OptionException extends BaseException{
         return new OptionException("updateAdditional.Fail");
     }
 
+    public static OptionException updateFailDuplicate(){
+        return new OptionException("update.Fail.duplicate");
+    }
+
     public static OptionException deleteFail(){
         return new OptionException("deleteAdditional.Fail");
     }

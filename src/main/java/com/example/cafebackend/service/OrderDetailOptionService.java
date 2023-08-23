@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class OrderDetailOptionService {
@@ -21,24 +23,30 @@ public class OrderDetailOptionService {
 
     //////////////////////////
 
-    public OrderDetailOption createOrderDetailOption(OrderDetailProduct orderDetailProduct, String optionName, Double price) {
+    public OrderDetailOption createOrderDetailOption(OrderDetailProduct orderDetailProduct, String optionName,
+            Double price, String optionId) {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "ODTo" + uuid.substring(0, 13);
         OrderDetailOption table = new OrderDetailOption();
+        table.setOdtOptionId(uuid);
         table.setOrderDetailProduct(orderDetailProduct);
         table.setOptionName(optionName);
         table.setOptionPrice(price);
+        table.setOptionId(optionId);
         return orderDetailOptionRepository.save(table);
     }
     /////////////////////////
 
     public OrderDetailOption updateOrderDetailOption(OrderDetailOption orderDetailOption) throws OptionException {
         /// verify
-        if(Objects.isNull(orderDetailOption)) throw OptionException.updateFail();
+        if (Objects.isNull(orderDetailOption))
+            throw OptionException.updateFail();
         /// save
         return orderDetailOptionRepository.save(orderDetailOption);
     }
     /////////////////////////
 
-    public Optional<OrderDetailOption> findById(String id){
+    public Optional<OrderDetailOption> findById(String id) {
         ///
         return orderDetailOptionRepository.findById(id);
     }
@@ -50,9 +58,24 @@ public class OrderDetailOptionService {
     }
     /////////////////////////
 
-    public List<OrderDetailOption> findByOrderDetailOptionBetweenDate(String start, String end, String status) {
+    public List<OrderDetailOption> findByOrderDetailOptionBetweenDate(String start, String end) {
         ///
-        return orderDetailOptionRepository.findOrderDetailOptionBetweenDate(start, end, status);
+        return orderDetailOptionRepository.findOrderDetailOptionBetweenDate(start, end);
+    }
+
+    public List<OrderDetailOption> findByOrderDetailOptionBetweenDateStatus(String start, String end, String status) {
+        ///
+        return orderDetailOptionRepository.findOrderDetailOptionBetweenDateStatus(start, end, status);
+    }
+
+    public Set<String> findByOrderDetailOptionNameBetweenDateStatus(String start, String end, String status) {
+        ///
+        return orderDetailOptionRepository.findOrderDetailOptionNameBetweenDateStatus(start, end, status);
+    }
+
+    public Integer findByOrderDetailOptionCountBetweenDateStatus(String start, String end, String status, String name) {
+        ///
+        return orderDetailOptionRepository.findOrderDetailOptionCountBetweenDateStatus(start, end, status, name);
     }
     /////////////////////////
 
@@ -69,6 +92,5 @@ public class OrderDetailOptionService {
     }
 
     /////////////////////////
-
 
 }

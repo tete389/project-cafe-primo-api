@@ -1,4 +1,4 @@
-package com.example.cafebackend.model.response;
+package com.example.cafebackend.model.response.ForFindMateUsed;
 
 import com.example.cafebackend.table.Option;
 import com.example.cafebackend.table.ProductBase;
@@ -10,9 +10,9 @@ public class ForMaterialUseResponse {
 
     private Double amountUsed;
 
-    private ProductForm productForms;
+    private ProductBase productBase;
 
-    private ProductBase productBases;
+    private ProductForm productForm;
 
-    private Option options;
+    private Option option;
 }

@@ -2,14 +2,13 @@ package com.example.cafebackend.controller;
 
 import com.example.cafebackend.exception.MaterialException;
 import com.example.cafebackend.exception.ProductException;
-import com.example.cafebackend.mapper.AddOnMapper;
 import com.example.cafebackend.mapper.MaterialMapper;
-import com.example.cafebackend.mapper.ProductMapper;
 import com.example.cafebackend.model.request.MateUsedRequest;
+import com.example.cafebackend.model.request.UsedRequest;
 import com.example.cafebackend.model.response.*;
-import com.example.cafebackend.model.response.ForFindMateUsed.ForFindMateUseInOptionResponse;
-import com.example.cafebackend.model.response.ForFindMateUsed.ForFindMateUseInProdBaseResponse;
-import com.example.cafebackend.model.response.ForFindMateUsed.ForFindMateUseInProdFormResponse;
+import com.example.cafebackend.model.response.ForFindMateUsed.ForMaterialUseOfBaseResponse;
+import com.example.cafebackend.model.response.ForFindMateUsed.ForMaterialUseOfFormResponse;
+import com.example.cafebackend.model.response.ForFindMateUsed.ForMaterialUseOfOptionResponse;
 import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
 import com.example.cafebackend.service.*;
 import com.example.cafebackend.table.*;
@@ -37,140 +36,261 @@ public class MaterialUsedController {
 
     private MaterialMapper materialMapper;
 
-    private ProductMapper productMapper;
 
-    private AddOnMapper addOnMapper;
 
     //////////////////////////////////////////////////////////////////////
 
-    public MessageResponse updateAddMaterialUsedInBase(String baseId, List<MateUsedRequest> request) throws Exception{
+    public MessageResponse createMaterialUsed(UsedRequest usedRequest) throws Exception{
         /// validate
-        if(Objects.isNull(baseId) || baseId.isEmpty()) throw MaterialException.updateFail();
-        //// verify
-        /// check product form
-        Optional<ProductBase> prodOpt = productBaseService.findBaseById(baseId);
-        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
-        ProductBase productBase = prodOpt.get();
-        /// check material  to save
-        List<MaterialUsed> listSaveMateUse = new ArrayList<>();
-        manageMaterial(request, listSaveMateUse, productBase, null, null);
-        /// response
-        productBase.setMaterialUsed(listSaveMateUse);
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update MaterialUsed success");
-        res.setRes(productBase);
-        return res;
-    }
-    //////////////////////////////////////
-
-    public MessageResponse updateAddMaterialUsedInForm(String formId, List<MateUsedRequest> request) throws Exception{
-        /// validate
-        if(Objects.isNull(formId) || formId.isEmpty()) throw MaterialException.updateFail();
-        //// verify
-        /// check product base
-        Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
-        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
-        ProductForm productForm = prodOpt.get();
-        /// check save material use
-        List<MaterialUsed> listSaveMateUse = new ArrayList<>();
-        manageMaterial(request, listSaveMateUse, null, productForm, null);
-        /// response
-        productForm.setMaterialUsed(listSaveMateUse);
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update MaterialUsed success");
-        res.setRes(productForm);
-        return res;
-    }
-    //////////////////////////////////////
-
-    public MessageResponse updateAddMaterialUsedInOption(String optionId, List<MateUsedRequest> request) throws Exception{
-        /// validate
-        if(Objects.isNull(optionId) || optionId.isEmpty()) throw MaterialException.updateFail();
-        //// verify
-        /// check product form
-        Optional<Option> opt = optionService.findOptionById(optionId);
-        if(opt.isEmpty()) throw ProductException.findProductFail();
-        Option option = opt.get();
-        /// check material to save
-        List<MaterialUsed> listSaveMateUse = new ArrayList<>();
-        manageMaterial(request, listSaveMateUse,null, null, option);
-        /// response
-        option.setMaterialUsed(listSaveMateUse);
-        MessageResponse res = new MessageResponse();
-        res.setMessage("update MaterialUsed success");
-        res.setRes(option);
-        return res;
-    }
-    //////////////////////////////////////
-
-    public MessageResponse findMaterialUsedInBaseId(String baseId) throws Exception{
-        /// validate
-        if(Objects.isNull(baseId) || baseId.isEmpty()) throw MaterialException.findFail();
-        //// verify
-        /// check base
-        Optional<ProductBase> baseOpt = productBaseService.findBaseById(baseId);
-        if(baseOpt.isEmpty()) throw ProductException.findProductFail();
-        ProductBase productBase = baseOpt.get();
-        /// check res material use
-        List<MaterialUsedNec> ListMateNec = new ArrayList<>();
-        for (MaterialUsed mateUsed : productBase.getMaterialUsed()){
-            MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
-            ListMateNec.add(materialUsedNec);
+        if(!(Objects.isNull(usedRequest.getProdBaseId()) || usedRequest.getProdBaseId().isEmpty())) {
+            /// check product base
+            Optional<ProductBase> prodOpt = productBaseService.findBaseById(usedRequest.getProdBaseId());
+            if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+            ProductBase productBase = prodOpt.get();
+            /// check material  to save
+            List<MaterialUsed> listSaveMateUse = new ArrayList<>();
+            manageMaterial(usedRequest.getMateUsed(), listSaveMateUse, productBase, null, null);
+            /// response
+            productBase.setMaterialUsed(listSaveMateUse);
+            MessageResponse res = new MessageResponse();
+            res.setMessage("update MaterialUsed success");
+            res.setRes(productBase);
+            return res;
         }
-         ForFindMateUseInProdBaseResponse baseRes =  productMapper.toForFindMateUseInProdBaseResponse(productBase, ListMateNec);
-        /// response
+        if(!(Objects.isNull(usedRequest.getProdFormId()) || usedRequest.getProdFormId().isEmpty())) {
+            /// check product form
+            Optional<ProductForm> prodOpt = productFormService.findProductFormById(usedRequest.getProdFormId());
+            if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+            ProductForm productForm = prodOpt.get();
+            /// check save material use
+            List<MaterialUsed> listSaveMateUse = new ArrayList<>();
+            manageMaterial(usedRequest.getMateUsed(), listSaveMateUse, null, productForm, null);
+            /// response
+            productForm.setMaterialUsed(listSaveMateUse);
+            MessageResponse res = new MessageResponse();
+            res.setMessage("update MaterialUsed success");
+            res.setRes(productForm);
+            return res;
+        }
+        if(!(Objects.isNull(usedRequest.getOptionId()) || usedRequest.getOptionId().isEmpty())) {
+            /// check option
+            Optional<Option> opt = optionService.findOptionById(usedRequest.getOptionId());
+            if(opt.isEmpty()) throw ProductException.findProductFail();
+            Option option = opt.get();
+            /// check material to save
+            List<MaterialUsed> listSaveMateUse = new ArrayList<>();
+            manageMaterial(usedRequest.getMateUsed(), listSaveMateUse,null, null, option);
+            /// response
+            option.setMaterialUsed(listSaveMateUse);
+            MessageResponse res = new MessageResponse();
+            res.setMessage("update MaterialUsed success");
+            res.setRes(option);
+            return res;
+        }
         MessageResponse res = new MessageResponse();
-        res.setMessage("get MaterialUsed success");
-        res.setRes(baseRes);
+        res.setMessage("update MaterialUsed fail");
         return res;
     }
     //////////////////////////////////////
 
-    public MessageResponse findMaterialUsedInFormId(String formId) throws Exception{
+//    public MessageResponse updateAddMaterialUsedInForm(String formId, List<MateUsedRequest> request) throws Exception{
+//        /// validate
+//        if(Objects.isNull(formId) || formId.isEmpty()) throw MaterialException.updateFail();
+//        //// verify
+//        /// check product form
+//        Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
+//        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+//        ProductForm productForm = prodOpt.get();
+//        /// check save material use
+//        List<MaterialUsed> listSaveMateUse = new ArrayList<>();
+//        manageMaterial(request, listSaveMateUse, null, productForm, null);
+//        /// response
+//        productForm.setMaterialUsed(listSaveMateUse);
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("update MaterialUsed success");
+//        res.setRes(productForm);
+//        return res;
+//    }
+    //////////////////////////////////////
+
+//    public MessageResponse updateAddMaterialUsedInOption(String optionId, List<MateUsedRequest> request) throws Exception{
+//        /// validate
+//        if(Objects.isNull(optionId) || optionId.isEmpty()) throw MaterialException.updateFail();
+//        //// verify
+//        /// check option
+//        Optional<Option> opt = optionService.findOptionById(optionId);
+//        if(opt.isEmpty()) throw ProductException.findProductFail();
+//        Option option = opt.get();
+//        /// check material to save
+//        List<MaterialUsed> listSaveMateUse = new ArrayList<>();
+//        manageMaterial(request, listSaveMateUse,null, null, option);
+//        /// response
+//        option.setMaterialUsed(listSaveMateUse);
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("update MaterialUsed success");
+//        res.setRes(option);
+//        return res;
+//    }
+    //////////////////////////////////////
+
+    public MessageResponse findMaterialUsed(String mateId, String baseId, String formId, String optionId) throws Exception{
         /// validate
-        if(Objects.isNull(formId) || formId.isEmpty()) throw MaterialException.findFail();
-        //// verify
-        /// check form
-        Optional<ProductForm> formOpt = productFormService.findProductFormById(formId);
-        if(formOpt.isEmpty()) throw ProductException.findProductFail();
-        ProductForm productForm = formOpt.get();
-        /// check res material use
-        List<MaterialUsedNec> ListMateNec = new ArrayList<>();
-        for (MaterialUsed mateUsed : productForm.getMaterialUsed()){
-            MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
-            ListMateNec.add(materialUsedNec);
+        if(!(Objects.isNull(mateId) || mateId.isEmpty())) {
+            /// verify
+            Optional<Material> material = materialService.findById(mateId);
+            if(material.isEmpty()) throw MaterialException.findFail();
+            Material mate = material.get();
+            ///
+            List<Object> objects = new ArrayList<>();
+            for (MaterialUsed mu : mate.getMaterialUsed()){
+                if (!Objects.isNull(mu.getProductBase())) {
+                    ForMaterialUseOfBaseResponse muRes = materialMapper.toForMaterialUseOfBaseResponse(mu, mu.getProductBase());
+                    objects.add(muRes);
+                }
+
+                if (!Objects.isNull(mu.getProductForm())) {
+                    ForMaterialUseOfFormResponse muRes = materialMapper.toForMaterialUseOfFormResponse(mu, mu.getProductForm());
+                    objects.add(muRes);
+                }
+
+                if (!Objects.isNull(mu.getOption())) {
+                    ForMaterialUseOfOptionResponse muRes = materialMapper.toForMaterialUseOfOptionResponse(mu, mu.getOption());
+                    objects.add(muRes);
+                }
+
+            }
+
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get MaterialUsed By Material ID");
+            res.setRes(objects);
+            return res;
+        };
+
+        if(!(Objects.isNull(baseId) || baseId.isEmpty())) {
+            /// check base
+            Optional<ProductBase> baseOpt = productBaseService.findBaseById(baseId);
+            if(baseOpt.isEmpty()) throw ProductException.findProductFail();
+            ProductBase productBase = baseOpt.get();
+            /// check res material use
+            List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+            for (MaterialUsed mateUsed : productBase.getMaterialUsed()){
+                MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
+                ListMateNec.add(materialUsedNec);
+            }
+            /// response
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get MaterialUsed success");
+            res.setRes(ListMateNec);
+            return res;
         }
-        ForFindMateUseInProdFormResponse baseRes =  productMapper.toForFindMateUseInProdFormResponse(productForm, ListMateNec);
+        ///
+        if(!(Objects.isNull(formId) || formId.isEmpty())) {
+            /// check form
+            Optional<ProductForm> formOpt = productFormService.findProductFormById(formId);
+            if(formOpt.isEmpty()) throw ProductException.findProductFail();
+            ProductForm productForm = formOpt.get();
+            /// check res material use
+            List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+            for (MaterialUsed mateUsed : productForm.getMaterialUsed()){
+                MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
+                ListMateNec.add(materialUsedNec);
+            }
+            //ForFindMateUseInProdFormResponse baseRes =  productMapper.toForFindMateUseInProdFormResponse(productForm, ListMateNec);
+            /// response
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get MaterialUsed success");
+            res.setRes(ListMateNec);
+            return res;
+        }
+        ///
+        if(!(Objects.isNull(optionId) || optionId.isEmpty())) {
+            /// check form
+            Optional<Option> optionOpt = optionService.findOptionById(optionId);
+            if(optionOpt.isEmpty()) throw ProductException.findProductFail();
+            Option option = optionOpt.get();
+            /// check res material use
+            List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+            for (MaterialUsed mateUsed : option.getMaterialUsed()){
+                MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
+                ListMateNec.add(materialUsedNec);
+            }
+            //ForFindMateUseInOptionResponse optionRes =  addOnMapper.toForFindMateUseInOptionResponse(option, ListMateNec);
+            /// response
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get MaterialUsed success");
+            res.setRes(ListMateNec);
+            return res;
+        };
+
         /// response
         MessageResponse res = new MessageResponse();
-        res.setMessage("get MaterialUsed success");
-        res.setRes(baseRes);
+        res.setMessage("get MaterialUsed fail");
         return res;
     }
     //////////////////////////////////////
 
-    public MessageResponse findMaterialUsedInOptionId(String optionId) throws Exception{
-        /// validate
-        if(Objects.isNull(optionId) || optionId.isEmpty()) throw MaterialException.findFail();
-        //// verify
-        /// check form
-        Optional<Option> optionOpt = optionService.findOptionById(optionId);
-        if(optionOpt.isEmpty()) throw ProductException.findProductFail();
-        Option option = optionOpt.get();
-        /// check res material use
-        List<MaterialUsedNec> ListMateNec = new ArrayList<>();
-        for (MaterialUsed mateUsed : option.getMaterialUsed()){
-            MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
-            ListMateNec.add(materialUsedNec);
-        }
-        ForFindMateUseInOptionResponse optionRes =  addOnMapper.toForFindMateUseInOptionResponse(option, ListMateNec);
-        /// response
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get MaterialUsed success");
-        res.setRes(optionRes);
-        return res;
-    }
+//    public MessageResponse findMaterialUsedInFormId(String formId) throws Exception{
+//        /// validate
+//        if(Objects.isNull(formId) || formId.isEmpty()) throw MaterialException.findFail();
+//        //// verify
+//        /// check form
+//        Optional<ProductForm> formOpt = productFormService.findProductFormById(formId);
+//        if(formOpt.isEmpty()) throw ProductException.findProductFail();
+//        ProductForm productForm = formOpt.get();
+//        /// check res material use
+//        List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+//        for (MaterialUsed mateUsed : productForm.getMaterialUsed()){
+//            MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
+//            ListMateNec.add(materialUsedNec);
+//        }
+//        //ForFindMateUseInProdFormResponse baseRes =  productMapper.toForFindMateUseInProdFormResponse(productForm, ListMateNec);
+//        /// response
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("get MaterialUsed success");
+//        res.setRes(ListMateNec);
+//        return res;
+//    }
     //////////////////////////////////////
+
+//    public MessageResponse findMaterialUsedInOptionId(String optionId) throws Exception{
+//        /// validate
+//        if(Objects.isNull(optionId) || optionId.isEmpty()) throw MaterialException.findFail();
+//        //// verify
+//        /// check form
+//        Optional<Option> optionOpt = optionService.findOptionById(optionId);
+//        if(optionOpt.isEmpty()) throw ProductException.findProductFail();
+//        Option option = optionOpt.get();
+//        /// check res material use
+//        List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+//        for (MaterialUsed mateUsed : option.getMaterialUsed()){
+//            MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed, mateUsed.getMaterial());
+//            ListMateNec.add(materialUsedNec);
+//        }
+//        //ForFindMateUseInOptionResponse optionRes =  addOnMapper.toForFindMateUseInOptionResponse(option, ListMateNec);
+//        /// response
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("get MaterialUsed success");
+//        res.setRes(ListMateNec);
+//        return res;
+//    }
+    //////////////////////////////////////
+
+//    public MessageResponse findListMateUseByMateId(String mateId) throws BaseException {
+//        /// validate
+//        if(Objects.isNull(mateId) || mateId.isEmpty())throw MaterialException.findFail();
+//        /// verify
+//        Optional<Material> material = materialService.findById(mateId);
+//        if(material.isEmpty()) throw MaterialException.findFail();
+//        Material mate = material.get();
+//
+//        List<ForMaterialUseResponse> mateUseMap = materialMapper.toListForMaterialUseResponse(mate.getMaterialUsed());
+//        //ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, mateUseMap);
+//        MessageResponse res = new MessageResponse();
+//        res.setMessage("get MaterialUsed By Material ID");
+//        res.setRes(mateUseMap);
+//        return res;
+//    }
+    ////////////////////////////////////////
 
     public void manageMaterial(List<MateUsedRequest> request,  List<MaterialUsed> listSaveMateUse, ProductBase base, ProductForm form, Option option) throws Exception {
         /// check material to save

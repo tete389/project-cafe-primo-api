@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import lombok.Data;
 @ControllerAdvice
 public class ErrorAdviser {
@@ -20,7 +22,7 @@ public class ErrorAdviser {
     @Data
     public static class ErrorResponse {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime timestamp = LocalDateTime.now();
+        private LocalDateTime timestamp = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
         private int status;
         private String error;
 

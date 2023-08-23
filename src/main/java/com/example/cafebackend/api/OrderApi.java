@@ -3,19 +3,24 @@ package com.example.cafebackend.api;
 import com.example.cafebackend.controller.OrderController;
 import com.example.cafebackend.exception.BaseException;
 
-import com.example.cafebackend.exception.OrderException;
-import com.example.cafebackend.model.request.DateRequest;
 import com.example.cafebackend.model.request.OrderRequest;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.table.Order;
+
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+// @CrossOrigin(origins = {"http://localhost:5137"})
 @RestController
 @RequestMapping("/order")
 public class OrderApi {
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     private final OrderController orderController;
 
@@ -28,73 +33,69 @@ public class OrderApi {
     @PostMapping("/createOrder")
     public ResponseEntity<MessageResponse> createOrder(@RequestBody OrderRequest request) throws Exception {
         MessageResponse res = orderController.createOrder(request);
+        String countOrderNotPayment = orderController.countOrderNotPayment();
+        messagingTemplate.convertAndSend("/topic/notifications", countOrderNotPayment);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateProductInOrder")
+    @PutMapping("/updateProductInOrder")
     public ResponseEntity<MessageResponse> updateProductInOrder(@RequestBody OrderRequest request) throws Exception {
         MessageResponse res = orderController.updateProdInOrder(request);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateConfirmPayment")
-    public ResponseEntity<MessageResponse> updateConfirmPayment(@RequestBody Order orderId) throws BaseException {
-        MessageResponse res = orderController.updateOrderConfirmPayment(orderId.getOrderId());
+    // @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @CrossOrigin
+    @PutMapping("/confirmOrder")
+    public ResponseEntity<MessageResponse> updateConfirmPayment(@RequestBody Order order) throws BaseException {
+        MessageResponse res = orderController.updateOrderConfirm(order.getOrderId(), order.getStatus());
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/updateCancelOrder")
+    @PutMapping("/cancelOrder")
     public ResponseEntity<MessageResponse> updateCancelOrder(@RequestBody Order orderId) throws BaseException {
         MessageResponse res = orderController.updateCancelOrder(orderId.getOrderId());
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/getOrderAll")
-    public ResponseEntity<MessageResponse> getOrderAll() {
-        MessageResponse res = orderController.getOrderAll();
+    @GetMapping("/getOrderById")
+    public ResponseEntity<MessageResponse> getOrderInfoById(@RequestParam(name = "orderId") String orderId,
+            @RequestParam(name = "orderDetail", required = false) String orderDetail) throws BaseException {
+        MessageResponse res = orderController.getOrderInfoById(orderId, orderDetail);
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/getOrderToDay")
-    public ResponseEntity<MessageResponse> getOrderToDay() {
-        MessageResponse res = orderController.getOrderToDay();
+    @GetMapping("/getRecentOrder")
+    public ResponseEntity<MessageResponse> getRecentOrder(
+            @RequestParam(name = "recentMaterial", required = false) String recentMaterial,
+            @RequestParam(name = "recentProduct", required = false) String recentProduct,
+            @RequestParam(name = "recentOption", required = false) String recentOption,
+            @RequestParam(name = "dateStart") String dateStart,
+            @RequestParam(name = "dateEnd") String dateEnd,
+            @RequestParam(name = "status") String status) throws BaseException {
+        MessageResponse res = orderController.getRecentOrder(recentMaterial, recentProduct, recentOption, dateStart,
+                dateEnd, status);
+
+        // if (Objects.isNull(recentMaterial) || Objects.isNull(recentProduct) ||
+        // Objects.isNull(recentOption) || recentMaterial.isEmpty() ||
+        // recentProduct.isEmpty() || recentOption.isEmpty())) {
+        // String countOrderNotPayment = orderController.countOrderNotPayment();
+        // messagingTemplate.convertAndSend("/topic/notifications",
+        // countOrderNotPayment);
+        // }
+        // String countOrderNotPayment = orderController.countOrderNotPayment();
+        // messagingTemplate.convertAndSend("/topic/notifications", countOrderNotPayment);
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/getOrderById")
-    public ResponseEntity<MessageResponse> getOrderById(@RequestBody Order orderId) throws BaseException {
-        MessageResponse res = orderController.getOrderById(orderId.getOrderId());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getOrderInfoById")
-    public ResponseEntity<MessageResponse> getOrderInfoById(@RequestBody Order request) throws BaseException {
-        MessageResponse res = orderController.getOrderInfoById(request.getOrderId());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getRecentOrder")
-    public ResponseEntity<MessageResponse> getRecentOrder(@RequestBody DateRequest dateRequest) throws BaseException {
-        MessageResponse res = orderController.getRecentOrder(dateRequest.getDateStart(), dateRequest.getDateEnd(), dateRequest.getStatusOrder());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getRecentDetailProduct")
-    public ResponseEntity<MessageResponse> getRecentDetailProduct(@RequestBody DateRequest dateRequest) throws BaseException {
-        MessageResponse res = orderController.getRecentOrderDetailProduct(dateRequest.getDateStart(), dateRequest.getDateEnd());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getRecentDetailMaterial")
-    public ResponseEntity<MessageResponse> getRecentDetailMaterial(@RequestBody DateRequest dateRequest) throws BaseException {
-        MessageResponse res = orderController.getRecentOrderDetailMaterial(dateRequest.getDateStart(), dateRequest.getDateEnd());
-        return ResponseEntity.ok(res);
-    }
-
-    @PostMapping("/getRecentDetailOption")
-    public ResponseEntity<MessageResponse> getRecentDetailOption(@RequestBody DateRequest dateRequest) throws BaseException {
-        MessageResponse res = orderController.getRecentOrderDetailOption(dateRequest.getDateStart(), dateRequest.getDateEnd());
-        return ResponseEntity.ok(res);
+    
+    @GetMapping("/getNotifications")
+    public ResponseEntity<?> sendNotifications() throws BaseException {
+        String countOrderNotPayment = orderController.countOrderNotPayment();
+        messagingTemplate.convertAndSend("/topic/notifications", countOrderNotPayment);
+        // MessageResponse res = new MessageResponse();
+        // res.setMessage("send success");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/deleteOder")

@@ -6,11 +6,7 @@ import com.example.cafebackend.repository.OrderRepository;
 import com.example.cafebackend.table.Order;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -25,13 +21,15 @@ public class OrderService {
 
     public Order createOrder(String noOrder, String status) {
         /// set Order id
-        String timeStamp = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(new Date());
-        String[] arrOfStr = timeStamp.split(" ", 5);
-        String[] arrOfStrDate = arrOfStr[0].split("-",5);
-        String ordId = "ORD"+arrOfStrDate[0]+arrOfStrDate[1]+noOrder+arrOfStrDate[2];
+//        String timeStamp = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(new Date());
+//        String[] arrOfStr = timeStamp.split(" ", 5);
+//        String[] arrOfStrDate = arrOfStr[0].split("-",5);
+//        String ordId = "ORD"+arrOfStrDate[0]+arrOfStrDate[1]+noOrder+arrOfStrDate[2];
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "ORD"+uuid.substring(0, 14);
         /// save
         Order table = new Order();
-        table.setOrderId(ordId);
+        table.setOrderId(uuid);
         table.setOrderNumber(noOrder);
         table.setStatus(status);
         return orderRepository.save(table);
@@ -70,9 +68,9 @@ public class OrderService {
     }
     /////////////////////////
 
-    public Integer findCountByOrderToDay() {
+    public Integer findCountByOrderToDay(String status) {
         ///
-        return orderRepository.findCountByOrderToDay();
+        return orderRepository.findCountByOrderToDay(status);
     }
     /////////////////////////
 
@@ -86,8 +84,9 @@ public class OrderService {
         /// verify
         if(Objects.isNull(order)) throw OrderException.updateFailNotFound();
         order.setStatus(status);
-        order.setTotalPrice(0.0);
-        order.setTotalBonusPoint(0.0);
+        order.setTotalDetailPrice(0.0);
+        order.setOrderPrice(0.0);
+        order.setDiscount(0.0);
         order.getOrderDetailProducts().clear();
         /// save
         return orderRepository.save(order);

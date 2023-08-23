@@ -1,14 +1,11 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
 
-import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.ProductBase;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class ForFindAddOnInPFResponse {
+public class ForProductFormInfoResponse {
 
     private String prodFormId;
 
@@ -16,14 +13,16 @@ public class ForFindAddOnInPFResponse {
 
     private Boolean isEnable;
 
-    private Double price;
+    private Boolean isMaterialEnable;
 
-    private Double bonusPoint;
+    private Double price;
 
     private String description;
 
     private ProductBase productBase;
 
-    private List<AddOn> addOn;
+    //private List<Boolean> materialUsedEnable;
+
+
 
 }

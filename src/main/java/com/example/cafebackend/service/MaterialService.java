@@ -2,9 +2,7 @@ package com.example.cafebackend.service;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.MaterialException;
-import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.repository.MaterialRepository;
-import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.Material;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +23,16 @@ public class MaterialService {
     public Material createMaterial(String mateName, Double mateStock, String unit) throws BaseException {
         /// verify
         if(materialRepository.existsByMateName(mateName)) throw MaterialException.createFailNameDuplicate();
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
-        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
-        String Id = "M"+n1+n2;
+//        Calendar now = Calendar.getInstance();
+//        now.setTime(new Date());
+//        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
+//        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
+//        String Id = "M"+n1+n2;
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "M"+uuid.substring(0, 14);
         /// save
         Material table = new Material();
-        table.setMateId(Id);
+        table.setMateId(uuid);
         table.setMateName(mateName);
         table.setIsEnable(true);
         table.setMateUnit(unit);

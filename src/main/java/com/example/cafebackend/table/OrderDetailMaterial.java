@@ -2,8 +2,6 @@ package com.example.cafebackend.table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 
 @Data
@@ -12,8 +10,6 @@ import javax.persistence.*;
 public class OrderDetailMaterial {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "odt_mate_id", length = 36 ,nullable = false, updatable = false, unique = true)
     private String odtMateId;
 
@@ -36,8 +32,8 @@ public class OrderDetailMaterial {
 
     @PreRemove
     private void removeOrderFromOrderDetailMaterial() {
-        Order ord  =  order;
-        ord.getOrderDetailMaterials().remove(this);
+//        Order ord  =  order;
+//        ord.getOrderDetailMaterials().remove(this);
     }
 
 }

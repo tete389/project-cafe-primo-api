@@ -16,15 +16,15 @@ public final class FileUtil {
     //public static final Path filePath = Paths.get(folderPath);
 
     //public static final String folderPath = "imagesFolder";
-    public static final String folderPath = "src/main/resources/static/images/";
+    // public static final String folderPath = "src/main/resources/static/images/";
 
-    public static final Path filePath = Paths.get(folderPath);
+    // public static final Path filePath = Paths.get(folderPath);
 
     //public static final String imageProductUrl = folderPath +"/imgProducts";
 
 
-    public String ipAddress() throws UnknownHostException {
-        return InetAddress.getLocalHost().getHostAddress();
-    }
+    // public String ipAddress() throws UnknownHostException {
+    //     return InetAddress.getLocalHost().getHostAddress();
+    // }
 }
 

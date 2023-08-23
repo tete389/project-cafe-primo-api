@@ -2,16 +2,9 @@ package com.example.cafebackend.controller;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.MaterialException;
-import com.example.cafebackend.mapper.MaterialMapper;
-import com.example.cafebackend.mapper.ProductMapper;
-import com.example.cafebackend.model.response.ForMaterialResponse;
-import com.example.cafebackend.model.response.ForMaterialUseResponse;
 import com.example.cafebackend.model.response.MessageResponse;
-import com.example.cafebackend.service.MaterialService;
-import com.example.cafebackend.service.MaterialUsedService;
-import com.example.cafebackend.service.ProductFormService;
-import com.example.cafebackend.table.Material;
-import com.example.cafebackend.table.MaterialUsed;
+import com.example.cafebackend.service.*;
+import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +18,13 @@ public class MaterialController {
 
     private MaterialService materialService;
 
-    private ProductFormService productFormService;
-
     private MaterialUsedService materialUsedService;
 
-    private MaterialMapper materialMapper;
+    private ProductBaseService productBaseService;
 
-    private ProductMapper productMapper;
+    private ProductFormService productFormService;
+
+    private OptionService optionService;
 
     //////////////////////////////////////////////////////////////////////
 
@@ -49,40 +42,44 @@ public class MaterialController {
     }
     ////////////////////////////////////////
 
-    public MessageResponse updateMaterial(String mateId, String mateName, String mateStock, String isEnable, String unit) throws BaseException {
+    public MessageResponse updateMaterial(String mateId, String mateName, Double mateStock, Boolean isEnable, String unit) throws BaseException {
         /// validate
         if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
-        if(Objects.isNull(mateName) || mateName.isEmpty()) throw MaterialException.findFailRequestNull();
-        if(Objects.isNull(mateStock) || mateStock.isEmpty()) throw MaterialException.findFailRequestNull();
-        if(Objects.isNull(isEnable) || isEnable.isEmpty()) throw MaterialException.findFailRequestNull();
+//        if(Objects.isNull(mateStock) || mateStock.isEmpty()) throw MaterialException.findFailRequestNull();
+//        if(Objects.isNull(isEnable) || isEnable.isEmpty()) throw MaterialException.findFailRequestNull();
         /// verify
         Optional<Material> mate =  materialService.findById(mateId);
         if(mate.isEmpty()) throw MaterialException.findFail();
         Material material = mate.get();
         /// check mate name
-        if (!mateName.equals(material.getMateName())) {
-            if (materialService.existsByName(mateName)) throw MaterialException.updateFail();
-            material.setMateName(mateName);
+        if (!(Objects.isNull(mateName) || mateName.isEmpty())){
+            if (!mateName.equals(material.getMateName())) {
+                if (materialService.existsByName(mateName)) throw MaterialException.updateFail();
+                material.setMateName(mateName);
+            }
         }
         /// check stock
-        Double stock = Double.valueOf(mateStock);
-        if (!stock.equals(material.getStock())) {
-            material.setStock(stock);
+        //Double stock = Double.valueOf(mateStock);
+        if (!Objects.isNull(mateStock)) {
+            if (!mateStock.equals(material.getStock())) {
+                material.setStock(mateStock);
+            }
         }
         /// check isEnable
-        String enable = String.valueOf(material.getIsEnable());
-        if (!isEnable.equals(enable)) {
-            material.setIsEnable(Boolean.valueOf(isEnable));
-            for (MaterialUsed mateUse : material.getMaterialUsed()) {
-                Optional<MaterialUsed> opt =  materialUsedService.findById(mateUse.getMateUsedId());
-                if(opt.isEmpty()) throw MaterialException.findFail();
-                opt.get().setIsEnable(Boolean.valueOf(isEnable));
+        //String enable = String.valueOf(material.getIsEnable());
+        if(!Objects.isNull(isEnable)){
+            if (!isEnable.equals(material.getIsEnable())) {
+                material.setIsEnable(isEnable);
+                checkMaterialUsed(material);
             }
         }
         /// check unit
-        if (!unit.equals(material.getMateUnit())) {
-            material.setMateUnit(unit);
+        if (!Objects.isNull(unit)) {
+            if (!unit.equals(material.getMateUnit())) {
+                material.setMateUnit(unit);
+            }
         }
+
         ///
         Material mateRes = materialService.updateMaterial(material);
         MessageResponse res = new MessageResponse();
@@ -90,54 +87,26 @@ public class MaterialController {
         res.setRes(mateRes);
         return res;
     }
-
     ////////////////////////////////////////
 
-    public MessageResponse getMaterialById(String mateId) throws BaseException {
+    public MessageResponse getMaterial(String mateId) throws BaseException {
         /// validate
-        if(Objects.isNull(mateId) || mateId.isEmpty()) throw MaterialException.findFailRequestNull();
-        /// verify
-        Optional<Material> mate =  materialService.findById(mateId);
-        if(mate.isEmpty()) throw MaterialException.findFail();
-        /// res
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get Material By ID");
-        res.setRes(mate);
-        return res;
-    }
-
-
-    public MessageResponse getMaterialAll(){
-        List<Material> mateList = materialService.findAllMate();
-//        List<ForMaterialResponse> mateResList = new ArrayList<>();
-//        for (Material mate : mateList){
-//            List<ProductForm> prodList = productFormService.findProductByMaterialId(mate.getMateId());
-//            ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, prodList);
-//            mateResList.add(mateRes);
-//        }
-        //List<ForMaterialResponse> mateRes = materialMapper.toListForMaterialResponse(materials);
+        if(!(Objects.isNull(mateId) || mateId.isEmpty())) {
+            Optional<Material> mate =  materialService.findById(mateId);
+            if(mate.isEmpty()) throw MaterialException.findFail();
+            /// res
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get Material By ID");
+            res.setRes(mate);
+            return res;
+        };
         /// res
         MessageResponse res = new MessageResponse();
         res.setMessage("get Material All");
-        res.setRes(mateList);
+        res.setRes(materialService.findAllMate());
         return res;
     }
 
-    public MessageResponse findListMateUseByMateId(String mateId) throws BaseException {
-        /// validate
-        if(Objects.isNull(mateId) || mateId.isEmpty())throw MaterialException.findFail();
-        /// verify
-        Optional<Material> material = materialService.findById(mateId);
-        if(material.isEmpty()) throw MaterialException.findFail();
-        Material mate = material.get();
-
-        List<ForMaterialUseResponse> mateUseMap = materialMapper.toListForMaterialUseResponse(mate.getMaterialUsed());
-        ForMaterialResponse mateRes = materialMapper.toForMaterialResponse(mate, mateUseMap);
-        MessageResponse res = new MessageResponse();
-        res.setMessage("get List MaterialUsed By Material ID");
-        res.setRes(mateRes);
-        return res;
-    }
     ////////////////////////////////////////
 
     public MessageResponse deleteMate(String mateId) throws MaterialException {
@@ -149,5 +118,68 @@ public class MaterialController {
     }
     ////////////////////////////////////////
 
+
+    ////////////////////////////////////////
+    public void checkMaterialUsed(Material material) throws BaseException {
+
+        for (MaterialUsed materialUsed : material.getMaterialUsed()) {
+            materialUsed.setIsEnable(material.getIsEnable());
+            materialUsedService.updateMaterialUsed(materialUsed);
+        }
+
+        List<ProductBase> listProductBase = productBaseService.findBaseByMateId(material.getMateId());
+        for (ProductBase base : listProductBase) {
+            if (material.getIsEnable().equals(true)) {
+                for (MaterialUsed mu : base.getMaterialUsed()) {
+                    if (mu.getIsEnable().equals(false)){
+                        base.setIsMaterialEnable(false);
+                        break;
+                    }
+                    base.setIsMaterialEnable(true);
+                }
+                productBaseService.updateProductBase(base);
+            } else {
+                base.setIsMaterialEnable(false);
+                productBaseService.updateProductBase(base);
+            }
+        }
+
+        List<ProductForm> listProductForm = productFormService.findFormByMateId(material.getMateId());
+        for (ProductForm form : listProductForm) {
+            if (material.getIsEnable().equals(true)) {
+                for (MaterialUsed mu : form.getMaterialUsed()) {
+                    if (mu.getIsEnable().equals(false)){
+                        form.setIsMaterialEnable(false);
+                        break;
+                    }
+                    form.setIsMaterialEnable(true);
+                }
+                productFormService.updateProductForm(form);
+            } else {
+                form.setIsMaterialEnable(false);
+                productFormService.updateProductForm(form);
+            }
+        }
+
+        List<Option> listOption = optionService.findOptionByMateId(material.getMateId());
+        for (Option option : listOption) {
+            if (material.getIsEnable().equals(true)) {
+                for (MaterialUsed mu : option.getMaterialUsed()) {
+                    if (mu.getIsEnable().equals(false)){
+                        option.setIsEnable(false);
+                        break;
+                    }
+                    option.setIsMaterialEnable(true);
+                }
+                optionService.updateOption(option);
+            } else {
+                option.setIsMaterialEnable(false);
+                optionService.updateOption(option);
+            }
+        }
+
+
+
+    }
 
 }

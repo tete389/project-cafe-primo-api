@@ -5,13 +5,13 @@ import com.example.cafebackend.exception.EmployeeException;
 import com.example.cafebackend.repository.EmployeeRepository;
 import com.example.cafebackend.table.Employee;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -40,8 +40,11 @@ public class EmployeeService {
     //////////////////////////////////
 
     public Employee createEmployee(String username, String pass, String name, String phone) throws BaseException {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "E"+uuid.substring(0, 14);
         /// save
         Employee table = new Employee();
+        table.setEmpId(uuid);
         table.setUsername(username);
         table.setPassword(pass);
         table.setEmpName(name);

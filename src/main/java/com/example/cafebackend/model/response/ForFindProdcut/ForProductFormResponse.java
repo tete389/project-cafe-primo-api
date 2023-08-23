@@ -1,12 +1,9 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
 
-import com.example.cafebackend.model.response.ForFindNecessary.CategoryNec;
-import com.example.cafebackend.model.response.ForFindNecessary.MaterialEnableNec;
 import com.example.cafebackend.table.ProductBase;
 import lombok.Data;
 
-import java.util.List;
 
 @Data
 public class ForProductFormResponse {
@@ -15,21 +12,19 @@ public class ForProductFormResponse {
 
     private String prodForm;
 
-    //private String image;
-
     private Boolean isEnable;
 
-    private Double price;
+    private Boolean isMaterialEnable;
 
-    //private Double bonusPoint;
+    private Double price;
 
     private String description;
 
     private ProductBase productBase;
 
-//    private List<MaterialEnableNec> materialUsed;
-//
-//    private List<CategoryNec> category;
+    private String productBaseId;
+
+
 
 
 }

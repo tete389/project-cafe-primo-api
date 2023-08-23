@@ -14,8 +14,8 @@
 --DELETE FROM material;
 
 
-insert into setting_value(sett_Id, point_rate, vat_rate, is_open_shop, open_date, closed_date)
-values ('eOiJIUzI1NiJGefWsSyJ0eXAiOiJKV1QiLCJhbGci', 100.0, 7.0, true, '09:00:00', '17:00:00');
+insert into setting_shop(set_shop_id, point_spend_rate, point_collect_rate, vat_rate, open_date, closed_date)
+values ('eOiJIUzI1NiJGefWsSyJ0eXAiOiJKV', 100.0, 1.0, 7.0, '09:00:00', '17:00:00');
 
 
 insert into employee(emp_id, username, password, emp_name, phone_number )

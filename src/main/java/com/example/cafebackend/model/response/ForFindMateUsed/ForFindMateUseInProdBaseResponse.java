@@ -13,7 +13,11 @@ public class ForFindMateUseInProdBaseResponse {
 
     private String prodTitle;
 
+    private String image;
+
     private Boolean isEnable;
+
+    private Boolean isMaterialEnable;
 
     private String description;
 

@@ -19,55 +19,31 @@ public class ProductFormService {
     }
 
     //////////////////////////////////////////////////////////
-    public ProductForm createProductForm(ProductBase prod, String prodForm, Double prodPrice, Double bonusPoint, String description) throws BaseException {
+    public ProductForm createProductForm(ProductBase prod, String prodForm, Double prodPrice, String description) throws BaseException {
         /// verify
-        //if(productFormRepository.existsByProdName(prodName)) throw ProductException.createFailFormDuplicate();
-        /// create id
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        String n1 = String.valueOf(1000 + now.get(Calendar.SECOND) * now.get(Calendar.MINUTE));
-        String n2 = String.valueOf(100 + now.get(Calendar.SECOND)+ now.get(Calendar.MINUTE));
-        String Id = "PF"+n1+n2;
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        uuid = "PF"+uuid.substring(0, 13);
         /// save
         ProductForm table = new ProductForm();
         table.setProductBase(prod);
-        table.setProdFormId(Id);
+        table.setProdFormId(uuid);
         table.setProdForm(prodForm);
         table.setIsEnable(true);
+        table.setIsMaterialEnable(true);
         table.setPrice(prodPrice);
-        //table.setImage("none");
-        table.setBonusPoint(bonusPoint);
         table.setDescription(description);
         return productFormRepository.save(table);
     }
     //////////////////////////////////
 
+    public ProductForm updateProductForm(ProductForm prod) throws BaseException {
+        /// verify
+        if(Objects.isNull(prod)) throw ProductException.updateFailProductNull();
+        /// save
+        return productFormRepository.save(prod);
 
-    public ProductForm updateProductForm(ProductForm prod) throws Exception {
-        try {
-            /// verify
-            if(Objects.isNull(prod)) throw ProductException.updateFailProductNull();
-            /// save
-            return productFormRepository.save(prod);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
-
     //////////////////////////////////////////////////////// checkExists
-    public Boolean checkExistsByCategory(String cateId){
-        /// validate
-        return productFormRepository.existsByCategoryCateId(cateId);
-    }
-    public Boolean checkExistsByAddOn(String addId){
-        /// validate
-        return productFormRepository.existsByAddOnAddOnId(addId);
-    }
-    public Boolean checkExistsByMaterialId(String mateId){
-        /// validate
-        return productFormRepository.existsByMaterialUsedMaterialMateId(mateId);
-    }
 
     public Boolean checkExistsByForm(String form){
         /// validate
@@ -80,32 +56,30 @@ public class ProductFormService {
         return productFormRepository.findAllProduct();
     }
 
-    public List<ProductForm> findFormByBaseId(String baseId){
+    public List<ProductForm> findProductFormByBaseId(String baseId){
+        ///
+        return productFormRepository.findProductFormByBaseId(baseId);
+    }
+
+    public List<String> findFormByBaseId(String baseId){
         ///
         return productFormRepository.findFormByBaseId(baseId);
     }
 
-//    public List<ProductForm> findProductByCateId(String cateId){
-//        ///
-//        return productFormRepository.findByCategoryCateId(cateId);
-//    }
+    public List<ProductForm> findFormByMateId(String mateId){
+        ///
+        return productFormRepository.findProdFormByMateId(mateId);
+    }
 
     public Optional<ProductForm> findProductFormById(String prodId){
         ///
         return productFormRepository.findById(prodId);
     }
 
-
-//    public List<ProductForm> findProductByMaterialId(String mateId){
-//        ///
-//        return productFormRepository.findByIngredientsIdMateId(mateId);
-//    }
-
-//    public List<ProductForm> findProductByAddOnlId(String mateId){
-//        ///
-//        return productFormRepository.findByIngredientsIdMateId(mateId);
-//    }
-
+    public Double findProductMinPriceByBaseId(String prodId){
+        ///
+        return productFormRepository.findMinPrice(prodId);
+    }
     ////////////////////////////////////////////////////////
 
     public Boolean deleteFormById(String id) throws BaseException {

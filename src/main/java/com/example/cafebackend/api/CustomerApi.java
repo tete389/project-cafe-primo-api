@@ -2,11 +2,7 @@ package com.example.cafebackend.api;
 
 import com.example.cafebackend.controller.CustomerController;
 import com.example.cafebackend.exception.BaseException;
-import com.example.cafebackend.model.request.ManagePointsRequest;
-import com.example.cafebackend.model.response.ApiResponse;
-import com.example.cafebackend.model.response.EmployeeResponse;
 import com.example.cafebackend.model.response.MessageResponse;
-import com.example.cafebackend.table.Employee;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,20 +20,22 @@ public class CustomerApi {
     //////////////////////////////////////////////////////////
 
     @PostMapping("/collectPoints")
-    public ResponseEntity<MessageResponse> collectPoints(@RequestBody ManagePointsRequest request) throws BaseException {
-        MessageResponse res = customerController.collectPoints(request.getPhoneNumber() ,request.getPoint(), request.getOrderId());
+    public ResponseEntity<MessageResponse> collectPoints(@RequestParam(name = "phoneNumber") String phoneNumber,
+                                                         @RequestParam(name = "orderId") String orderId) throws BaseException {
+        MessageResponse res = customerController.collectPoints(phoneNumber, orderId);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/spendPoint")
-    public ResponseEntity<MessageResponse> spendPoint(@RequestBody ManagePointsRequest request) throws BaseException {
-        MessageResponse res = customerController.spendPoint(request.getPhoneNumber() ,request.getPoint());
+    public ResponseEntity<MessageResponse> spendPoint(@RequestParam(name = "phoneNumber") String phoneNumber,
+                                                      @RequestParam(name = "orderId") String orderId) throws BaseException {
+        MessageResponse res = customerController.spendPoint(phoneNumber, orderId);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/getPoint")
-    public ResponseEntity<MessageResponse> getPoint(@RequestBody ManagePointsRequest request) throws BaseException {
-        MessageResponse res = customerController.getPoint(request.getPhoneNumber());
+    public ResponseEntity<MessageResponse> getPoint(@RequestParam(name = "phoneNumber") String phoneNumber) throws BaseException {
+        MessageResponse res = customerController.getPoint(phoneNumber);
         return ResponseEntity.ok(res);
     }
 

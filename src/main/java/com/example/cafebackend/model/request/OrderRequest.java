@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import com.example.cafebackend.model.response.ForOrder.OrderDiscount;
+
 @Data
 public class OrderRequest {
 
@@ -13,5 +15,7 @@ public class OrderRequest {
 
     private String note;
 
-    private String spendPoint;
+    private OrderDiscount discount;
+
 }
+

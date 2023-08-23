@@ -1,14 +1,11 @@
 package com.example.cafebackend.mapper;
 
-import com.example.cafebackend.model.response.ForFindCategory.ForCategoryAndProdBaseInfoResponse;
-import com.example.cafebackend.model.response.ForFindCategory.ForCategoryAndProdFormInfoResponse;
-import com.example.cafebackend.model.response.ForFindCategory.ForProdBaseOfCategoryResponse;
-import com.example.cafebackend.model.response.ForFindCategory.ForProdFormOfCategoryResponse;
-import com.example.cafebackend.model.response.ForFindProdcut.ForFindMateEnableInPBResponse;
-import com.example.cafebackend.model.response.ForFindProdcut.ForFindMateEnableInPFResponse;
+
+import com.example.cafebackend.model.response.ForFindCategory.ForCategoryProductBaseMinPriceResponse;
+import com.example.cafebackend.model.response.ForFindCategory.ForCategoryResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseMinPriceResponse;
 import com.example.cafebackend.table.Category;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -18,24 +15,30 @@ public interface CategoryMapper {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    //ForCategoryResponse toForCategoryResponse(Category category, Integer prodCount);
 
-    //ForCategoryResponse toForCategoryResponse(Category category, List<ProductForm> prods);
+    ForCategoryResponse toForCategoryResponse(Category category);
 
-    @Mapping(target = "products", source = "productForm")
-    ForProdFormOfCategoryResponse toForProdFormOfCategoryResponse(Category category);
+    List<ForCategoryResponse> toListForCategoryResponse(List<Category> categoryList);
 
-    List<ForProdFormOfCategoryResponse> toListForProdFormOfCategoryResponse(List<Category> category);
+    ForCategoryProductBaseMinPriceResponse toForCategoryProductInfoPriceResponse(Category category, List<ForProductBaseMinPriceResponse> productBasePrice);
 
-
-    @Mapping(target = "products", source = "productBase")
-    ForProdBaseOfCategoryResponse toForProdBaseOfCategoryResponse(Category category);
-
-    List<ForProdBaseOfCategoryResponse> toListForProdBaseOfCategoryResponse(List<Category> category);
+//    @Mapping(target = "products", source = "productForm")
+//    ForProdFormOfCategoryResponse toForProdFormOfCategoryResponse(Category category);
+//
+//    List<ForProdFormOfCategoryResponse> toListForProdFormOfCategoryResponse(List<Category> category);
 
 
-    ForCategoryAndProdFormInfoResponse toForCategoryAndProdInfoResponse(Category category, List<ForFindMateEnableInPFResponse> products);
-
-    ForCategoryAndProdBaseInfoResponse toForCategoryAndProdBaseInfoResponse(Category category, List<ForFindMateEnableInPBResponse> products);
+//    @Mapping(target = "products", source = "productBase")
+//    ForProdBaseOfCategoryResponse toForProdBaseOfCategoryResponse(Category category);
+//
+//    List<ForProdBaseOfCategoryResponse> toListForProdBaseOfCategoryResponse(List<Category> category);
+//
+//
+//    ForCategoryAndProdFormInfoResponse toForCategoryAndProdInfoResponse(Category category, List<ForFindMateEnableInPFResponse> products);
+//
+//    ForCategoryAndProdBaseInfoResponse toForCategoryAndProdBaseInfoResponse(Category category, List<ForFindMateEnableInPBResponse> products);
+//
+//
+//    ForCategoryAndProdPriceResponse toForCategoryAndProdPriceResponse(Category category, List<ForProductBaseInfoPriceResponse> products);
 
 }
