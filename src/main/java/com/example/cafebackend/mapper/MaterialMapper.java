@@ -26,9 +26,9 @@ public interface MaterialMapper {
 
     ForMaterialUseOfBaseResponse toForMaterialUseOfBaseResponse(MaterialUsed materialUsed, ProductBase productBaseRes);
 
-    ForMaterialUseOfFormResponse toForMaterialUseOfFormResponse(MaterialUsed materialUsed, ProductForm productFormRes);
+    ForMaterialUseOfFormResponse toForMaterialUseOfFormResponse(MaterialUsed materialUsed, ProductForm productFormRes, ProductBase base);
 
-    ForMaterialUseOfOptionResponse toForMaterialUseOfOptionResponse(MaterialUsed materialUsed, Option optionRes);
+    ForMaterialUseOfOptionResponse toForMaterialUseOfOptionResponse(MaterialUsed materialUsed, Option optionRes, AddOn addOn);
 
 //    List<ForMaterialUseOfBaseResponse> toListForMaterialUseOfBaseResponse(List<MaterialUsed> materialUsed);
 

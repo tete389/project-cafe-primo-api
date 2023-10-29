@@ -11,7 +11,9 @@ import lombok.Data;
 public class ForOrderDetailProrductResponse {
     private String odtProdId;
 
-    private String prodName;
+    private String prodNameTh;
+
+    private String prodNameEng;
 
     private Double prodPrice;
 

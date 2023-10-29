@@ -77,10 +77,21 @@ public class OrderDetailMaterialService {
         return orderDetailMaterialRepository.findOrderDetailMaterialNameBetweenDateStatus(start, end, status);
     }
 
+    public Set<String> findByOrderDetailMaterialNameBetweenDate(String start, String end) {
+        ///
+        return orderDetailMaterialRepository.findOrderDetailMaterialNameBetweenDate(start, end);
+    }
+
     public Integer findByOrderDetailMaterialCountBetweenDateStatus(String start, String end, String status,
             String name) {
         ///
         return orderDetailMaterialRepository.findOrderDetailMaterialCountBetweenDateStatus(start, end, status, name);
+    }
+
+    public Integer findByOrderDetailMaterialCountBetweenDate(String start, String end,
+            String name) {
+        ///
+        return orderDetailMaterialRepository.findOrderDetailMaterialCountBetweenDate(start, end, name);
     }
     /////////////////////////
 

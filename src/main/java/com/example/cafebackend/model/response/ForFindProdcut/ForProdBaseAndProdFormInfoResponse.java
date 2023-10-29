@@ -10,7 +10,9 @@ public class ForProdBaseAndProdFormInfoResponse {
 
     private String prodBaseId;
 
-    private String prodTitle;
+    private String prodTitleTh;
+
+    private String prodTitleEng;
 
     private String image;
 

@@ -22,7 +22,7 @@ public class OrderDetailMaterial {
     @Column(name = "mate_unit", length = 12)
     private String mateUnit;
 
-    @Column(name = "mate_id", length = 15)
+    @Column(name = "mate_id")
     private String mateId;
 
     @JsonIgnore
@@ -30,11 +30,11 @@ public class OrderDetailMaterial {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @PreRemove
-    private void removeOrderFromOrderDetailMaterial() {
-//        Order ord  =  order;
-//        ord.getOrderDetailMaterials().remove(this);
-    }
+    // @PreRemove
+    // private void removeOrderFromOrderDetailMaterial() {
+    //    Order ord  =  order;
+    //    ord.getOrderDetailMaterials().remove(this);
+    // }
 
 }
 

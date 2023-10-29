@@ -2,22 +2,25 @@ package com.example.cafebackend.appString;
 
 public enum EString {
 
-
-    WAIT_PAYMENT("Wait Payment"),
-    CANCEL_ORDER("Cancel Order"),
-    PAYMENT_SUCCESS("Payment Success"),
-    ORDER_SUCCESS("Order Success"),
+    PAYMENT("Payment"),
+    MAKING("Making"),
+    RECEIVE("Receive"),
+    SUCCESS("Success"),
     EDITING("Editing"),
     CREATING("Creating"),
-    NONE("none"),
+    NONE("None"),
+    CANCEL("Cancel"),
+    KEEP("Keep"),
+    // ALL("ALL"),
+     All("All"),
 
-    ALL("All"),
 
     COLLECT_POINT("Collect Points"),
 
-    SPEND_POINT("Spend Points")
-    ;
+    SPEND_POINT("Spend Points"),
 
+    NAME("NAME"),
+    Name("Name");
 
     public final String name;
 
@@ -26,8 +29,9 @@ public enum EString {
     }
 
     public static EString get(String name) {
-        for(EString e : EString.values()) {
-            if(e.name.equals(name)) return e;
+        for (EString e : EString.values()) {
+            if (e.name.equals(name))
+                return e;
         }
         return null;
     }

@@ -43,9 +43,9 @@ public class CustomerController {
         if(Objects.isNull(orderOpt) || orderOpt.isEmpty()) throw OrderException.findFail();
         Order order = orderOpt.get();
         /// check order payment success ?
-        if(!order.getStatus().equals(EString.PAYMENT_SUCCESS.getValue())) throw OrderException.unpaid();
+        if(!order.getStatus().equals(EString.SUCCESS.getValue())) throw OrderException.unpaid();
         /// check phoneNumber if not have go crete customer
-        Customer customer;
+        Customer customer = new Customer();
         if(!customerService.existsByPhoneNumber(phoneNumber)) {
             customer = customerService.createCustomer(phoneNumber);
         } else {

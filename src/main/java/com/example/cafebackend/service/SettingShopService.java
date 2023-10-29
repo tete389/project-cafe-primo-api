@@ -29,6 +29,8 @@ public class SettingShopService {
         table.setVatRate(vat);
         table.setPointSpendRate(pointSpend);
         table.setPointCollectRate(pointCollect);
+        table.setIsOpenShop(false);
+        table.setIsCloseShop(false);
         table.setOpenDate(open);
         table.setClosedDate(close);
         return settingShopRepository.save(table);

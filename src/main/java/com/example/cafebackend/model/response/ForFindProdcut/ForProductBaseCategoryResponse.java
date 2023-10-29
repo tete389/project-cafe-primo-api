@@ -1,11 +1,14 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
 
+import com.example.cafebackend.table.Category;
+import com.example.cafebackend.table.ProductForm;
 import lombok.Data;
 
+import java.util.List;
 
 @Data
-public class ForProductBaseMinPriceResponse {
+public class ForProductBaseCategoryResponse {
 
     private String prodBaseId;
 
@@ -21,7 +24,9 @@ public class ForProductBaseMinPriceResponse {
 
     private String description;
 
-    private Double productMinPrice;
+    private List<ProductForm> productForms;
+
+    private List<Category> category;
 
 
 }

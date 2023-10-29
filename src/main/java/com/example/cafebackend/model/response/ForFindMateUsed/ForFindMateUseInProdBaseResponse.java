@@ -1,6 +1,5 @@
 package com.example.cafebackend.model.response.ForFindMateUsed;
 
-
 import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
 import lombok.Data;
 
@@ -11,7 +10,9 @@ public class ForFindMateUseInProdBaseResponse {
 
     private String prodBaseId;
 
-    private String prodTitle;
+    private String prodTitleTh;
+
+    private String prodTitleEng;
 
     private String image;
 
@@ -21,6 +22,6 @@ public class ForFindMateUseInProdBaseResponse {
 
     private String description;
 
-    private List<MaterialUsedNec>  materialInfoUsed;
+    private List<MaterialUsedNec> materialInfoUsed;
 
 }

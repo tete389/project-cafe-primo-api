@@ -20,12 +20,13 @@ public class MaterialUsedService {
 
     public MaterialUsed updateMaterialUsed(MaterialUsed mateUsed) throws BaseException {
         /// verify
-        if(Objects.isNull(mateUsed)) throw MaterialException.updateFail();
+        if (Objects.isNull(mateUsed))
+            throw MaterialException.updateFail();
         /// save
         return materialUsedRepository.save(mateUsed);
     }
 
-    public Optional<MaterialUsed> findById(String id){
+    public Optional<MaterialUsed> findById(String id) {
         /// find
         return materialUsedRepository.findById(id);
     }
@@ -68,18 +69,19 @@ public class MaterialUsedService {
     }
     /////////////////////////
 
-    public void deleteMaterialUsed(String Id) throws Exception {
+    public void deleteMaterialUsed(String Id) throws BaseException {
         /// verify
-        try {
-            if(Objects.isNull(Id) || Id.isEmpty()) throw MaterialException.updateFail();
-            materialUsedRepository.deleteById(Id);
-            materialUsedRepository.flush();
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-//        Optional<MaterialUsed> mate = materialUsedRepository.findById(Id);
-//        if(mate.isEmpty()) return true;
-//        throw MaterialException.deleteFail();
+        // try {
+        if (Objects.isNull(Id) || Id.isEmpty())
+            throw MaterialException.updateFail();
+        materialUsedRepository.deleteById(Id);
+        materialUsedRepository.flush();
+        // } catch (Exception e) {
+        // throw new Exception(e);
+        // }
+        // Optional<MaterialUsed> mate = materialUsedRepository.findById(Id);
+        // if(mate.isEmpty()) return true;
+        // throw MaterialException.deleteFail();
     }
     /////////////////////////
 

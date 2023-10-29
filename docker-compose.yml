@@ -11,8 +11,8 @@ services:
       - POSTGRES_DB=mydatabase
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=syspass
-    volumes:
-      - ../../database/postgresql/data:/var/lib/postgresql/data
+    # volumes:
+    #   - ../../database/postgresql/data:/var/lib/postgresql/data
 
   app:
     container_name: spring_cafe
@@ -37,6 +37,7 @@ services:
       - '80:80'
     depends_on:
       - app
+
 
 networks:
   backend:

@@ -6,8 +6,14 @@ import lombok.Data;
 public class ForMaterialUseOfOptionResponse {
 
     private String optionId;
+    
+    private String addOnTitleTh;
 
-    private String optionName;
+    private String addOnTitleEng;
+
+    private String optionNameTh;
+
+    private String optionNameEng;
 
     private Double amountUsed;
 

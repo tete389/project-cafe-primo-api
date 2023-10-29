@@ -8,9 +8,10 @@ import com.example.cafebackend.model.response.ApiResponse;
 import com.example.cafebackend.model.response.EmployeeResponse;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.table.Employee;
+import com.example.cafebackend.table.SettingShop;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/employee")
@@ -29,7 +30,8 @@ public class EmployeeApi {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerEmp(@RequestBody ForEmployeeRequest request) throws BaseException {
-        ApiResponse res = employeeController.createEmployee(request.getUsername(), request.getPassword(), request.getEmpName(), request.getPhoneNumber());
+        ApiResponse res = employeeController.createEmployee(request.getUsername(), request.getPassword(),
+                request.getEmpName(), request.getPhoneNumber());
         return ResponseEntity.ok(res);
     }
 
@@ -52,8 +54,10 @@ public class EmployeeApi {
     }
 
     @PutMapping("/updateEmployee")
-    public ResponseEntity<EmployeeResponse> updateEmployee(@RequestBody ForEmployeeRequest request) throws BaseException {
-        EmployeeResponse res = employeeController.updateEmployee(request.getPassword(), request.getEmpName(), request.getPhoneNumber());
+    public ResponseEntity<EmployeeResponse> updateEmployee(@RequestBody ForEmployeeRequest request)
+            throws BaseException {
+        EmployeeResponse res = employeeController.updateEmployee(request.getPassword(), request.getEmpName(),
+                request.getPhoneNumber());
         return ResponseEntity.ok(res);
     }
 
@@ -71,13 +75,11 @@ public class EmployeeApi {
     }
 
     @PostMapping("/updateSetting")
-    public ResponseEntity<MessageResponse> updateSetting(@RequestParam("setShopId") String setShopId,
-                                                         @RequestParam("spendRate") String pointSpendRate,
-                                                         @RequestParam("collectRate") String pointCollectRate,
-                                                         @RequestParam("vatRate") String vatRate,
-                                                         @RequestParam("openDate") String openDate,
-                                                         @RequestParam("closedDate") String closedDate) throws BaseException {
-        MessageResponse res = shopController.updateSettingShop(setShopId, pointSpendRate, pointCollectRate, vatRate, openDate, closedDate);
+    public ResponseEntity<MessageResponse> updateSetting(@RequestBody SettingShop request) throws BaseException {
+        MessageResponse res = shopController.updateSettingShop(request.getSetShopId(), request.getPointSpendRate(),
+                request.getPointCollectRate(), request.getVatRate(), request.getIsOpenShop(), request.getIsCloseShop(),
+                request.getOpenDate(),
+                request.getClosedDate());
         return ResponseEntity.ok(res);
     }
 }

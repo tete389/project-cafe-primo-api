@@ -24,64 +24,75 @@ public class OrderDetailProductController {
 
     private ProductFormService productFormService;
 
-    private OptionService optionService;
+    private ProductBaseService productBaseService;
 
+    private OptionService optionService;
 
     ////////////////////////////////////////////////
 
-    public OrderDetailProduct createOrderDetailProduct(Order order, ProdRequest request, List<OrderDetailMaterial> keepMateUse) throws BaseException {
+    public OrderDetailProduct createOrderDetailProduct(Order order, ProdRequest request,
+            List<OrderDetailMaterial> keepMateUse) throws BaseException {
         /// validate product
         Optional<ProductForm> product = productFormService.findProductFormById(request.getProdFormId());
-        if(product.isEmpty()) throw OrderException.createFail();
+        if (product.isEmpty())
+            throw OrderException.createFail();
         ProductForm prod = product.get();
         /// add order
         OrderDetailProduct orderDetailProduct = orderDetailProductService.createOrderDetailProduct(order);
         /// option price
         double optionPrice = 0.0;
         /// check material used prod base
-        if (!prod.getProductBase().getMaterialUsed().isEmpty()) {
-            OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
-            for (MaterialUsed mateUse : prod.getProductBase().getMaterialUsed()){
-                keepMateUse.add(setMateUse(orderDetailMaterial, mateUse));
+        Optional<ProductBase> baseOpt = productBaseService.findBaseById(prod.getProductBase().getProdBaseId());
+        ProductBase base = baseOpt.get();
+
+        /// check quantity
+        double quantity = Double.parseDouble(request.getQuantity());
+        if (quantity <= 0)
+            quantity = 1.0;
+
+        if (!base.getMaterialUsed().isEmpty()) {
+            for (MaterialUsed mateUse : base.getMaterialUsed()) {
+                keepMateUse.add(setMateUse(mateUse, quantity));
             }
         }
         /// check material used prod form
         if (!prod.getMaterialUsed().isEmpty()) {
-            OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
-            for (MaterialUsed mateUse : prod.getMaterialUsed()){
-                keepMateUse.add(setMateUse(orderDetailMaterial, mateUse));
+            for (MaterialUsed mateUse : prod.getMaterialUsed()) {
+                keepMateUse.add(setMateUse(mateUse, quantity));
             }
         }
         /// check options
-        if(!request.getOptions().isEmpty()){
-            for(Option optionRequest : request.getOptions()){
+        if (!request.getOptions().isEmpty()) {
+            for (Option optionRequest : request.getOptions()) {
                 Optional<Option> option = optionService.findOptionById(optionRequest.getOptionId());
-                if(option.isEmpty()) throw OptionException.findFail();
+                if (option.isEmpty())
+                    throw OptionException.findFail();
                 Option opt = option.get();
                 /// create odt option and add odt prod
-                OrderDetailOption orderDetailOption = orderDetailOptionService.createOrderDetailOption(orderDetailProduct, opt.getOptionName(), opt.getPrice(), opt.getOptionId());
+                OrderDetailOption orderDetailOption = orderDetailOptionService.createOrderDetailOption(
+                        orderDetailProduct, opt.getOptionNameTh(), opt.getOptionNameEng(), opt.getPrice(),
+                        opt.getOptionId());
                 /// check options price
                 optionPrice = optionPrice + opt.getPrice();
                 /// add odt option
                 orderDetailProduct.getOrderDetailOptions().add(orderDetailOption);
                 /// check material used option
                 if (!opt.getMaterialUsed().isEmpty()) {
-                    OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
-                    for (MaterialUsed mateUse : opt.getMaterialUsed()){
-                        keepMateUse.add(setMateUse(orderDetailMaterial, mateUse));
+                    for (MaterialUsed mateUse : opt.getMaterialUsed()) {
+                        keepMateUse.add(setMateUse(mateUse, quantity));
                     }
                 }
             }
         }
-        /// check quantity
-        double quantity = Double.parseDouble(request.getQuantity());
-        if(quantity <= 0 ) quantity = 1.0;
+
         /// check detail price
         Double detailPrice = (optionPrice + prod.getPrice()) * quantity;
         /// check product name
-        String prodName =  prod.getProductBase().getProdTitle() + prod.getProdForm();
+        String prodNameTh = prod.getProductBase().getProdTitleTh() + " " + prod.getProdFormTh();
+        String prodNameEng = prod.getProductBase().getProdTitleEng() + " " + prod.getProdFormEng();
         /// add data
-        orderDetailProduct.setProdName(prodName);
+        orderDetailProduct.setProdNameTh(prodNameTh);
+        orderDetailProduct.setProdNameEng(prodNameEng);
         orderDetailProduct.setProdPrice(prod.getPrice());
         orderDetailProduct.setQuantity(quantity);
         orderDetailProduct.setOptionPrice(optionPrice);
@@ -94,32 +105,36 @@ public class OrderDetailProductController {
     public boolean clearOrderDetailProductInOrder(Order order) throws BaseException {
         /// validate
         List<OrderDetailProduct> orderDetailProduct = order.getOrderDetailProducts();
-        if(orderDetailProduct.isEmpty()) return true;
+        if (orderDetailProduct.isEmpty())
+            return true;
         /// keep date to clear
         List<String> OdtOptionIdList = new ArrayList<>();
         List<String> OdtProdIdList = new ArrayList<>();
         for (OrderDetailProduct detailProduct : orderDetailProduct) {
             List<OrderDetailOption> detailOptionList = detailProduct.getOrderDetailOptions();
-            for(OrderDetailOption detailOption :  detailOptionList) {
+            for (OrderDetailOption detailOption : detailOptionList) {
                 OdtOptionIdList.add(detailOption.getOdtOptionId());
             }
             OdtProdIdList.add(detailProduct.getOdtProdId());
         }
         /// clear odt prod and odt option
-        for (String OdtOption: OdtOptionIdList) {
+        for (String OdtOption : OdtOptionIdList) {
             orderDetailOptionService.deleteOrderDetailOption(OdtOption);
         }
         for (String OdtProd : OdtProdIdList) {
             orderDetailProductService.deleteOderDetailProduct(OdtProd);
             Optional<OrderDetailProduct> deleteProdRec = orderDetailProductService.findById(OdtProd);
-            if (!(Objects.isNull(deleteProdRec) || deleteProdRec.isEmpty())) return false;
+            if (!(Objects.isNull(deleteProdRec) || deleteProdRec.isEmpty()))
+                return false;
         }
         return true;
     }
 
-    public OrderDetailMaterial setMateUse(OrderDetailMaterial orderDetailMaterial, MaterialUsed materialUsed) {
+    public OrderDetailMaterial setMateUse(MaterialUsed materialUsed,
+            Double quantity) {
+        OrderDetailMaterial orderDetailMaterial = new OrderDetailMaterial();
         orderDetailMaterial.setMateName(materialUsed.getMaterial().getMateName());
-        orderDetailMaterial.setAmountUsed(materialUsed.getAmountUsed());
+        orderDetailMaterial.setAmountUsed(materialUsed.getAmountUsed() * quantity);
         orderDetailMaterial.setMateUnit(materialUsed.getMaterial().getMateUnit());
         orderDetailMaterial.setMateId(materialUsed.getMaterial().getMateId());
         return orderDetailMaterial;

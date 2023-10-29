@@ -11,7 +11,9 @@ public class ForFindMateUseInProdFormResponse {
 
     private String prodFormId;
 
-    private String prodForm;
+    private String prodFormTh;
+
+    private String prodFormEng;
 
     private Boolean isEnable;
 
@@ -23,6 +25,6 @@ public class ForFindMateUseInProdFormResponse {
 
     private ProductBase productBase;
 
-    private List<MaterialUsedNec>  materialInfoUsed;
+    private List<MaterialUsedNec> materialInfoUsed;
 
 }

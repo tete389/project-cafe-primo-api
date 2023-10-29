@@ -14,13 +14,13 @@ public class OrderDetailPoint {
     @Column(name = "odt_point_id", length = 36 ,nullable = false, updatable = false, unique = true)
     private String odtPointId;
 
-    @Column(name = "action", length = 12)
+    @Column(name = "action")
     private String action;
 
-    @Column(name = "action_point", length = 12)
+    @Column(name = "action_point")
     private Double actionPoint;
 
-    @Column(name = "phone_number", length = 12)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @JsonIgnore

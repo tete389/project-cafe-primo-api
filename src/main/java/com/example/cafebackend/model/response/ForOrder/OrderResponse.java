@@ -20,6 +20,8 @@ public class OrderResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
 
+    private String status;
+
     private Double totalDetailPrice;
 
     private Double discount;
@@ -28,12 +30,12 @@ public class OrderResponse {
 
     private String note;
 
+    private String customerName;
+
     private List<ForOrderDetailProrductResponse> orderDetailProducts = new ArrayList<>();
 
     private List<OrderDetailMaterial> orderDetailMaterials = new ArrayList<>();
 
     private List<OrderDetailPoint> orderDetailPoint = new ArrayList<>();
-
-
 
 }

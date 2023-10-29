@@ -1,20 +1,22 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
 
-import com.example.cafebackend.model.response.ForFindNecessary.MaterialEnableNec;
+import java.util.List;
+
+import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
+import com.example.cafebackend.table.AddOn;
 import com.example.cafebackend.table.ProductBase;
 import lombok.Data;
 
-import java.util.List;
 
 @Data
-public class ForFindMateEnableInPFResponse {
+public class ForProductFormDetailResponse {
 
     private String prodFormId;
 
     private String prodFormTh;
 
-    private String prodFormEng;
+     private String prodFormEng;
 
     private Boolean isEnable;
 
@@ -26,7 +28,10 @@ public class ForFindMateEnableInPFResponse {
 
     private ProductBase productBase;
 
-    private List<MaterialEnableNec> materialUsed;
+    private String productBaseId;
 
+    private List<MaterialUsedNec> materialUsed;
+
+    private List<AddOn> addOn;
 
 }

@@ -4,6 +4,8 @@ import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.ProductException;
 import com.example.cafebackend.repository.ProductFormRepository;
 import com.example.cafebackend.table.*;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,70 +15,93 @@ public class ProductFormService {
 
     private final ProductFormRepository productFormRepository;
 
-    public ProductFormService(ProductFormRepository productFormRepository) {
+    private final MaterialUsedService materialUsedService;
+
+    public ProductFormService(ProductFormRepository productFormRepository, MaterialUsedService materialUsedService) {
         this.productFormRepository = productFormRepository;
+        this.materialUsedService = materialUsedService;
 
     }
 
     //////////////////////////////////////////////////////////
-    public ProductForm createProductForm(ProductBase prod, String prodForm, Double prodPrice, String description) throws BaseException {
+    public ProductForm createProductForm(ProductBase prod, String prodFormTh, String prodFormEng, Double prodPrice,
+            String description)
+            throws BaseException {
         /// verify
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        uuid = "PF"+uuid.substring(0, 13);
+        uuid = "PF" + uuid.substring(0, 13);
         /// save
         ProductForm table = new ProductForm();
         table.setProductBase(prod);
         table.setProdFormId(uuid);
-        table.setProdForm(prodForm);
+        table.setProdFormTh(prodFormTh);
+        table.setProdFormEng(prodFormEng);
         table.setIsEnable(true);
         table.setIsMaterialEnable(true);
         table.setPrice(prodPrice);
         table.setDescription(description);
+        table.setIsDelete(false);
         return productFormRepository.save(table);
     }
     //////////////////////////////////
 
     public ProductForm updateProductForm(ProductForm prod) throws BaseException {
         /// verify
-        if(Objects.isNull(prod)) throw ProductException.updateFailProductNull();
+        if (Objects.isNull(prod))
+            throw ProductException.updateFailProductNull();
         /// save
         return productFormRepository.save(prod);
 
     }
     //////////////////////////////////////////////////////// checkExists
 
-    public Boolean checkExistsByForm(String form){
+    public Boolean checkExistsByFormTh(String form) {
         /// validate
-        return productFormRepository.existsByProdForm(form);
+        return productFormRepository.existsByProdFormTh(form);
+    }
+
+    public Boolean checkExistsByFormEng(String form) {
+        /// validate
+        return productFormRepository.existsByProdFormEng(form);
     }
     ////////////////////////////////////////////////////////
 
-    public List<ProductForm> findListProduct(){
-        /// search
-        return productFormRepository.findAllProduct();
+    public Optional<ProductForm> findProductFormById(String prodId) {
+        ///
+        return productFormRepository.findProductFormById(prodId);
     }
 
-    public List<ProductForm> findProductFormByBaseId(String baseId){
+    public List<ProductForm> findProductFormAll() {
+        /// search
+        return productFormRepository.findProductFormAllASC();
+    }
+
+    public List<ProductForm> findProductFormAllPageable(Pageable pageable) {
+        /// search
+        return productFormRepository.findProductFormAllASCPageable(pageable).getContent();
+    }
+
+    public List<ProductForm> findProductFormByBaseId(String baseId) {
         ///
         return productFormRepository.findProductFormByBaseId(baseId);
     }
 
-    public List<String> findFormByBaseId(String baseId){
+    public List<ProductForm> findProductFormByBaseIdPageable(String baseId, Pageable pageable) {
         ///
-        return productFormRepository.findFormByBaseId(baseId);
+        return productFormRepository.findProductFormByBaseId(baseId, pageable).getContent();
     }
 
-    public List<ProductForm> findFormByMateId(String mateId){
+    public List<String> findFormThByBaseId(String baseId) {
         ///
-        return productFormRepository.findProdFormByMateId(mateId);
+        return productFormRepository.findFormThByBaseId(baseId);
     }
 
-    public Optional<ProductForm> findProductFormById(String prodId){
+    public List<ProductForm> findFormByMateId(String mateId) {
         ///
-        return productFormRepository.findById(prodId);
+        return productFormRepository.findProductFormByMateId(mateId);
     }
 
-    public Double findProductMinPriceByBaseId(String prodId){
+    public Double findProductMinPriceByBaseId(String prodId) {
         ///
         return productFormRepository.findMinPrice(prodId);
     }
@@ -84,10 +109,27 @@ public class ProductFormService {
 
     public Boolean deleteFormById(String id) throws BaseException {
         /// verify
+        Optional<ProductForm> form = productFormRepository.findById(id);
+        ProductForm formDelete = form.get();
+        List<MaterialUsed> listDeleteMateUse = new ArrayList<>();
+        formDelete.getMaterialUsed().forEach(e -> listDeleteMateUse.add(e));
+        for (MaterialUsed mateUse : listDeleteMateUse) {
+            materialUsedService.deleteMaterialUsed(mateUse.getMateUsedId());
+        }
+        
         productFormRepository.deleteById(id);
         Optional<ProductForm> product = productFormRepository.findById(id);
-        if(product.isEmpty()) return true;
+        if (product.isEmpty())
+            return true;
         throw ProductException.deleteFail();
+
+        // formDelete.setIsDelete(true);
+        // formDelete.setIsEnable(false);
+
+        // formDelete.setProductBase(null);
+        // formDelete.setAddOn(null);
+        // productFormRepository.save(formDelete);
+        // return true;
     }
 
     //////////////////////////////////

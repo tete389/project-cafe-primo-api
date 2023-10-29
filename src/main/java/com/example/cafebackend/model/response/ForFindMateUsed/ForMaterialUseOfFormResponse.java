@@ -7,7 +7,13 @@ public class ForMaterialUseOfFormResponse {
 
     private String prodFormId;
 
-    private String prodForm;
+    private String prodTitleTh;
+
+    private String prodTitleEng;
+
+    private String prodFormTh;
+
+    private String prodFormEng;
 
     private Double amountUsed;
 

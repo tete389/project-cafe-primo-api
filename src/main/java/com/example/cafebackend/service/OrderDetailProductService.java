@@ -69,15 +69,26 @@ public class OrderDetailProductService {
         return orderDetailProductRepository.findOrderDetailProductBetweenDateStatus(start, end, status);
     }
 
-    public Set<String> findByOrderDetailProductFormIdBetweenDateStatus(String start, String end, String status) {
+    public Set<String> findByOrderDetailProductNameThBetweenDateStatus(String start, String end, String status) {
         ///
-        return orderDetailProductRepository.findOrderDetailProductFormIdBetweenDateStatus(start, end, status);
+        return orderDetailProductRepository.findOrderDetailProductNameThBetweenDateStatus(start, end, status);
+    }
+
+    public Set<String> findOrderDetailProductNameThBetweenDate(String start, String end) {
+        ///
+        return orderDetailProductRepository.findOrderDetailProductNameThBetweenDate(start, end);
     }
 
     public Integer findByOrderDetailProductCountBetweenDateStatus(String start, String end, String status,
             String formId) {
         ///
         return orderDetailProductRepository.findOrderDetailProductCountBetweenDateStatus(start, end, status, formId);
+    }
+
+    public Integer findByOrderDetailProductCountBetweenDate(String start, String end,
+            String formId) {
+        ///
+        return orderDetailProductRepository.findOrderDetailProductCountBetweenDate(start, end, formId);
     }
     /////////////////////////
 

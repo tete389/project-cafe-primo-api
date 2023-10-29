@@ -17,5 +17,7 @@ public class OrderRequest {
 
     private OrderDiscount discount;
 
+    private String customerName; 
+
 }
 

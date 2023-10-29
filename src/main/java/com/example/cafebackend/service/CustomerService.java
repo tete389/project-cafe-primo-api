@@ -31,6 +31,7 @@ public class CustomerService {
         Customer table = new Customer();
         table.setCusId(uuid);
         table.setPhoneNumber(PhoneNumber);
+        table.setPointCount(0.0);
         return customerRepository.save(table);
     }
     //////////////////////////////////

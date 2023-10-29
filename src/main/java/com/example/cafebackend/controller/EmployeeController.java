@@ -99,7 +99,7 @@ public class EmployeeController {
 
     public EmployeeResponse getEmployeeAll() throws BaseException {
         System.out.println("1");
-        Employee emp = tokenService.checkTokenEmp();
+        tokenService.checkTokenEmp();
         ///
         EmployeeResponse res = new EmployeeResponse();
         List<Employee> empRes = employeeService.findAllEmp();
@@ -111,7 +111,7 @@ public class EmployeeController {
     ////////////////////////////////////////////////
 
     public EmployeeResponse deleteEmployee(String empId) throws BaseException {
-        Employee emp = tokenService.checkTokenEmp();
+        tokenService.checkTokenEmp();
         ///
         EmployeeResponse res = new EmployeeResponse();
         employeeService.deleteEmp(empId);

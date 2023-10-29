@@ -1,6 +1,5 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
-
 import com.example.cafebackend.table.AddOn;
 import lombok.Data;
 
@@ -11,7 +10,9 @@ public class ForProductFormAddOnResponse {
 
     private String prodFormId;
 
-    private String prodForm;
+    private String prodFormTh;
+
+    private String prodFormEng;
 
     private Boolean isEnable;
 

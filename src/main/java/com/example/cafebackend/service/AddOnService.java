@@ -4,6 +4,8 @@ import com.example.cafebackend.exception.OptionException;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.repository.AddOnRepository;
 import com.example.cafebackend.table.AddOn;
+import com.example.cafebackend.table.Option;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,62 +15,96 @@ public class AddOnService {
 
     private final AddOnRepository addOnRepository;
 
-    public AddOnService(AddOnRepository addOnRepository) {
+    private final OptionService optionService;
+
+    public AddOnService(AddOnRepository addOnRepository, OptionService optionService) {
         this.addOnRepository = addOnRepository;
+        this.optionService = optionService;
     }
 
-
     //////////////////////////
-    public AddOn createAddOn(String title, String description, Boolean isManyOptions) throws BaseException {
+    public AddOn createAddOn(String titleTh, String titleEng, String description, Boolean isManyOptions)
+            throws BaseException {
         /// verify
-        if(addOnRepository.existsByAddOnTitle(title)) throw OptionException.updateFailDuplicate();
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        uuid = "AD"+uuid.substring(0, 13);
+        uuid = "AD" + uuid.substring(0, 13);
         /// save
         AddOn table = new AddOn();
         table.setAddOnId(uuid);
-        table.setAddOnTitle(title);
+        table.setAddOnTitleTh(titleTh);
+        table.setAddOnTitleEng(titleEng);
         table.setIsManyOptions(isManyOptions);
         table.setDescription(description);
         table.setIsEnable(true);
+        table.setIsDelete(false);
         return addOnRepository.save(table);
     }
 
-    public Optional<AddOn> findAddOnById(String id){
+    public Optional<AddOn> findAddOnById(String id) {
         ///
-        return addOnRepository.findById(id);
+        return addOnRepository.findAddOnById(id);
     }
 
     public List<AddOn> findListAddOn() {
         ///
-        return addOnRepository.findAll();
+        return addOnRepository.findAddOnAll();
     }
 
-    public Optional<AddOn> findAddOnByTitle(String name) {
+    public Optional<AddOn> findAddOnByTitleTh(String name) {
         ///
-        return addOnRepository.findByAddOnTitle(name);
+        return addOnRepository.findByAddOnTitleTh(name);
     }
 
-    public Boolean existsByTitle(String title) {
+    public Optional<AddOn> findAddOnByTitleEng(String name) {
         ///
-        return addOnRepository.existsByAddOnTitle(title);
+        return addOnRepository.findByAddOnTitleEng(name);
     }
 
+    public List<AddOn> findAddOnByProductFormId(String id) {
+        ///
+        return addOnRepository.findAddOnByProductFormId(id);
+    }
+
+    public Boolean existsByTitleTh(String title) {
+        ///
+        return addOnRepository.existsByAddOnTitleTh(title);
+    }
+
+    public Boolean existsByTitleEng(String title) {
+        ///
+        return addOnRepository.existsByAddOnTitleEng(title);
+    }
 
     public AddOn updateAddOn(AddOn addOn) throws BaseException {
         /// validate
-        if(Objects.isNull(addOn)) throw OptionException.updateFail();
+        if (Objects.isNull(addOn))
+            throw OptionException.updateFail();
         /// save
         return addOnRepository.save(addOn);
     }
 
     public Boolean deleteAddOn(String id) throws BaseException {
         /// verify
+        Optional<AddOn> addOnOpt = addOnRepository.findById(id);
+        AddOn addOnDelete = addOnOpt.get();
+
+        List<Option> listDeleteOption = new ArrayList<>();
+        addOnDelete.getOptions().forEach(e -> listDeleteOption.add(e));
+        for (Option option : listDeleteOption) {
+            optionService.deleteOption(option.getOptionId());
+        }
+
         addOnRepository.deleteById(id);
+
         Optional<AddOn> addOn = addOnRepository.findById(id);
-        if(addOn.isEmpty()) return true;
+        // addOn.get().setIsDelete(true);
+        // addOnRepository.save(addOn.get());
+        // return true;
+
+        if (addOn.isEmpty()) {
+            return true;
+        }
         throw OptionException.deleteFail();
     }
-
 
 }

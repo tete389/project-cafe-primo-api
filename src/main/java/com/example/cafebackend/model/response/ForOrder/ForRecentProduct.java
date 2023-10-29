@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ForRecentProduct {
-    private String prodName;
+    private String prodNameTh;
 
     private Integer quantity;
 }

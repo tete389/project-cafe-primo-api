@@ -8,7 +8,9 @@ public class ForOptionResponse {
 
     private String optionId;
 
-    private String optionName;
+    private String optionNameTh;
+
+    private String optionNameEng;
 
     private Double price;
 

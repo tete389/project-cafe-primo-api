@@ -10,7 +10,9 @@ public class ForCategoryProductBaseMinPriceResponse {
 
     private String cateId;
 
-    private String cateName;
+    private String cateNameTh;
+
+    private String cateNameEng;
 
     private Boolean isEnable;
 

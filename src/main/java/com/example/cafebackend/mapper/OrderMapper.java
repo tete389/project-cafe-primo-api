@@ -4,7 +4,6 @@ package com.example.cafebackend.mapper;
 import com.example.cafebackend.model.response.ForOrder.OrderResponse;
 import com.example.cafebackend.table.Order;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 

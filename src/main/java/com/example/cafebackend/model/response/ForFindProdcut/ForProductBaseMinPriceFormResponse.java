@@ -1,6 +1,5 @@
 package com.example.cafebackend.model.response.ForFindProdcut;
 
-
 import com.example.cafebackend.table.ProductForm;
 import lombok.Data;
 
@@ -11,7 +10,9 @@ public class ForProductBaseMinPriceFormResponse {
 
     private String prodBaseId;
 
-    private String prodTitle;
+    private String prodTitleTh;
+
+    private String prodTitleEng;
 
     private String image;
 
@@ -24,6 +25,7 @@ public class ForProductBaseMinPriceFormResponse {
     private Double productMinPrice;
 
     private List<ProductForm> productForms;
+
 
 
 }

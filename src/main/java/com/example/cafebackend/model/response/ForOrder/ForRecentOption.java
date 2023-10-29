@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ForRecentOption {
-    private String OptionlName;
+    private String OptionlNameTh;
 
     private Integer quantity;
 }

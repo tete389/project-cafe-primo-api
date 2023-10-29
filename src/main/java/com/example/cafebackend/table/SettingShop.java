@@ -25,8 +25,11 @@ public class SettingShop {
     @Column(name = "vat_rate")
     private Double vatRate;
 
-//    @Column(name = "is_open_shop")
-//    private Boolean isOpenShop;
+   @Column(name = "is_open_shop")
+   private Boolean isOpenShop;
+
+   @Column(name = "is_close_shop")
+   private Boolean isCloseShop;
 
     @JsonFormat(pattern = "HH:mm:ss")
     @Column(name = "open_date")

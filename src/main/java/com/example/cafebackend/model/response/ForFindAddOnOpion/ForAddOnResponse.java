@@ -8,9 +8,11 @@ import java.util.List;
 @Data
 public class ForAddOnResponse {
 
-    private String AddOnId;
+    private String addOnId;
 
-    private String AddOnTitle;
+    private String addOnTitleTh;
+
+    private String addOnTitleEng;
 
     private Boolean isManyOptions;
 

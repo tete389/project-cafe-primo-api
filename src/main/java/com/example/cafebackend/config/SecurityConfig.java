@@ -6,23 +6,16 @@ import com.example.cafebackend.service.TokenService;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.config.web.servlet.HttpSecurityDsl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -45,7 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
             "/order/updateProductInOrder",
             "/order/getOrderById",
             "/order/getRecentOrder",
-            // "/order/confirmOrder",
+            "/order/getEmployeeNotifications",
+            "/order/getCustomerNotifications",
     };
 
     public SecurityConfig(TokenService tokenService) {

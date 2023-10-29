@@ -13,11 +13,14 @@ import java.util.List;
 public class Category {
 
     @Id
-    @Column(name = "cate_id", length = 15, nullable = false, unique = true)
+    @Column(name = "cate_id", length = 36, nullable = false, unique = true)
     private String cateId;
 
-    @Column(name = "cate_name", length = 60, unique = true)
-    private String cateName;
+    @Column(name = "cate_name_th", length = 60)
+    private String cateNameTh;
+
+    @Column(name = "cate_name_eng", length = 60)
+    private String cateNameEng;
 
     @Column(name = "is_enable")
     private Boolean isEnable;
@@ -25,32 +28,21 @@ public class Category {
     @Column(name = "is_recommend")
     private Boolean isRecommend;
 
-//    @JsonIgnore
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = "cate_prod",
-//            joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
-//            inverseJoinColumns = @JoinColumn(name = "prod_form_id", referencedColumnName = "prod_form_id"))
-//    private List<ProductForm> productForm = new ArrayList<>();
+    @JsonIgnore
+    @Column(name = "is_delete")
+    private Boolean isDelete;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "cate_prod",
-            joinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"),
-            inverseJoinColumns = @JoinColumn(name = "prod_base_id", referencedColumnName = "prod_base_id"))
+    @ManyToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<ProductBase> productBase = new ArrayList<>();
-
 
     @PreRemove
     private void removeProductCategory() {
         if (!productBase.isEmpty()) {
-            for (ProductBase prod : productBase) {
-                prod.getCategory().remove(this);
-            }
+            productBase.forEach(e -> e.getCategory().remove(this));
+
         }
 
     }
-
 
 }

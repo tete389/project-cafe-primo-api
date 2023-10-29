@@ -19,11 +19,17 @@ public interface ProductMapper {
 
     ForProductBaseMinPriceFormResponse toForProductBaseMinPriceFormResponse(ProductBase productBase, Double productMinPrice);
 
+    ForProductBaseMinPriceFormNameResponse toForProductBaseMinPriceFormNameResponse(ProductBase productBase, Double productMinPrice, List<String> formsName);
+
     ForProductBaseResponse toForProductBaseResponse(ProductBase productBase);
+
+    ForProductBaseCategoryResponse toForProductBaseCategoryResponse(ProductBase productBase);
 
     List<ForProductBaseResponse> toListForProductBaseResponse(List<ProductBase> productBaseList);
 
+    ForProductBaseFormNameResponse toForProductBaseFormNameResponse(ProductBase productBase, List<String> formsName);
 
+    ForProductBaseFormNameCategoryResponse toForProductBaseFormNameCategoryResponse(ProductBase productBase, List<String> formsName);
     ///// list
 
 

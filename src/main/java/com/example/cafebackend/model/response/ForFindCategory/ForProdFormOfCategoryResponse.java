@@ -10,7 +10,9 @@ public class ForProdFormOfCategoryResponse {
 
     private String cateId;
 
-    private String cateName;
+    private String cateNameTh;
+
+    private String cateNameEng;
 
     private Boolean isEnable;
 

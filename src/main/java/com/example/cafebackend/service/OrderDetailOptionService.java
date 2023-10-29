@@ -23,14 +23,15 @@ public class OrderDetailOptionService {
 
     //////////////////////////
 
-    public OrderDetailOption createOrderDetailOption(OrderDetailProduct orderDetailProduct, String optionName,
+    public OrderDetailOption createOrderDetailOption(OrderDetailProduct orderDetailProduct, String optionNameTh, String optionNameEng,
             Double price, String optionId) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         uuid = "ODTo" + uuid.substring(0, 13);
         OrderDetailOption table = new OrderDetailOption();
         table.setOdtOptionId(uuid);
         table.setOrderDetailProduct(orderDetailProduct);
-        table.setOptionName(optionName);
+        table.setOptionNameTh(optionNameTh);
+        table.setOptionNameEng(optionNameEng);
         table.setOptionPrice(price);
         table.setOptionId(optionId);
         return orderDetailOptionRepository.save(table);
@@ -68,14 +69,25 @@ public class OrderDetailOptionService {
         return orderDetailOptionRepository.findOrderDetailOptionBetweenDateStatus(start, end, status);
     }
 
-    public Set<String> findByOrderDetailOptionNameBetweenDateStatus(String start, String end, String status) {
+    public Set<String> findByOrderDetailOptionNameThBetweenDateStatus(String start, String end, String status) {
         ///
-        return orderDetailOptionRepository.findOrderDetailOptionNameBetweenDateStatus(start, end, status);
+        return orderDetailOptionRepository.findOrderDetailOptionNameThBetweenDateStatus(start, end, status);
+    }
+
+    
+    public Set<String> findByOrderDetailOptionNameThBetweenDate(String start, String end) {
+        ///
+        return orderDetailOptionRepository.findOrderDetailOptionNameThBetweenDate(start, end);
     }
 
     public Integer findByOrderDetailOptionCountBetweenDateStatus(String start, String end, String status, String name) {
         ///
         return orderDetailOptionRepository.findOrderDetailOptionCountBetweenDateStatus(start, end, status, name);
+    }
+
+      public Integer findByOrderDetailOptionCountBetweenDate(String start, String end, String name) {
+        ///
+        return orderDetailOptionRepository.findOrderDetailOptionCountBetweenDate(start, end, name);
     }
     /////////////////////////
 

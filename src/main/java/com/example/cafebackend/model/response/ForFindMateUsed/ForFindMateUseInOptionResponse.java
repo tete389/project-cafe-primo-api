@@ -1,6 +1,5 @@
 package com.example.cafebackend.model.response.ForFindMateUsed;
 
-
 import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
 import com.example.cafebackend.table.AddOn;
 import lombok.Data;
@@ -12,7 +11,9 @@ public class ForFindMateUseInOptionResponse {
 
     private String optionId;
 
-    private String optionName;
+    private String optionNameTh;
+
+    private String optionNameEng;
 
     private Double price;
 
@@ -22,6 +23,6 @@ public class ForFindMateUseInOptionResponse {
 
     private AddOn addOn;
 
-    private List<MaterialUsedNec>  materialInfoUsed;
+    private List<MaterialUsedNec> materialInfoUsed;
 
 }

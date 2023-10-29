@@ -13,11 +13,14 @@ import java.util.List;
 public class AddOn {
 
     @Id
-    @Column(name = "add_on_id", length = 15, nullable = false, unique = true)
+    @Column(name = "add_on_id", length = 36, nullable = false, unique = true)
     private String addOnId;
 
-    @Column(name = "add_on_title", length = 36, unique = true)
-    private String addOnTitle;
+    @Column(name = "add_on_title_th", length = 36)
+    private String addOnTitleTh;
+
+    @Column(name = "add_on_title_eng", length = 36)
+    private String addOnTitleEng;
 
     @Column(name = "is_many_options")
     private Boolean isManyOptions;
@@ -29,6 +32,10 @@ public class AddOn {
     private String description;
 
     @JsonIgnore
+    @Column(name = "is_delete")
+    private Boolean isDelete;
+
+    @JsonIgnore
     @ManyToMany(mappedBy = "addOn", fetch = FetchType.LAZY)
     private List<ProductForm> productForm = new ArrayList<>();
 
@@ -37,12 +44,11 @@ public class AddOn {
     private List<Option> options = new ArrayList<>();
 
     @PreRemove
-    private void removeAddOnProductFrom() {
-        if (!productForm.isEmpty()){
-            for (ProductForm form : productForm) {
-                form.getAddOn().remove(this);
-            }
-        }
+    private void removeAddOn() {
+        if (!productForm.isEmpty()) {
+            productForm.forEach(e -> e.getAddOn().remove(this));
 
+        }
     }
+
 }

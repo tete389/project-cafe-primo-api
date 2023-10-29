@@ -13,7 +13,7 @@ import java.util.List;
 public class Material {
 
     @Id
-    @Column(name = "mate_id", nullable = false, updatable = false, unique = true)
+    @Column(name = "mate_id", length = 36, nullable = false, updatable = false, unique = true)
     private String mateId;
 
     @Column(name = "mate_name", length = 36, nullable = false)
@@ -28,16 +28,14 @@ public class Material {
     @Column(name = "stock", length = 36, nullable = false)
     private Double stock;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "material", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<Ingredient> ingredients = new ArrayList<>();
+    @JsonIgnore
+    @Column(name = "is_delete")
+    private Boolean isDelete;
 
     @JsonIgnore
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MaterialUsed> materialUsed = new ArrayList<>();
 
     /////////
-
-
 
 }

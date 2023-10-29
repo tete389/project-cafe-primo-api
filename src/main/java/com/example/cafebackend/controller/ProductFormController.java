@@ -2,15 +2,19 @@ package com.example.cafebackend.controller;
 
 import com.example.cafebackend.exception.*;
 import com.example.cafebackend.mapper.AddOnMapper;
+import com.example.cafebackend.mapper.MaterialMapper;
 import com.example.cafebackend.mapper.ProductMapper;
 import com.example.cafebackend.model.response.*;
 import com.example.cafebackend.model.response.ForFindAddOnOpion.ForAddOnResponse;
+import com.example.cafebackend.model.response.ForFindNecessary.MaterialUsedNec;
 import com.example.cafebackend.model.response.ForFindProdcut.*;
 import com.example.cafebackend.service.*;
 import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -26,28 +30,43 @@ public class ProductFormController {
 
     private AddOnMapper addOnMapper;
 
-
+    private MaterialMapper materialMapper;
 
     //////////////////////////////////////////////////////////////////////////
 
-    public MessageResponse createProductForm(String baseId, String prodForm, Double prodPrice, String description) throws BaseException{
+    public MessageResponse createProductForm(String baseId, String prodFormTh, String prodFormEng, Double prodPrice,
+            String description)
+            throws BaseException {
         /// validate
-        if(Objects.isNull(baseId) || baseId.isEmpty()) throw ProductException.createFailRequestBaseNull();
-        if(Objects.isNull(prodForm) || prodForm.isEmpty()) throw ProductException.createFailRequestFormNull();
-        if(Objects.isNull(prodPrice)) throw ProductException.createFailPriceRequestNull();
-        if(Objects.isNull(description) || description.isEmpty()) description = "none";
+        if (Objects.isNull(baseId) || baseId.isEmpty())
+            throw ProductException.createFailRequestBaseNull();
+        if (Objects.isNull(prodFormTh) || prodFormTh.isEmpty())
+            throw ProductException.createFailRequestFormNull();
+        if (Objects.isNull(prodFormEng) || prodFormEng.isEmpty())
+            prodFormEng = "none";
+        if (Objects.isNull(prodPrice))
+            throw ProductException.createFailPriceRequestNull();
+        if (Objects.isNull(description) || description.isEmpty())
+            description = "none";
         /// verify
         Optional<ProductBase> productBase = productBaseService.findBaseById(baseId);
-        if(productBase.isEmpty()) throw ProductException.findBaseFail();
+        if (productBase.isEmpty())
+            throw ProductException.findBaseFail();
         ProductBase base = productBase.get();
         /// check product form
-        if(productFormService.checkExistsByForm(prodForm)) {
-            for(String listForm :  productFormService.findFormByBaseId(base.getProdBaseId()))
-                if (listForm.equals(prodForm)) throw ProductException.createFailFormDuplicate();
+        if (productFormService.checkExistsByFormTh(prodFormTh)) {
+            for (ProductForm listForm : base.getProductForms())
+                if (listForm.getProdFormTh().equals(prodFormTh))
+                    throw ProductException.createFailFormDuplicate();
+        }
+        if (productFormService.checkExistsByFormEng(prodFormEng)) {
+            for (ProductForm listForm : base.getProductForms())
+                if (listForm.getProdFormTh().equals(prodFormEng))
+                    throw ProductException.createFailFormDuplicate();
         }
         /// create product form
-        //Double setPrice = Double.valueOf(prodPrice);
-        ProductForm productForm = productFormService.createProductForm(base, prodForm, prodPrice, description);
+        ProductForm productForm = productFormService.createProductForm(base, prodFormTh, prodFormEng, prodPrice,
+                description);
         /// set response
         MessageResponse res = new MessageResponse();
         res.setMessage("add Product(f) success");
@@ -55,44 +74,56 @@ public class ProductFormController {
         return res;
     }
 
-    public MessageResponse updateProductForm(String formId, String prodForm, Double prodPrice, String description, Boolean isEnable) throws Exception{
+    public MessageResponse updateProductForm(String formId, String prodFormTh, String prodFormEng, Double prodPrice,
+            String description,
+            Boolean isEnable) throws Exception {
         /// validate
-        if(Objects.isNull(formId) || formId.isEmpty()) throw ProductException.findFailRequestProductIdNull();
+        if (Objects.isNull(formId) || formId.isEmpty())
+            throw ProductException.findFailRequestProductIdNull();
         /// verify
         Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
-        if(prodOpt.isEmpty()) throw ProductException.findProductFail();
+        if (prodOpt.isEmpty())
+            throw ProductException.findProductFail();
         ProductForm form = prodOpt.get();
+        List<ProductForm> listForm = productFormService.findProductFormByBaseId(form.getProductBase().getProdBaseId());
         /// check product form
-        if(!(Objects.isNull(prodForm) || prodForm.isEmpty())) {
-            if(!prodForm.equals(form.getProdForm())) {
-                for(String listForm : productFormService.findFormByBaseId(form.getProductBase().getProdBaseId())){
-                    if (listForm.equals(prodForm)) throw ProductException.updateFailFormDuplicate();
+        if (!(Objects.isNull(prodFormTh) || prodFormTh.isEmpty())) {
+            if (!prodFormTh.equals(form.getProdFormTh())) {
+                for (ProductForm formInBase : listForm) {
+                    if (formInBase.getProdFormTh().equals(prodFormTh))
+                        throw ProductException.updateFailFormDuplicate();
                 }
-                form.setProdForm(prodForm);
+                form.setProdFormTh(prodFormTh);
+            }
+        }
+        if (!(Objects.isNull(prodFormEng) || prodFormEng.isEmpty())) {
+            if (!prodFormEng.equals(form.getProdFormEng())) {
+                for (ProductForm formInBase : listForm) {
+                    if (formInBase.getProdFormEng().equals(prodFormEng))
+                        throw ProductException.updateFailFormDuplicate();
+                }
+                form.setProdFormEng(prodFormEng);
             }
         }
         /// check price
-//        Double setPrice = Double.valueOf(prodPrice);
         if (!(Objects.isNull(prodPrice))) {
-            if(!prodPrice.equals(form.getPrice())) {
+            if (!prodPrice.equals(form.getPrice())) {
                 form.setPrice(prodPrice);
             }
         }
 
         /// check description
         if (!(Objects.isNull(description) || description.isEmpty())) {
-            if(!description.equals(form.getDescription())) {
+            if (!description.equals(form.getDescription())) {
                 form.setDescription(description);
             }
         }
         /// check isEnable
-//        String enable = String.valueOf(form.getIsEnable());
         if (!(Objects.isNull(isEnable))) {
-            if(!isEnable.equals(form.getIsEnable())){
+            if (!isEnable.equals(form.getIsEnable())) {
                 form.setIsEnable(isEnable);
             }
         }
-
 
         /// update product form
         ProductForm prod = productFormService.updateProductForm(form);
@@ -104,144 +135,73 @@ public class ProductFormController {
     }
     //////////////////////////////////////////////////////////////////////////
 
-//    public MessageResponse findProductFormById(String prodId) throws BaseException {
-//        /// validate
-//        Optional<ProductForm> productForm =  productFormService.findProductFormById(prodId);
-//        if(productForm.isEmpty()) throw ProductException.findProductFail();
-//        ForProductFormResponse response = productMapper.toForProductFormResponse(productForm.get());
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get Product(f) By ID");
-//        res.setRes(response);
-//        return res;
-//    }
-//
-//    public MessageResponse findProductFormAll() {
-//        /// verify
-//        List<ProductForm> productForm =  productFormService.findListProduct();
-//        List<ForProductFormResponse> response = productMapper.toListForProductFormResponse(productForm);
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get Product(f) All");
-//        res.setRes(response);
-//        return res;
-//    }
+    private MessageResponse findProductFormByBaseId(String baseId, String addOn, String option,
+            String haveMateUse, Integer pageSize, Integer pageNum) throws ProductException {
+        Optional<ProductBase> baseOpt = productBaseService.findBaseById(baseId);
+        if (baseOpt.isEmpty())
+            throw ProductException.findBaseFail();
+        // ProductBase productBase = baseOpt.get();
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        /// if addon true
+        if (!(Objects.isNull(addOn) || addOn.isEmpty()) && addOn.equals("true")) {
+            /// if option true
+            if (!(Objects.isNull(option) || option.isEmpty()) && option.equals("true")) {
+                List<ForProductFormAddOnOptionResponse> responses = new ArrayList<>();
+                for (ProductForm form : productFormService.findProductFormByBaseIdPageable(baseId, pageable)) {
+                    List<ForAddOnResponse> listAdd = addOnMapper.toListForAddOnResponse(form.getAddOn());
+                    ForProductFormAddOnOptionResponse pf = productMapper.toForProductFormAddOnOptionResponse(form,
+                            listAdd);
+                    responses.add(pf);
+                }
+                /// res
+                MessageResponse res = new MessageResponse();
+                res.setMessage("get list Product(f) Addon Option By Base ID");
+                res.setRes(responses);
+                return res;
+            }
+            List<ForProductFormAddOnResponse> pfAddon = productMapper.toListForProductFormAddOnResponse(
+                    productFormService.findProductFormByBaseIdPageable(baseId, pageable));
+            /// res
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get list Product(f) Addon By Base ID");
+            res.setRes(pfAddon);
+            return res;
+        }
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get list Product(f) By Base ID");
+        res.setRes(productFormService.findProductFormByBaseIdPageable(baseId, pageable));
+        return res;
+    }
+
     ////////////////////////////////////////////////////////////////
 
-//    public MessageResponse findProductFormInFoById(String prodId) throws BaseException {
-//        /// validate
-//        Optional<ProductForm> productForm =  productFormService.findProductFormById(prodId);
-//        if(productForm.isEmpty()) throw ProductException.findProductFail();
-//        /// get res
-//
-//        List<Boolean> listMateUsedEnable = materialUsedService.findEnableByFormId(productForm.get().getProdFormId());
-//        ForProductFormInfoResponse prodRes = productMapper.toForProductFormInfoResponse(productForm.get(), listMateUsedEnable);
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get Product(f) info By ID");
-//        res.setRes(prodRes);
-//        return res;
-//    }
-
-//    public MessageResponse findProductFormInFoAddonOptionInfoById(String prodId) throws BaseException {
-//        /// validate
-//        Optional<ProductForm> productForm =  productFormService.findProductFormById(prodId);
-//        if(productForm.isEmpty()) throw ProductException.findProductFail();
-//        ProductForm form = productForm.get();
-//        /// get res
-//        List<ForAddOnOptionInfoResponse> listAddOption = new ArrayList<>();
-//        for (AddOn addOn : form.getAddOn()) {
-//            List<ForOptionInfoResponse> listOptInfo = new ArrayList<>();
-//            for (Option option : addOn.getOptions()) {
-//                List<Boolean> listMateUsedEnable2 = materialUsedService.findEnableByOptionId(option.getOptionId());
-//                ForOptionInfoResponse optionInfo = addOnMapper.toForOptionInfoResponse(option, listMateUsedEnable2);
-//                listOptInfo.add(optionInfo);
-//            }
-//            ForAddOnOptionInfoResponse addOption = addOnMapper.toForFindMateUseInOptionResponse(addOn, listOptInfo);
-//            listAddOption.add(addOption);
-//        }
-//        //List<ForAddOnResponse> addRes = addOnMapper.toListForAddOnResponse(form.getAddOn());
-//        List<Boolean> listMateUsedEnable = materialUsedService.findEnableByFormId(productForm.get().getProdFormId());
-//        ForProdFormInfoAddOnOptionInfoResponse prodRes = productMapper.toForProdFormInfoAddOnOptionInfoResponse(form, listMateUsedEnable, listAddOption);
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get Product(f) info Addon Option info By ID");
-//        res.setRes(prodRes);
-//        return res;
-//    }
-    ////////////////////////////////////////////////////////////////
-
-
-    public MessageResponse findProductForm(String formId, String baseId, String addOn, String option) throws BaseException {
+    public MessageResponse findProductForm(String formId, String baseId, String addOn, String option,
+            String haveMateUse, Integer pageSize, Integer pageNum) throws BaseException {
         /// verify
         ///////////////////////////
-        /// if form value
-        if (!(Objects.isNull(formId) || formId.isEmpty())) {
-            Optional<ProductForm> productForm =  productFormService.findProductFormById(formId);
-            if(productForm.isEmpty()) throw ProductException.findProductFail();
-            ProductForm form = productForm.get();
-            /// if addon true
-            if (!(Objects.isNull(addOn) || addOn.isEmpty()) && addOn.equals("true")) {
-                ///  if option true
-                if (!(Objects.isNull(option) || option.isEmpty()) && option.equals("true")){
-                        List<ForAddOnResponse> listAdd = addOnMapper.toListForAddOnResponse(form.getAddOn());
-                        ForProductFormInfoAddOnOptionResponse pf = productMapper.toForProductFormInfoAddOnOptionResponse(form, listAdd);
-                    /// res
-                    MessageResponse res = new MessageResponse();
-                    res.setMessage("get Product(f) Addon Option By Base ID");
-                    res.setRes(pf);
-                    return res;
-                }
-                ForProductFormInfoAddOnResponse pfAddon = productMapper.toForProductFormInfoAddOnResponse(form);
-                /// res
-                MessageResponse res = new MessageResponse();
-                res.setMessage("get Product(f) Addon By Base ID");
-                res.setRes(pfAddon);
-                return res;
-            }
-            ForProductFormInfoResponse response = productMapper.toForProductFormInfoResponse(productForm.get());
-            /// res
-            MessageResponse res = new MessageResponse();
-            res.setMessage("get Product(f) By ID");
-            res.setRes(response);
-            return res;
+        if (Objects.isNull(pageNum)) {
+            pageNum = 0;
         }
-        /// if base value
-        if(!(Objects.isNull(baseId) || baseId.isEmpty())) {
-            Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
-            if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
-            ProductBase productBase = baseOpt.get();
-            /// if addon true
-            if (!(Objects.isNull(addOn) || addOn.isEmpty()) && addOn.equals("true")) {
-                ///  if option true
-                if (!(Objects.isNull(option) || option.isEmpty()) && option.equals("true")){
-                    List<ForProductFormAddOnOptionResponse> responses = new ArrayList<>();
-                    for (ProductForm form : productBase.getProductForms()){
-                        List<ForAddOnResponse> listAdd = addOnMapper.toListForAddOnResponse(form.getAddOn());
-                        ForProductFormAddOnOptionResponse pf = productMapper.toForProductFormAddOnOptionResponse(form, listAdd);
-                        responses.add(pf);
-                    }
-                    /// res
-                    MessageResponse res = new MessageResponse();
-                    res.setMessage("get list Product(f) Addon Option By Base ID");
-                    res.setRes(responses);
-                    return res;
-                }
-                List<ForProductFormAddOnResponse> pfAddon = productMapper.toListForProductFormAddOnResponse(productBase.getProductForms());
-                /// res
-                MessageResponse res = new MessageResponse();
-                res.setMessage("get list Product(f) Addon By Base ID");
-                res.setRes(pfAddon);
-                return res;
-            }
-            /// res
-            MessageResponse res = new MessageResponse();
-            res.setMessage("get list Product(f) By Base ID");
-            res.setRes(productBase.getProductForms());
-            return res;
+        if (Objects.isNull(pageSize)) {
+            pageSize = 30;
+        }
+        /// if form id value
+        if (!(Objects.isNull(formId) || formId.isEmpty())) {
+            MessageResponse resById = findProductFormId(formId, addOn, option, haveMateUse);
+            return resById;
+        }
+        /// if base id value
+        if (!(Objects.isNull(baseId) || baseId.isEmpty())) {
+            MessageResponse resByBaseId = findProductFormByBaseId(baseId, addOn, option, haveMateUse, pageSize,
+                    pageNum);
+            return resByBaseId;
+
         }
         /// res if all not value
-        List<ProductForm> productForm =  productFormService.findListProduct();
+
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        List<ProductForm> productForm = productFormService.findProductFormAllPageable(pageable);
         List<ForProductFormInfoResponse> response = productMapper.toListForProductFormInfoResponse(productForm);
         /// res
         MessageResponse res = new MessageResponse();
@@ -250,129 +210,13 @@ public class ProductFormController {
         return res;
     }
 
-//    public MessageResponse findProductFormAddOnByBaseId(String baseId) throws BaseException {
-//        /// validate
-//        if(Objects.isNull(baseId) || baseId.isEmpty())throw ProductException.findBaseFail();
-//        /// verify
-//        Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
-//        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
-//        ProductBase productBase = baseOpt.get();
-//        ///
-//        List<ForProductFormInfoAddOnResponse> list = new ArrayList<>();
-//        for (ProductForm productForm : productBase.getProductForms()){
-//            ForProductFormInfoAddOnResponse pfInfoAddon = productMapper.toForProductFormInfoAddOnResponse(productForm);
-//            list.add(pfInfoAddon);
-//        }
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get list Product(f) info Addon By Base ID");
-//        res.setRes(list);
-//        return res;
-//    }
-//
-//    public MessageResponse findProductFormAddOnOptionByBaseId(String baseId) throws BaseException {
-//        /// validate
-//        if(Objects.isNull(baseId) || baseId.isEmpty())throw ProductException.findBaseFail();
-//        /// verify
-//        Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
-//        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
-//        ProductBase productBase = baseOpt.get();
-//        ///
-//        List<ForProductFormAddOnOptionResponse> responses = new ArrayList<>();
-//        for (ProductForm productForm : productBase.getProductForms()){
-//            List<ForAddOnResponse> listAdd = addOnMapper.toListForAddOnResponse(productForm.getAddOn());
-//            ForProductFormAddOnOptionResponse pf = productMapper.toForProductFormAddOnOptionResponse(productForm, listAdd);
-//            responses.add(pf);
-//        }
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get list Product(f) Addon Option By Base ID");
-//        res.setRes(responses);
-//        return res;
-//    }
-
-
-//    /////////////////  f
-//    public MessageResponse findProductFormInfoByBaseId(String baseId) throws BaseException {
-//        /// validate
-//        if(Objects.isNull(baseId) || baseId.isEmpty())throw ProductException.findBaseFail();
-//        /// verify
-//        Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
-//        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
-//        ProductBase productBase = baseOpt.get();
-//        ///
-//        List<ForProductFormInfoResponse> list = new ArrayList<>();
-//        for (ProductForm productForm : productBase.getProductForms()){
-//            List<Boolean> listMateUsedEnable = materialUsedService.findEnableByFormId(productForm.getProdFormId());
-//            ForProductFormInfoResponse pfInfo = productMapper.toForProductFormInfoResponse(productForm, listMateUsedEnable);
-//            list.add(pfInfo);
-//        }
-//        //List<ForProductFormInfoResponse> listCheck = productMapper.toListForProductFormInfoResponse(productBase.getProductForms());
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get list Product(f) info By Base ID");
-//        res.setRes(list);
-//        return res;
-//    }
-//
-//    public MessageResponse findProductFormInfoAddOnByBaseId(String baseId) throws BaseException {
-//        /// validate
-//        if(Objects.isNull(baseId) || baseId.isEmpty())throw ProductException.findBaseFail();
-//        /// verify
-//        Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
-//        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
-//        ProductBase productBase = baseOpt.get();
-//        ///
-//        List<ForProductFormInfoAddOnResponse> list = new ArrayList<>();
-//        for (ProductForm productForm : productBase.getProductForms()){
-//            ForProductFormInfoAddOnResponse pfInfoAddon = productMapper.toForProductFormInfoAddOnResponse(productForm);
-//            list.add(pfInfoAddon);
-//        }
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get list Product(f) info Addon By Base ID");
-//        res.setRes(list);
-//        return res;
-//    }
-//
-//    public MessageResponse findProductFormInfoAddOnOptionInfoByBaseId(String baseId) throws BaseException {
-//        /// validate
-//        if(Objects.isNull(baseId) || baseId.isEmpty())throw ProductException.findBaseFail();
-//        /// verify
-//        Optional<ProductBase> baseOpt =  productBaseService.findBaseById(baseId);
-//        if(baseOpt.isEmpty()) throw ProductException.findBaseFail();
-//        ProductBase productBase = baseOpt.get();
-//        ///
-//        List<ForProdFormInfoAddOnOptionInfoResponse> list = new ArrayList<>();
-//        for (ProductForm productForm : productBase.getProductForms()){
-//            List<ForAddOnOptionInfoResponse> listAddOption = new ArrayList<>();
-//            for (AddOn addOn : productForm.getAddOn()) {
-//                List<ForOptionInfoResponse> listOptInfo = new ArrayList<>();
-//                for (Option option : addOn.getOptions()) {
-//                    List<Boolean> listMateUsedEnableOpt = materialUsedService.findEnableByOptionId(option.getOptionId());
-//                    ForOptionInfoResponse optionInfo = addOnMapper.toForOptionInfoResponse(option, listMateUsedEnableOpt);
-//                    listOptInfo.add(optionInfo);
-//                }
-//                ForAddOnOptionInfoResponse addOption = addOnMapper.toForFindMateUseInOptionResponse(addOn, listOptInfo);
-//                listAddOption.add(addOption);
-//            }
-//            List<Boolean> listMateUsedEnable = materialUsedService.findEnableByFormId(productForm.getProdFormId());
-//            ForProdFormInfoAddOnOptionInfoResponse pfInfoAddon = productMapper.toForProdFormInfoAddOnOptionInfoResponse(productForm, listMateUsedEnable ,listAddOption);
-//            list.add(pfInfoAddon);
-//        }
-//        //List<ForProdFormInfoAddOnOptionInfoResponse> prodRes = productMapper.toListForProdFormInfoAddOnOptionInfoResponse(productBase.getProductForms());
-//        /// res
-//        MessageResponse res = new MessageResponse();
-//        res.setMessage("get list Product(f) info Addon Option info By Base ID");
-//        res.setRes(list);
-//        return res;
-//    }
     ////////////////////////////////////////////////
 
-
-
     public MessageResponse deleteProductForm(String prodId) throws BaseException {
-        Boolean product =  productFormService.deleteFormById(prodId);
+        /// validate
+        if (Objects.isNull(prodId) || prodId.isEmpty())
+            throw ProductException.findProductFail();
+        Boolean product = productFormService.deleteFormById(prodId);
         /// res
         MessageResponse res = new MessageResponse();
         res.setMessage("delete Product(f) success");
@@ -380,5 +224,100 @@ public class ProductFormController {
         return res;
     }
     ////////////////////////////////////////////////////////////////
+
+    private MessageResponse findProductFormId(String formId, String addOn, String option,
+            String haveMateUse) throws ProductException {
+        Optional<ProductForm> productForm = productFormService.findProductFormById(formId);
+        if (productForm.isEmpty())
+            throw ProductException.findProductFail();
+        ProductForm form = productForm.get();
+        /// if addon true
+        if (!(Objects.isNull(addOn) || addOn.isEmpty())) {
+            if (addOn.equals("true")) {
+                /// if option true
+                if (!(Objects.isNull(option) || option.isEmpty())) {
+                    if (option.equals("true")) {
+                        List<ForAddOnResponse> listAdd = addOnMapper.toListForAddOnResponse(form.getAddOn());
+                        ForProductFormInfoAddOnOptionResponse pf = productMapper
+                                .toForProductFormInfoAddOnOptionResponse(form, listAdd);
+                        /// res
+                        MessageResponse res = new MessageResponse();
+                        res.setMessage("get Product(f) Addon Option By Base ID");
+                        res.setRes(pf);
+                        return res;
+                    }
+                }
+
+                /// if haveMateUse true
+                if (!(Objects.isNull(haveMateUse) || haveMateUse.isEmpty())) {
+                    if (haveMateUse.equals("true")) {
+                        /// check res material use
+                        List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+                        for (MaterialUsed mateUsed : form.getMaterialUsed()) {
+                            MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed,
+                                    mateUsed.getMaterial());
+                            ListMateNec.add(materialUsedNec);
+                        }
+                        ForProductFormDetailResponse formDetail = new ForProductFormDetailResponse();
+                        formDetail.setAddOn(form.getAddOn());
+                        formDetail.setMaterialUsed(ListMateNec);
+                        formDetail.setPrice(form.getPrice());
+                        formDetail.setIsEnable(form.getIsEnable());
+                        formDetail.setIsMaterialEnable(form.getIsMaterialEnable());
+                        formDetail.setDescription(form.getDescription());
+                        formDetail.setProdFormTh(form.getProdFormTh());
+                        formDetail.setProdFormEng(form.getProdFormEng());
+                        formDetail.setProdFormId(form.getProdFormId());
+                        formDetail.setProductBase(form.getProductBase());
+                        /// response
+                        MessageResponse res = new MessageResponse();
+                        res.setMessage("get materialUsed ");
+                        res.setRes(formDetail);
+                        return res;
+                    }
+                }
+                ForProductFormInfoAddOnResponse pfAddon = productMapper.toForProductFormInfoAddOnResponse(form);
+                /// res
+                MessageResponse res = new MessageResponse();
+                res.setMessage("get Product(f) Addon By Base ID");
+                res.setRes(pfAddon);
+                return res;
+            }
+
+        }
+        /// if haveMateUse true
+        if (!(Objects.isNull(haveMateUse) || haveMateUse.isEmpty())) {
+            if (haveMateUse.equals("true")) {
+                /// check res material use
+                List<MaterialUsedNec> ListMateNec = new ArrayList<>();
+                for (MaterialUsed mateUsed : form.getMaterialUsed()) {
+                    MaterialUsedNec materialUsedNec = materialMapper.toMaterialUsedNec(mateUsed,
+                            mateUsed.getMaterial());
+                    ListMateNec.add(materialUsedNec);
+                }
+                ForProductFormDetailResponse formDetail = new ForProductFormDetailResponse();
+                formDetail.setMaterialUsed(ListMateNec);
+                formDetail.setPrice(form.getPrice());
+                formDetail.setIsEnable(form.getIsEnable());
+                formDetail.setIsMaterialEnable(form.getIsMaterialEnable());
+                formDetail.setDescription(form.getDescription());
+                formDetail.setProdFormTh(form.getProdFormTh());
+                formDetail.setProdFormEng(form.getProdFormEng());
+                formDetail.setProdFormId(form.getProdFormId());
+                formDetail.setProductBase(form.getProductBase());
+                /// response
+                MessageResponse res = new MessageResponse();
+                res.setMessage("get materialUsed ");
+                res.setRes(formDetail);
+                return res;
+            }
+        }
+        ForProductFormInfoResponse response = productMapper.toForProductFormInfoResponse(productForm.get());
+        /// res
+        MessageResponse res = new MessageResponse();
+        res.setMessage("get Product(f) By ID");
+        res.setRes(response);
+        return res;
+    }
 
 }

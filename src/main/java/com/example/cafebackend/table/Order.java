@@ -15,19 +15,13 @@ import java.util.List;
 @Table(name = "order")
 public class Order {
 
-
-//    @GeneratedValue(generator = "uuid")
-//    @GenericGenerator(name = "uuid", strategy = "uuid2")
+ 
     @Id
-    @Column(name = "order_id", length = 36 ,nullable = false, updatable = false, unique = true)
+    @Column(name = "order_id", length = 36, nullable = false, updatable = false, unique = true)
     private String orderId;
 
     @Column(name = "order_number", length = 36)
     private String OrderNumber;
-
-//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    @Column(name = "order_date")
-//    private Date orderDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
@@ -48,6 +42,9 @@ public class Order {
     @Column(name = "note")
     private String note;
 
+    @Column(name = "customer_name")
+    private String customerName;
+
     @JsonIgnore
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderDetailProduct> orderDetailProducts = new ArrayList<>();
@@ -61,7 +58,7 @@ public class Order {
     private List<OrderDetailPoint> orderDetailPoint = new ArrayList<>();
 
     public Order() {
-        //orderDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        // orderDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         orderDate = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
     }
 

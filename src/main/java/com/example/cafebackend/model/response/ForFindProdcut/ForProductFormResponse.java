@@ -10,7 +10,9 @@ public class ForProductFormResponse {
 
     private String prodFormId;
 
-    private String prodForm;
+    private String prodFormTh;
+
+    private String prodFormEng;
 
     private Boolean isEnable;
 

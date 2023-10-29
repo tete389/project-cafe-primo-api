@@ -4,7 +4,6 @@ import com.example.cafebackend.controller.MaterialController;
 import com.example.cafebackend.controller.MaterialUsedController;
 import com.example.cafebackend.exception.BaseException;
 
-import com.example.cafebackend.exception.MaterialException;
 import com.example.cafebackend.model.request.UsedRequest;
 import com.example.cafebackend.model.response.MessageResponse;
 
@@ -30,10 +29,8 @@ public class MaterialApi {
     //////////////////////////////////////////////////////////
 
     @PostMapping("/createMaterial")
-    public ResponseEntity<MessageResponse> createMate(@RequestParam("mateName") String mateName,
-                                                      @RequestParam("mateStock") Double mateStock,
-                                                      @RequestParam("mateUnit") String unit) throws BaseException {
-        MessageResponse res = materialController.createMaterial(mateName, mateStock, unit);
+    public ResponseEntity<MessageResponse> createMate(@RequestBody Material request) throws BaseException {
+        MessageResponse res = materialController.createMaterial(request.getMateName(), request.getMateUnit(), request.getStock());
         return ResponseEntity.ok(res);
     }
 
@@ -50,16 +47,11 @@ public class MaterialApi {
         return ResponseEntity.ok(res);
     }
 
-//    @GetMapping("/getMaterialAll")
-//    public ResponseEntity<MessageResponse> getMateAll() {
-//        MessageResponse res = materialController.getMaterialAll();
-//        return ResponseEntity.ok(res);
-//    }
     ///////////////////////////////
 
-    @DeleteMapping("/deleteMaterial")
-    public ResponseEntity<MessageResponse> deleteMate(@RequestParam("mateId") String mateId) throws MaterialException {
-        MessageResponse res = materialController.deleteMate(mateId);
+    @PostMapping("/deleteMaterial")
+    public ResponseEntity<MessageResponse> deleteMate(@RequestBody Material request) throws BaseException {
+        MessageResponse res = materialController.deleteMate(request.getMateId());
         return ResponseEntity.ok(res);
     }
 
@@ -74,25 +66,13 @@ public class MaterialApi {
         return ResponseEntity.ok(res);
     }
 
-//    @PostMapping("/updateMaterialUseIntoProductForm")
-//    public ResponseEntity<MessageResponse> updateMaterialUseOfForm(@RequestBody UsedRequest usedRequest)  throws Exception {
-//        MessageResponse res = materialUsedController.updateAddMaterialUsedInForm(usedRequest.getProdFormId(), usedRequest.getMateUsed());
-//        return ResponseEntity.ok(res);
-//    }
-//
-//    @PostMapping("/updateMaterialUseIntoOption")
-//    public ResponseEntity<MessageResponse> updateMaterialUseOfOption(@RequestBody UsedRequest usedRequest)  throws Exception {
-//        MessageResponse res = materialUsedController.updateAddMaterialUsedInOption(usedRequest.getProdFormId(), usedRequest.getMateUsed());
-//        return ResponseEntity.ok(res);
-//    }
+    @PutMapping("/removeMaterialUseInto")
+    public ResponseEntity<MessageResponse> MaterialUseOfBase(@RequestBody UsedRequest usedRequest)  throws Exception {
+        MessageResponse res = materialUsedController.removeMaterialUsed(usedRequest);
+        return ResponseEntity.ok(res);
+    }
 
-    //////////////////////
 
-//    @PostMapping("/getMaterialUseByMaterialId")
-//    public ResponseEntity<MessageResponse> findMateUseByMateId(@RequestParam("mateId") String mateId) throws BaseException {
-//        MessageResponse res = materialUsedController.findListMateUseByMateId(mateId);
-//        return ResponseEntity.ok(res);
-//    }
 
     @GetMapping("/getMaterialUse")
     public ResponseEntity<MessageResponse> findMaterialUseInBase(@RequestParam(name = "mateId" , required = false) String mateId,
@@ -103,17 +83,6 @@ public class MaterialApi {
         return ResponseEntity.ok(res);
     }
 
-//    @PostMapping("/getMaterialUseByProductFormId")
-//    public ResponseEntity<MessageResponse> findMaterialUseInForm(@RequestParam("formId") String formId)  throws Exception {
-//        MessageResponse res = materialUsedController.findMaterialUsedInFormId(formId);
-//        return ResponseEntity.ok(res);
-//    }
-//
-//    @PostMapping("/getMaterialUseByOptionId")
-//    public ResponseEntity<MessageResponse> findMaterialUseInOption(@RequestParam("optionId") String optionId)  throws Exception {
-//        MessageResponse res = materialUsedController.findMaterialUsedInOptionId(optionId);
-//        return ResponseEntity.ok(res);
-//    }
 
 
 }

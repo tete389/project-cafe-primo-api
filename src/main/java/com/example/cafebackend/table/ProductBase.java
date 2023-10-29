@@ -13,11 +13,14 @@ import java.util.List;
 public class ProductBase {
 
     @Id
-    @Column(name = "prod_base_id", length = 15, nullable = false, unique = true)
+    @Column(name = "prod_base_id", length = 36, nullable = false, unique = true)
     private String prodBaseId;
 
-    @Column(name = "prod_title", length = 60, nullable = false)
-    private String prodTitle;
+    @Column(name = "prod_title_th", length = 60, nullable = false)
+    private String prodTitleTh;
+
+    @Column(name = "prod_title_eng", length = 60, nullable = false)
+    private String prodTitleEng;
 
     @Column(name = "image")
     private String image;
@@ -32,11 +35,16 @@ public class ProductBase {
     private String description;
 
     @JsonIgnore
+    @Column(name = "is_delete")
+    private Boolean isDelete;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "productBase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductForm> productForms = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "productBase", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cate_prod", joinColumns = @JoinColumn(name = "prod_base_id", referencedColumnName = "prod_base_id"), inverseJoinColumns = @JoinColumn(name = "cate_id", referencedColumnName = "cate_id"))
     private List<Category> category = new ArrayList<>();
 
     @JsonIgnore
@@ -46,11 +54,9 @@ public class ProductBase {
     @PreRemove
     private void removeCategoryProduct() {
         if (!category.isEmpty()) {
-            for (Category category1 : category) {
-                category1.getProductBase().remove(this);
-            }
-        }
+            category.forEach(e -> e.getProductBase().remove(this));
 
+        }
 
     }
 

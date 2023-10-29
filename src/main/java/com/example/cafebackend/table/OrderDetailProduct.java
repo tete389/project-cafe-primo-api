@@ -16,8 +16,11 @@ public class OrderDetailProduct {
     @Column(name = "odt_prod_id", length = 36 ,nullable = false, updatable = false, unique = true)
     private String odtProdId;
 
-    @Column(name = "prod_name", length = 36)
-    private String prodName;
+    @Column(name = "prod_name_th", length = 36)
+    private String prodNameTh;
+
+    @Column(name = "prod_name_eng", length = 36)
+    private String prodNameEng;
 
     @Column(name = "prod_price", length = 12)
     private Double prodPrice;
