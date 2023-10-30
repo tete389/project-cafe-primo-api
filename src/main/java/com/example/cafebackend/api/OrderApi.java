@@ -14,16 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.cafebackend.appString.EString;
-import com.example.cafebackend.controller.MaterialController;
 import com.example.cafebackend.controller.OrderController;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.model.request.OrderRequest;
 import com.example.cafebackend.model.request.OrderRequestCollect;
+import com.example.cafebackend.model.response.EmployeeNotifications;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.table.Order;
 
-import lombok.Data;
 
 // @CrossOrigin(origins = {"http://localhost:5137"})
 @RestController
@@ -35,11 +33,9 @@ public class OrderApi {
 
     private final OrderController orderController;
 
-    private final MaterialController materialController;
-
-    public OrderApi(OrderController orderController, MaterialController materialController) {
+    public OrderApi(OrderController orderController) {
         this.orderController = orderController;
-        this.materialController = materialController;
+       
     }
 
     ///////////////////////////////////////////////////////////
@@ -63,10 +59,11 @@ public class OrderApi {
         List<String> statusOrder = new ArrayList<>();
         MessageResponse res = orderController.updateOrderConfirm(order.getOrderId(), order.getStatus(),
                 order.getCollectPoint(), statusOrder);
-        if (statusOrder.get(0).equals(EString.PAYMENT.getValue())
-                || order.getStatus().equals(EString.PAYMENT.getValue())) {
-            setEmployeeNotification();
-        }
+        // if (statusOrder.get(0).equals(EString.PAYMENT.getValue())
+        // || order.getStatus().equals(EString.PAYMENT.getValue())) {
+        // setEmployeeNotification();
+        // }
+        setEmployeeNotification();
         return ResponseEntity.ok(res);
     }
 
@@ -119,11 +116,8 @@ public class OrderApi {
     }
 
     public void setEmployeeNotification() {
-        String countOrderNotPayment = orderController.countOrderNotPayment();
-        String countMateLowStock = materialController.countMaterialLowStock();
-        EmployeeNotifications empRes = new EmployeeNotifications();
-        empRes.setCountOrderNotPayment(countOrderNotPayment);
-        empRes.setCountMaterialLowStock(countMateLowStock);
+        EmployeeNotifications empRes = orderController.countOrderStatus();
+
         // messagingTemplate.convertAndSend("/topic/orderNotPayment_notifications",
         // empRes);
         // String resEmployeeNotifications = "notPaymentOrder:" + countOrderNotPayment +
@@ -150,10 +144,6 @@ public class OrderApi {
     // messagingTemplate.convertAndSend("/topic/followOrder_notifications", 0);
     // }
 
-    @Data
-    public static class EmployeeNotifications {
-        private String countOrderNotPayment;
-        private String countMaterialLowStock;
-    }
+
 
 }

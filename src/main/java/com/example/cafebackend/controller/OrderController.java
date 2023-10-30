@@ -6,6 +6,7 @@ import com.example.cafebackend.exception.OrderException;
 import com.example.cafebackend.mapper.OrderMapper;
 import com.example.cafebackend.model.request.OrderRequest;
 import com.example.cafebackend.model.request.ProdRequest;
+import com.example.cafebackend.model.response.EmployeeNotifications;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.model.response.ForOrder.ForRecentGroup;
 import com.example.cafebackend.model.response.ForOrder.ForRecentMaterail;
@@ -184,8 +185,9 @@ public class OrderController {
             return res;
         }
 
-        if (order.getStatus().equals(EString.PAYMENT.getValue()) && statusAction.equals(EString.KEEP.getValue())
-                && (Objects.isNull(statusAction) || statusAction.isEmpty())) {
+        if (order.getStatus().equals(EString.PAYMENT.getValue())
+                && !(Objects.isNull(statusAction) || statusAction.isEmpty())
+                && statusAction.equals(EString.KEEP.getValue())) {
             /// set status and update
             order.setStatus(EString.KEEP.getValue());
             Order resOrder = orderService.updateOrder(order);
@@ -197,7 +199,8 @@ public class OrderController {
         }
 
         ////
-        if (statusAction.equals(EString.PAYMENT.getValue())) {
+        if (!(Objects.isNull(statusAction) || statusAction.isEmpty())
+                && statusAction.equals(EString.PAYMENT.getValue())) {
             ///
             if (!order.getOrderDetailMaterials().isEmpty()
                     && order.getStatus().equals(EString.MAKING.getValue())) {
@@ -223,6 +226,7 @@ public class OrderController {
 
         //// payment to success
         if (order.getStatus().equals(EString.PAYMENT.getValue())
+                && !(Objects.isNull(statusAction) || statusAction.isEmpty())
                 && statusAction.equals(EString.SUCCESS.getValue())) {
             /// set mate use
             for (OrderDetailMaterial orderDetailMaterial : order.getOrderDetailMaterials()) {
@@ -287,7 +291,8 @@ public class OrderController {
         }
 
         //// to success order
-        if (statusAction.equals(EString.SUCCESS.getValue())) {
+        if (!(Objects.isNull(statusAction) || statusAction.isEmpty())
+                && statusAction.equals(EString.SUCCESS.getValue())) {
             /// set collect point
             if (!Objects.isNull(collectPoint)) {
                 if ((collectPoint.getCollectPoint() != 0) && (!collectPoint.getPhoneNumber().isEmpty())) {
@@ -324,7 +329,8 @@ public class OrderController {
         }
 
         //// to cancel order
-        if (statusAction.equals(EString.CANCEL.getValue())) {
+        if (!(Objects.isNull(statusAction) || statusAction.isEmpty())
+                && statusAction.equals(EString.CANCEL.getValue())) {
             /// check spend point
             if (!order.getOrderDetailPoint().isEmpty()
                     && (order.getStatus().equals(EString.RECEIVE.getValue())
@@ -477,13 +483,15 @@ public class OrderController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             // LocalDate inputDate = LocalDate.parse(dateEnd, formatter);
             // LocalDate daysBefore = inputDate.minusDays(dayToSubtract - 1);
+            ////
             LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Bangkok"));
             LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
             String formattedDate = firstDayOfMonth.format(formatter);
             Integer incomeOfMonth = orderService.findIncomeOfMonth(formattedDate, dateEnd);
             resIncome.setIncomeOfMonth(incomeOfMonth);
-            LocalDate date = LocalDate.parse(dateEnd);
-            int weekOfYear = date.get(WeekFields.ISO.weekOfWeekBasedYear());
+            ////
+            // LocalDate date = LocalDate.parse(dateEnd);
+            int weekOfYear = currentDate.get(WeekFields.ISO.weekOfWeekBasedYear());
             int yearNow = currentDate.getYear();
             LocalDate firstDayOfYear = LocalDate.of(yearNow, 1, 1);
             LocalDate firstDayOfWeek = firstDayOfYear.with(WeekFields.ISO.weekOfYear(), weekOfYear);
@@ -512,13 +520,31 @@ public class OrderController {
     }
     ////////////////////////////////////////////////
 
-    public String countOrderNotPayment() {
+    public EmployeeNotifications countOrderStatus() {
         LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Bangkok"));
+        EmployeeNotifications empRes = new EmployeeNotifications();
+
+        Integer countOrderPAYMENT = orderService.findCountByOrderToDayStatus(EString.PAYMENT.getValue(), currentDate);
+        Integer countOrderMAKING = orderService.findCountByOrderToDayStatus(EString.MAKING.getValue(), currentDate);
+        Integer countOrderRECEIVE = orderService.findCountByOrderToDayStatus(EString.RECEIVE.getValue(), currentDate);
+        Integer countOrderSUCCESS = orderService.findCountByOrderToDayStatus(EString.SUCCESS.getValue(), currentDate);
+        Integer countOrderKEEP = orderService.findCountByOrderToDayStatus(EString.KEEP.getValue(), currentDate);
+        Integer countOrderCANCEL = orderService.findCountByOrderToDayStatus(EString.CANCEL.getValue(), currentDate);
+        Integer countMateLowStock = materialService.findMateLowStock();
+
+        empRes.setCountOrderNotPayment(countOrderPAYMENT.toString());
+        empRes.setCountOrderMaking(countOrderMAKING.toString());
+        empRes.setCountOrderReceive(countOrderRECEIVE.toString());
+        empRes.setCountOrderSuccess(countOrderSUCCESS.toString());
+        empRes.setCountOrderKeep(countOrderKEEP.toString());
+        empRes.setCountOrderCancel(countOrderCANCEL.toString());
+        empRes.setCountMaterialLowStock(countMateLowStock.toString());
         // String formattedDate =
         // currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        Integer count = orderService.findCountByOrderToDayStatus(EString.PAYMENT.getValue(), currentDate);
-        return count.toString();
+
+        return empRes;
     }
+
     ////////////////////////////////////////////////
 
     public MessageResponse deleteOrder(String orderId) throws BaseException {
