@@ -491,7 +491,7 @@ public class OrderController {
             resIncome.setIncomeOfMonth(incomeOfMonth);
             ////
             // LocalDate date = LocalDate.parse(dateEnd);
-            int weekOfYear = currentDate.get(WeekFields.ISO.weekOfWeekBasedYear());
+            int weekOfYear = currentDate.get(WeekFields.ISO.weekOfWeekBasedYear())-1;
             int yearNow = currentDate.getYear();
             LocalDate firstDayOfYear = LocalDate.of(yearNow, 1, 1);
             LocalDate firstDayOfWeek = firstDayOfYear.with(WeekFields.ISO.weekOfYear(), weekOfYear);
@@ -657,7 +657,7 @@ public class OrderController {
                     Customer customer = customerOpt.get();
                     /// check spend point
                     Double spendPoint = Double.valueOf(request.getDiscount().getSpendPoint());
-                    if ((customer.getPointCount() - spendPoint) <= 0)
+                    if ((customer.getPointCount() - spendPoint) < 0)
                         throw OrderException.CannotSpend();
                     /// create point detail
                     OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(order,
