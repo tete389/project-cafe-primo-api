@@ -22,7 +22,6 @@ import com.example.cafebackend.model.response.EmployeeNotifications;
 import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.table.Order;
 
-
 // @CrossOrigin(origins = {"http://localhost:5137"})
 @RestController
 @RequestMapping("/order")
@@ -35,7 +34,7 @@ public class OrderApi {
 
     public OrderApi(OrderController orderController) {
         this.orderController = orderController;
-       
+
     }
 
     ///////////////////////////////////////////////////////////
@@ -59,25 +58,9 @@ public class OrderApi {
         List<String> statusOrder = new ArrayList<>();
         MessageResponse res = orderController.updateOrderConfirm(order.getOrderId(), order.getStatus(),
                 order.getCollectPoint(), statusOrder);
-        // if (statusOrder.get(0).equals(EString.PAYMENT.getValue())
-        // || order.getStatus().equals(EString.PAYMENT.getValue())) {
-        // setEmployeeNotification();
-        // }
         setEmployeeNotification();
         return ResponseEntity.ok(res);
     }
-
-    // @PutMapping("/cancelOrder")
-    // public ResponseEntity<MessageResponse> updateCancelOrder(@RequestBody Order
-    // orderId) throws BaseException {
-    // String statusOrder = "";
-    // MessageResponse res = orderController.updateCancelOrder(orderId.getOrderId(),
-    // statusOrder);
-    // if (statusOrder.equals(EString.WAIT_PAYMENT.getValue())) {
-    // setNotification();
-    // }
-    // return ResponseEntity.ok(res);
-    // }
 
     @GetMapping("/getOrderById")
     public ResponseEntity<MessageResponse> getOrderInfoById(@RequestParam(name = "orderId") String orderId,
@@ -99,7 +82,6 @@ public class OrderApi {
             @RequestParam(name = "pageNum", required = false) Integer pageNum) throws BaseException {
         MessageResponse res = orderController.getRecentOrder(recentMaterial, recentProduct, recentOption, dateStart,
                 dateEnd, status, income, pageSize, pageNum);
-
         return ResponseEntity.ok(res);
     }
 
@@ -117,33 +99,14 @@ public class OrderApi {
 
     public void setEmployeeNotification() {
         EmployeeNotifications empRes = orderController.countOrderStatus();
-
-        // messagingTemplate.convertAndSend("/topic/orderNotPayment_notifications",
-        // empRes);
-        // String resEmployeeNotifications = "notPaymentOrder:" + countOrderNotPayment +
-        // ",lowStockMaterial:-";
         messagingTemplate.convertAndSend("/topic/employee_notifications", empRes);
 
     }
 
     @PostMapping("/getCustomerNotifications")
     public ResponseEntity<?> sendCustomerNotifications() throws BaseException {
-        // setNotPaymentOrderNotification();
-        // setNotificationTest();
+
         return ResponseEntity.ok().build();
     }
-
-    // public void setNotificationTest() {
-    // // String countOrderNotPayment = orderController.countOrderNotPayment();
-    // messagingTemplate.convertAndSend("/topic/orderNotPayment_notifications",
-    // 99999);
-    // }
-
-    // public void setNotificationForCustomer() {
-    // // String countOrderNotPayment = orderController.countOrderNotPayment();
-    // messagingTemplate.convertAndSend("/topic/followOrder_notifications", 0);
-    // }
-
-
 
 }

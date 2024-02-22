@@ -4,7 +4,7 @@ services:
     container_name: postgres_cafe
     image: 'postgres:latest'
     networks:
-      - backend
+      - cafe
     ports:
       - "5432:5432"
     environment:
@@ -23,25 +23,29 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - backend
+      - cafe
     depends_on:
       - db
+
 
   cloudflared:
     container_name: cloudflared-cafe
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate --url http://spring_cafe:8080
     networks:
-      - backend
+      - cafe
     ports:
       - '80:80'
     depends_on:
       - app
 
-
 networks:
-  backend:
+  cafe:
     driver: bridge
-    name: backend-network
+    name: network-cafe2
 
 
+    # networks:
+    #   - backend
+    # depends_on:
+    #   - db
