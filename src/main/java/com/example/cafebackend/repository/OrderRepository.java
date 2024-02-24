@@ -1,5 +1,6 @@
 package com.example.cafebackend.repository;
 
+import com.example.cafebackend.model.response.ForOrder.ForRecentChart;
 import com.example.cafebackend.table.Order;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public interface OrderRepository extends JpaRepository<Order, String> {
 
@@ -39,4 +41,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
     @Query(value = "SELECT SUM(o.order_price) FROM \"order\" o WHERE o.status = :status and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
     Integer findIncomeOfWeek(String startDate, String endDate, String status);
+
+    @Query(value = "SELECT to_char(Date_TRUNC('month', o.order_date), 'MM'), SUM(o.order_price) FROM \"order\" o WHERE o.status = :status and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date) group by Date_TRUNC('month', o.order_date)", nativeQuery = true)
+    List<Object> findIncomeToChart(String startDate, String endDate, String status);
 }

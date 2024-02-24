@@ -7,13 +7,8 @@ import com.example.cafebackend.mapper.OrderMapper;
 import com.example.cafebackend.model.request.OrderRequest;
 import com.example.cafebackend.model.request.ProdRequest;
 import com.example.cafebackend.model.response.EmployeeNotifications;
+import com.example.cafebackend.model.response.ForOrder.*;
 import com.example.cafebackend.model.response.MessageResponse;
-import com.example.cafebackend.model.response.ForOrder.ForRecentGroup;
-import com.example.cafebackend.model.response.ForOrder.ForRecentMaterail;
-import com.example.cafebackend.model.response.ForOrder.ForRecentOption;
-import com.example.cafebackend.model.response.ForOrder.ForRecentProduct;
-import com.example.cafebackend.model.response.ForOrder.OrderCollect;
-import com.example.cafebackend.model.response.ForOrder.OrderResponse;
 import com.example.cafebackend.service.*;
 import com.example.cafebackend.table.*;
 import lombok.AllArgsConstructor;
@@ -491,14 +486,23 @@ public class OrderController {
             resIncome.setIncomeOfMonth(incomeOfMonth);
             ////
             // LocalDate date = LocalDate.parse(dateEnd);
+
             int weekOfYear = currentDate.get(WeekFields.ISO.weekOfWeekBasedYear())-1;
             int yearNow = currentDate.getYear();
             LocalDate firstDayOfYear = LocalDate.of(yearNow, 1, 1);
-            LocalDate firstDayOfWeek = firstDayOfYear.with(WeekFields.ISO.weekOfYear(), weekOfYear);
+            LocalDate firstDayOfWeek = firstDayOfYear.with(WeekFields.ISO.weekOfYear(), weekOfYear).plusWeeks(1);
             LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
             Integer incomeOfWeek = orderService.findIncomeOfWeek(firstDayOfWeek.toString(), lastDayOfWeek.toString());
             resIncome.setIncomeOfWeek(incomeOfWeek);
             resIncome.setListOrder(ListOrder);
+
+//            for (int i = 0 ; i < 12 ; i ++) {
+//                ResIncomeOfYearToChart resIncomeChart = getResIncomeOfYearToChart(i, yearNow);
+//                resIncome.getIncomeChart().add(resIncomeChart);
+//            }
+            LocalDate lastDayOfYear = LocalDate.of(yearNow, 12, 31);
+            List<Object> findIncomeToChart = orderService.findIncomeToChart(firstDayOfYear.toString(), lastDayOfYear.toString());
+            resIncome.setIncomeToChart(findIncomeToChart);
             MessageResponse res = new MessageResponse();
             res.setMessage("Get Order By Date");
             res.setRes(resIncome);
@@ -512,11 +516,36 @@ public class OrderController {
 
     }
 
+    private  ResIncomeOfYearToChart getResIncomeOfYearToChart(int i, int yearNow) {
+        ResIncomeOfYearToChart resIncomeChart = new ResIncomeOfYearToChart();
+        int m = i +1;
+        resIncomeChart.setMonth(m);
+        LocalDate startDay = LocalDate.of(yearNow, m, 1);
+
+        LocalDate endDay;
+        if ( i +1 >= 12) {
+            endDay = LocalDate.of(yearNow +1, 1, 1).minusDays(1);
+        }else {
+            endDay = LocalDate.of(yearNow, m+1, 1).minusDays(1);
+        }
+        Integer incomeInMonth = orderService.findIncomeOfMonth(startDay.toString(), endDay.toString());
+        resIncomeChart.setIncomeOfMonth(incomeInMonth == null ? 0 : incomeInMonth);
+        return resIncomeChart;
+    }
+
     @Data
     private static class ResIncomeOfOrder {
         private Integer incomeOfMonth;
         private Integer incomeOfWeek;
-        private List<Order> ListOrder;
+        private List<Order> ListOrder = new ArrayList<>();
+        private List<ResIncomeOfYearToChart> IncomeChart = new ArrayList<>();
+        private List<Object> IncomeToChart = new ArrayList<>();
+    }
+
+    @Data
+    private static class ResIncomeOfYearToChart {
+        private Integer month;
+        private Integer incomeOfMonth;
     }
     ////////////////////////////////////////////////
 

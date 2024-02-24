@@ -3,6 +3,7 @@ package com.example.cafebackend.service;
 import com.example.cafebackend.appString.EString;
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.OrderException;
+import com.example.cafebackend.model.response.ForOrder.ForRecentChart;
 import com.example.cafebackend.repository.OrderRepository;
 import com.example.cafebackend.table.Order;
 
@@ -98,6 +99,12 @@ public class OrderService {
     public Integer findIncomeOfWeek(String start, String end) {
         ///
         return orderRepository.findIncomeOfWeek(start, end, EString.SUCCESS.getValue());
+    }
+    /////////////////////////
+
+    public List<Object> findIncomeToChart(String start, String end) {
+        ///
+        return orderRepository.findIncomeToChart(start, end, EString.SUCCESS.getValue());
     }
     /////////////////////////
 
