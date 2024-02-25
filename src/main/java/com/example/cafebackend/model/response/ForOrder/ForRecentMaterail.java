@@ -6,5 +6,7 @@ import lombok.Data;
 public class ForRecentMaterail {
     private String materailName;
 
+    private String mate_unit;
+
     private Integer quantity;
 }

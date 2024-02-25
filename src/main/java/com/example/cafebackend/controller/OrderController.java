@@ -614,7 +614,7 @@ public class OrderController {
     }
 
     public List<ForRecentMaterail> getRecentMaterial(String dateStat, String dateEnd, String statusOrder) {
-        Set<String> ListODTMaterial = new HashSet<>();
+        Set<List<String>> ListODTMaterial = new HashSet<>();
         if (statusOrder.equals(EString.All.getValue())) {
             ListODTMaterial = orderDetailMaterialService.findByOrderDetailMaterialNameBetweenDate(dateStat,
                     dateEnd);
@@ -625,14 +625,14 @@ public class OrderController {
         List<ForRecentMaterail> ListRecentMate = new ArrayList<>();
         ListODTMaterial.forEach(mate -> {
             ForRecentMaterail recentMate = new ForRecentMaterail();
-            recentMate.setMaterailName(mate);
-
+            recentMate.setMaterailName(mate.get(0));
+            recentMate.setMate_unit(mate.get(1));
             if (statusOrder.equals(EString.All.getValue())) {
                 recentMate.setQuantity(orderDetailMaterialService
-                        .findByOrderDetailMaterialCountBetweenDate(dateStat, dateEnd, mate));
+                        .findByOrderDetailMaterialCountBetweenDate(dateStat, dateEnd, mate.get(0)));
             } else {
                 recentMate.setQuantity(orderDetailMaterialService
-                        .findByOrderDetailMaterialCountBetweenDateStatus(dateStat, dateEnd, statusOrder, mate));
+                        .findByOrderDetailMaterialCountBetweenDateStatus(dateStat, dateEnd, statusOrder, mate.get(0)));
             }
             ListRecentMate.add(recentMate);
         });

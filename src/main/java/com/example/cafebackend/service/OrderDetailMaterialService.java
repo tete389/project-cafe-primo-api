@@ -72,12 +72,12 @@ public class OrderDetailMaterialService {
         return orderDetailMaterialRepository.findOrderDetailMaterialBetweenDateStatus(start, end, status);
     }
 
-    public Set<String> findByOrderDetailMaterialNameBetweenDateStatus(String start, String end, String status) {
+    public Set<List<String>> findByOrderDetailMaterialNameBetweenDateStatus(String start, String end, String status) {
         ///
         return orderDetailMaterialRepository.findOrderDetailMaterialNameBetweenDateStatus(start, end, status);
     }
 
-    public Set<String> findByOrderDetailMaterialNameBetweenDate(String start, String end) {
+    public Set<List<String>> findByOrderDetailMaterialNameBetweenDate(String start, String end) {
         ///
         return orderDetailMaterialRepository.findOrderDetailMaterialNameBetweenDate(start, end);
     }

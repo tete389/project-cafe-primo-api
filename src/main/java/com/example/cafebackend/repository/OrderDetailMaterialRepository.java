@@ -18,16 +18,16 @@ public interface OrderDetailMaterialRepository extends JpaRepository<OrderDetail
     @Query(value = "SELECT odm.* FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE o.status = :stats and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
     List<OrderDetailMaterial> findOrderDetailMaterialBetweenDateStatus(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("stats") String stats);
 
-    @Query(value = "SELECT odm.mate_name FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE o.status = :stats and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
-    Set<String> findOrderDetailMaterialNameBetweenDateStatus(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("stats") String stats);
+    @Query(value = "SELECT odm.mate_name, odm.mate_unit  FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE o.status = :stats and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
+    Set<List<String>> findOrderDetailMaterialNameBetweenDateStatus(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("stats") String stats);
 
-    @Query(value = "SELECT COUNT(odm.mate_name) FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE o.status = :stats and odm.mate_name = :mateName and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
+    @Query(value = "SELECT SUM(odm.amount_used) FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE o.status = :stats and odm.mate_name = :mateName and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
     Integer findOrderDetailMaterialCountBetweenDateStatus(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("stats") String stats, @Param("mateName") String mateName);
 
-     @Query(value = "SELECT odm.mate_name FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
-    Set<String> findOrderDetailMaterialNameBetweenDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
+     @Query(value = "SELECT odm.mate_name, odm.mate_unit FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
+    Set<List<String>> findOrderDetailMaterialNameBetweenDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    @Query(value = "SELECT COUNT(odm.mate_name) FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE odm.mate_name = :mateName and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
+    @Query(value = "SELECT SUM(odm.amount_used) FROM order_detail_material odm inner join \"order\" o on odm.order_id = o.order_id WHERE odm.mate_name = :mateName and cast(o.order_date as date) BETWEEN cast(:startDate as date) and cast(:endDate as date)", nativeQuery = true)
     Integer findOrderDetailMaterialCountBetweenDate(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("mateName") String mateName);
 
 }
