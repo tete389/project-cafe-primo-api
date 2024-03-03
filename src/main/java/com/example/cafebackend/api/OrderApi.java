@@ -60,6 +60,7 @@ public class OrderApi {
         MessageResponse res = orderController.updateOrderConfirm(order.getOrderId(), order.getStatus(),
                 order.getCollectPoint(), statusOrder);
         setEmployeeNotification();
+        setCustomerNotification(order.getOrderId());
         return ResponseEntity.ok(res);
     }
 
@@ -105,16 +106,27 @@ public class OrderApi {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/getCustomerNotifications")
+    public ResponseEntity<?> sendCustomerNotifications() throws BaseException {
+        // setCustomerNotification();
+        return ResponseEntity.ok().build();
+    }
+
     public void setEmployeeNotification() {
         EmployeeNotifications empRes = orderController.countOrderStatus();
         messagingTemplate.convertAndSend("/topic/employee_notifications", empRes);
 
     }
 
-    @PostMapping("/getCustomerNotifications")
-    public ResponseEntity<?> sendCustomerNotifications() throws BaseException {
+    public void setCustomerNotification(String orderId) {
+        messagingTemplate.convertAndSend("/topic/customer_notifications", orderId);
 
-        return ResponseEntity.ok().build();
     }
+
+    // @PostMapping("/getCustomerNotifications")
+    // public ResponseEntity<?> sendCustomerNotifications() throws BaseException {
+
+    // return ResponseEntity.ok().build();
+    // }
 
 }
