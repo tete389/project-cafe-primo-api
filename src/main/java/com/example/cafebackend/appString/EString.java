@@ -16,8 +16,9 @@ public enum EString {
 
 
     COLLECT_POINT("Collect Points"),
-
+    WAIT_COLLECT("Wait Collect"),
     SPEND_POINT("Spend Points"),
+    WAIT_SPEND("Wait Spend"),
 
     NAME("NAME"),
     Name("Name");
