@@ -70,7 +70,7 @@ public class OrderApi {
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/getOrderByListId")
+    @PostMapping("/getOrderByListId")
     public ResponseEntity<MessageResponse> getOrderInfoByListId(@RequestBody ForRequestListOrder orderIds)
             throws BaseException {
         MessageResponse res = orderController.getOrderInfoByListId(orderIds);

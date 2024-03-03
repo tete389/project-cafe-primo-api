@@ -679,22 +679,22 @@ public class OrderController {
 
     }
 
-    private ResIncomeOfYearToChart getResIncomeOfYearToChart(int i, int yearNow) {
-        ResIncomeOfYearToChart resIncomeChart = new ResIncomeOfYearToChart();
-        int m = i + 1;
-        resIncomeChart.setMonth(m);
-        LocalDate startDay = LocalDate.of(yearNow, m, 1);
+    // private ResIncomeOfYearToChart getResIncomeOfYearToChart(int i, int yearNow) {
+    //     ResIncomeOfYearToChart resIncomeChart = new ResIncomeOfYearToChart();
+    //     int m = i + 1;
+    //     resIncomeChart.setMonth(m);
+    //     LocalDate startDay = LocalDate.of(yearNow, m, 1);
 
-        LocalDate endDay;
-        if (i + 1 >= 12) {
-            endDay = LocalDate.of(yearNow + 1, 1, 1).minusDays(1);
-        } else {
-            endDay = LocalDate.of(yearNow, m + 1, 1).minusDays(1);
-        }
-        Integer incomeInMonth = orderService.findIncomeOfMonth(startDay.toString(), endDay.toString());
-        resIncomeChart.setIncomeOfMonth(incomeInMonth == null ? 0 : incomeInMonth);
-        return resIncomeChart;
-    }
+    //     LocalDate endDay;
+    //     if (i + 1 >= 12) {
+    //         endDay = LocalDate.of(yearNow + 1, 1, 1).minusDays(1);
+    //     } else {
+    //         endDay = LocalDate.of(yearNow, m + 1, 1).minusDays(1);
+    //     }
+    //     Integer incomeInMonth = orderService.findIncomeOfMonth(startDay.toString(), endDay.toString());
+    //     resIncomeChart.setIncomeOfMonth(incomeInMonth == null ? 0 : incomeInMonth);
+    //     return resIncomeChart;
+    // }
 
     @Data
     private static class ResIncomeOfOrder {
