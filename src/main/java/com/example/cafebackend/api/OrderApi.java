@@ -23,6 +23,8 @@ import com.example.cafebackend.model.response.MessageResponse;
 import com.example.cafebackend.model.response.ForOrder.ForRequestListOrder;
 import com.example.cafebackend.table.Order;
 
+import lombok.Data;
+
 // @CrossOrigin(origins = {"http://localhost:5137"})
 @RestController
 @RequestMapping("/order")
@@ -119,8 +121,16 @@ public class OrderApi {
     }
 
     public void setCustomerNotification(String orderId) {
-        messagingTemplate.convertAndSend("/topic/customer_notifications", orderId);
+        ResCusNoti noti = new ResCusNoti();
+        noti.setOrderId(orderId);
+        messagingTemplate.convertAndSend("/topic/customer_notifications", noti);
 
+    }
+
+    @Data
+    private static class ResCusNoti {
+        private String orderId;
+     
     }
 
     // @PostMapping("/getCustomerNotifications")
