@@ -37,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Appl
             "/order/createOrder",
             "/order/updateProductInOrder",
             "/order/getOrderById",
+            "/order/getOrderByListId",
             "/order/getRecentOrder",
             "/order/getEmployeeNotifications",
             "/order/getCustomerNotifications",
