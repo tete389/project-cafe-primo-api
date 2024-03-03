@@ -65,7 +65,7 @@ public class OrderController {
 
         Integer countOrderToDay = orderService.findCountByOrderToDay(currentDate);
         String no_Order = countOrderToDay < 9 ? "00" + (countOrderToDay + 1)
-                : countOrderToDay > 99 ? String.valueOf((countOrderToDay + 1)) : "0" + (countOrderToDay + 1);
+                : countOrderToDay >= 99 ? String.valueOf((countOrderToDay + 1)) : "0" + (countOrderToDay + 1);
         /// create no. order and status customer name
         if (Objects.isNull(request.getCustomerName()) || request.getCustomerName().isEmpty()) {
             request.setCustomerName(EString.NONE.getValue());
@@ -141,20 +141,28 @@ public class OrderController {
             }
             /// set spend point
             if (!order.getOrderDetailPoint().isEmpty()) {
-                OrderDetailPoint oderOpt = order.getOrderDetailPoint().get(0);
-                /// check phoneNumber
-                Optional<Customer> customerOpt = customerService.findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
-                if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
-                    throw OrderException.findFail();
-                Customer customer = customerOpt.get();
-                /// check spend point
-                double result = customer.getPointCount();
-                if (oderOpt.getAction().equals(EString.SPEND_POINT.getValue())) {
-                    result = result + oderOpt.getActionPoint();
+                List<OrderDetailPoint> oderOpts = order.getOrderDetailPoint();
+                for (OrderDetailPoint oderOpt : oderOpts) {
+                    if (oderOpt.getAction().equals(EString.WAIT_SPEND.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount();
+                        if (oderOpt.getAction().equals(EString.WAIT_SPEND.getValue())) {
+                            result = result - (oderOpt.getActionPoint() * -1);
+                        }
+                        // if (result <= 0) throw OrderException.CannotSpend();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        /// update point detail
+                        oderOpt.setAction(EString.SPEND_POINT.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+                    }
                 }
-                // if (result <= 0) throw OrderException.CannotSpend();
-                customer.setPointCount(result);
-                customerService.updateCustomer(customer);
             }
             /// set status and update
             order.setStatus(EString.MAKING.getValue());
@@ -193,7 +201,7 @@ public class OrderController {
             return res;
         }
 
-        ////
+        //// back to payment
         if (!(Objects.isNull(statusAction) || statusAction.isEmpty())
                 && statusAction.equals(EString.PAYMENT.getValue())) {
             ///
@@ -209,6 +217,41 @@ public class OrderController {
                     materialService.updateMaterial(material);
                 }
             }
+
+            /// check spend point
+            if (!order.getOrderDetailPoint().isEmpty()) {
+                List<OrderDetailPoint> oderOpts = order.getOrderDetailPoint();
+                for (OrderDetailPoint oderOpt : oderOpts) {
+                    if (oderOpt.getAction().equals(EString.SPEND_POINT.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount() + (oderOpt.getActionPoint() * -1);
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        oderOpt.setAction(EString.WAIT_SPEND.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+                    } else if (oderOpt.getAction().equals(EString.COLLECT_POINT.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount() - oderOpt.getActionPoint();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        oderOpt.setAction(EString.WAIT_COLLECT.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+                    }
+                }
+            }
+
             /// set status and update
             order.setStatus(EString.PAYMENT.getValue());
             Order resOrder = orderService.updateOrder(order);
@@ -233,47 +276,73 @@ public class OrderController {
                 material.setStock(newStock);
                 materialService.updateMaterial(material);
             }
-            /// set spend point
+            /// set spend & collect point
             if (!order.getOrderDetailPoint().isEmpty()) {
-                OrderDetailPoint oderOpt = order.getOrderDetailPoint().get(0);
-                /// check phoneNumber
-                Optional<Customer> customerOpt = customerService.findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
-                if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
-                    throw OrderException.findFail();
-                Customer customer = customerOpt.get();
-                /// check spend point
-                double result = customer.getPointCount();
-                if (oderOpt.getAction().equals(EString.SPEND_POINT.getValue())) {
-                    result = result + oderOpt.getActionPoint();
-                }
-                // if (result <= 0) throw OrderException.CannotSpend();
-                customer.setPointCount(result);
-                customerService.updateCustomer(customer);
-            }
-            if (!Objects.isNull(collectPoint)) {
-                if ((collectPoint.getCollectPoint() != 0) && (!collectPoint.getPhoneNumber().isEmpty())) {
-                    /// check phoneNumber if not have go crete customer
-                    Customer customer = new Customer();
-                    Optional<Customer> customerOpt = customerService
-                            .findCustomerByPhoneNumber(collectPoint.getPhoneNumber());
-                    if (Objects.isNull(customerOpt) || customerOpt.isEmpty()) {
-                        customer = customerService.createCustomer(collectPoint.getPhoneNumber());
-                    } else {
-                        customer = customerOpt.get();
+                List<OrderDetailPoint> oderOpts = order.getOrderDetailPoint();
+                for (OrderDetailPoint oderOpt : oderOpts) {
+                    if (oderOpt.getAction().equals(EString.WAIT_SPEND.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount() - (oderOpt.getActionPoint() * -1);
+                        // if (result <= 0) throw OrderException.CannotSpend();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        /// update point detail
+                        oderOpt.setAction(EString.SPEND_POINT.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+
+                    } else if (oderOpt.getAction().equals(EString.WAIT_COLLECT.getValue())) {
+                        Customer customer = new Customer();
+                        if (!customerService.existsByPhoneNumber(oderOpt.getPhoneNumber())) {
+                            customer = customerService.createCustomer(oderOpt.getPhoneNumber());
+                        } else {
+                            Optional<Customer> customerOpt = customerService
+                                    .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                            if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                                throw OrderException.findFail();
+                            customer = customerOpt.get();
+                        }
+                        double result = customer.getPointCount() + oderOpt.getActionPoint();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        /// update point detail
+                        oderOpt.setAction(EString.COLLECT_POINT.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
                     }
-                    List<SettingShop> setting = shopService.findAll();
-                    double bonus = order.getOrderPrice() * setting.get(0).getPointCollectRate();
-                    double bonusMore = bonus + collectPoint.getCollectMore();
-                    /// create point detail
-                    OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(order,
-                            collectPoint.getPhoneNumber(),
-                            EString.COLLECT_POINT.getValue(), bonusMore);
-                    order.getOrderDetailPoint().add(detailPoint);
-                    /// update point
-                    customer.setPointCount(customer.getPointCount() + bonusMore);
-                    customerService.updateCustomer(customer);
                 }
             }
+
+            // if (!Objects.isNull(collectPoint)) {
+            // if ((collectPoint.getCollectPoint() != 0) &&
+            // (!collectPoint.getPhoneNumber().isEmpty())) {
+            // /// check phoneNumber if not have go crete customer
+            // Customer customer = new Customer();
+            // Optional<Customer> customerOpt = customerService
+            // .findCustomerByPhoneNumber(collectPoint.getPhoneNumber());
+            // if (Objects.isNull(customerOpt) || customerOpt.isEmpty()) {
+            // customer = customerService.createCustomer(collectPoint.getPhoneNumber());
+            // } else {
+            // customer = customerOpt.get();
+            // }
+            // List<SettingShop> setting = shopService.findAll();
+            // double bonus = order.getOrderPrice() * setting.get(0).getPointCollectRate();
+            // double bonusMore = bonus + collectPoint.getCollectMore();
+            // /// create point detail
+            // OrderDetailPoint detailPoint =
+            // orderDetailPointService.createPointDetail(order,
+            // collectPoint.getPhoneNumber(),
+            // EString.COLLECT_POINT.getValue(), bonusMore);
+            // order.getOrderDetailPoint().add(detailPoint);
+            // /// update point
+            // customer.setPointCount(customer.getPointCount() + bonusMore);
+            // customerService.updateCustomer(customer);
+            // }
+            // }
             /// set status and update
             order.setStatus(EString.SUCCESS.getValue());
             // order.setResponsible(emp.getEmpName());
@@ -289,30 +358,74 @@ public class OrderController {
         if (!(Objects.isNull(statusAction) || statusAction.isEmpty())
                 && statusAction.equals(EString.SUCCESS.getValue())) {
             /// set collect point
-            if (!Objects.isNull(collectPoint)) {
-                if ((collectPoint.getCollectPoint() != 0) && (!collectPoint.getPhoneNumber().isEmpty())) {
-                    /// check phoneNumber if not have go crete customer
-                    Customer customer = new Customer();
-                    Optional<Customer> customerOpt = customerService
-                            .findCustomerByPhoneNumber(collectPoint.getPhoneNumber());
-                    if (Objects.isNull(customerOpt) || customerOpt.isEmpty()) {
-                        customer = customerService.createCustomer(collectPoint.getPhoneNumber());
-                    } else {
-                        customer = customerOpt.get();
+            // if (!Objects.isNull(collectPoint)) {
+            // if ((collectPoint.getCollectPoint() != 0) &&
+            /// (!collectPoint.getPhoneNumber().isEmpty())) {
+            // /// check phoneNumber if not have go crete customer
+            // Customer customer = new Customer();
+            // Optional<Customer> customerOpt = customerService
+            // .findCustomerByPhoneNumber(collectPoint.getPhoneNumber());
+            // if (Objects.isNull(customerOpt) || customerOpt.isEmpty()) {
+            // customer = customerService.createCustomer(collectPoint.getPhoneNumber());
+            // } else {
+            // customer = customerOpt.get();
+            // }
+            // List<SettingShop> setting = shopService.findAll();
+            // double bonus = order.getOrderPrice() * setting.get(0).getPointCollectRate();
+            // double bonusMore = bonus + collectPoint.getCollectMore();
+            // /// create point detail
+            // OrderDetailPoint detailPoint =
+            /// orderDetailPointService.createPointDetail(order,
+            // collectPoint.getPhoneNumber(),
+            // EString.COLLECT_POINT.getValue(), bonusMore);
+            // order.getOrderDetailPoint().add(detailPoint);
+            // /// update point
+            // customer.setPointCount(customer.getPointCount() + bonusMore);
+            // customerService.updateCustomer(customer);
+            // }
+            // }
+
+            /// set spend & collect point
+            if (!order.getOrderDetailPoint().isEmpty()) {
+                List<OrderDetailPoint> oderOpts = order.getOrderDetailPoint();
+                for (OrderDetailPoint oderOpt : oderOpts) {
+                    if (oderOpt.getAction().equals(EString.WAIT_SPEND.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount() - (oderOpt.getActionPoint() * -1);
+                        // if (result <= 0) throw OrderException.CannotSpend();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        /// update point detail
+                        oderOpt.setAction(EString.SPEND_POINT.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+
+                    } else if (oderOpt.getAction().equals(EString.WAIT_COLLECT.getValue())) {
+                        Customer customer = new Customer();
+                        if (!customerService.existsByPhoneNumber(oderOpt.getPhoneNumber())) {
+                            customer = customerService.createCustomer(oderOpt.getPhoneNumber());
+                        } else {
+                            Optional<Customer> customerOpt = customerService
+                                    .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                            if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                                throw OrderException.findFail();
+                            customer = customerOpt.get();
+                        }
+                        double result = customer.getPointCount() + oderOpt.getActionPoint();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        /// update point detail
+                        oderOpt.setAction(EString.COLLECT_POINT.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
                     }
-                    List<SettingShop> setting = shopService.findAll();
-                    double bonus = order.getOrderPrice() * setting.get(0).getPointCollectRate();
-                    double bonusMore = bonus + collectPoint.getCollectMore();
-                    /// create point detail
-                    OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(order,
-                            collectPoint.getPhoneNumber(),
-                            EString.COLLECT_POINT.getValue(), bonusMore);
-                    order.getOrderDetailPoint().add(detailPoint);
-                    /// update point
-                    customer.setPointCount(customer.getPointCount() + bonusMore);
-                    customerService.updateCustomer(customer);
                 }
             }
+
             /// set status and update
             order.setStatus(EString.SUCCESS.getValue());
             Order resOrder = orderService.updateOrder(order);
@@ -330,19 +443,36 @@ public class OrderController {
             if (!order.getOrderDetailPoint().isEmpty()
                     && (order.getStatus().equals(EString.RECEIVE.getValue())
                             || order.getStatus().equals(EString.SUCCESS.getValue()))) {
-                OrderDetailPoint oderOpt = order.getOrderDetailPoint().get(0);
-                /// check phoneNumber
-                Optional<Customer> customerOpt = customerService.findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
-                if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
-                    throw OrderException.findFail();
-                Customer customer = customerOpt.get();
-                /// check spend point
-                double result = customer.getPointCount();
-                if (oderOpt.getAction().equals(EString.SPEND_POINT.getValue())) {
-                    result = result - oderOpt.getActionPoint();
+                List<OrderDetailPoint> oderOpts = order.getOrderDetailPoint();
+                for (OrderDetailPoint oderOpt : oderOpts) {
+                    if (oderOpt.getAction().equals(EString.SPEND_POINT.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount() + (oderOpt.getActionPoint() * -1);
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        oderOpt.setAction(EString.CANCEL.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+                    } else if (oderOpt.getAction().equals(EString.COLLECT_POINT.getValue())) {
+                        /// check phoneNumber
+                        Optional<Customer> customerOpt = customerService
+                                .findCustomerByPhoneNumber(oderOpt.getPhoneNumber());
+                        if (Objects.isNull(customerOpt) || customerOpt.isEmpty())
+                            throw OrderException.findFail();
+                        Customer customer = customerOpt.get();
+                        /// check spend point
+                        double result = customer.getPointCount() - oderOpt.getActionPoint();
+                        customer.setPointCount(result);
+                        customerService.updateCustomer(customer);
+                        oderOpt.setAction(EString.CANCEL.getValue());
+                        orderDetailPointService.updatePointDetail(oderOpt);
+                    }
                 }
-                customer.setPointCount(result);
-                customerService.updateCustomer(customer);
             }
             /// set status and update
             order.setStatus(EString.CANCEL.getValue());
@@ -487,7 +617,7 @@ public class OrderController {
             ////
             // LocalDate date = LocalDate.parse(dateEnd);
 
-            int weekOfYear = currentDate.get(WeekFields.ISO.weekOfWeekBasedYear())-1;
+            int weekOfYear = currentDate.get(WeekFields.ISO.weekOfWeekBasedYear()) - 1;
             int yearNow = currentDate.getYear();
             LocalDate firstDayOfYear = LocalDate.of(yearNow, 1, 1);
             LocalDate firstDayOfWeek = firstDayOfYear.with(WeekFields.ISO.weekOfYear(), weekOfYear).plusWeeks(1);
@@ -496,12 +626,14 @@ public class OrderController {
             resIncome.setIncomeOfWeek(incomeOfWeek);
             resIncome.setListOrder(ListOrder);
 
-//            for (int i = 0 ; i < 12 ; i ++) {
-//                ResIncomeOfYearToChart resIncomeChart = getResIncomeOfYearToChart(i, yearNow);
-//                resIncome.getIncomeChart().add(resIncomeChart);
-//            }
+            // for (int i = 0 ; i < 12 ; i ++) {
+            // ResIncomeOfYearToChart resIncomeChart = getResIncomeOfYearToChart(i,
+            // yearNow);
+            // resIncome.getIncomeChart().add(resIncomeChart);
+            // }
             LocalDate lastDayOfYear = LocalDate.of(yearNow, 12, 31);
-            List<Object> findIncomeToChart = orderService.findIncomeToChart(firstDayOfYear.toString(), lastDayOfYear.toString());
+            List<Object> findIncomeToChart = orderService.findIncomeToChart(firstDayOfYear.toString(),
+                    lastDayOfYear.toString());
             resIncome.setIncomeToChart(findIncomeToChart);
             MessageResponse res = new MessageResponse();
             res.setMessage("Get Order By Date");
@@ -516,17 +648,17 @@ public class OrderController {
 
     }
 
-    private  ResIncomeOfYearToChart getResIncomeOfYearToChart(int i, int yearNow) {
+    private ResIncomeOfYearToChart getResIncomeOfYearToChart(int i, int yearNow) {
         ResIncomeOfYearToChart resIncomeChart = new ResIncomeOfYearToChart();
-        int m = i +1;
+        int m = i + 1;
         resIncomeChart.setMonth(m);
         LocalDate startDay = LocalDate.of(yearNow, m, 1);
 
         LocalDate endDay;
-        if ( i +1 >= 12) {
-            endDay = LocalDate.of(yearNow +1, 1, 1).minusDays(1);
-        }else {
-            endDay = LocalDate.of(yearNow, m+1, 1).minusDays(1);
+        if (i + 1 >= 12) {
+            endDay = LocalDate.of(yearNow + 1, 1, 1).minusDays(1);
+        } else {
+            endDay = LocalDate.of(yearNow, m + 1, 1).minusDays(1);
         }
         Integer incomeInMonth = orderService.findIncomeOfMonth(startDay.toString(), endDay.toString());
         resIncomeChart.setIncomeOfMonth(incomeInMonth == null ? 0 : incomeInMonth);
@@ -690,7 +822,7 @@ public class OrderController {
                         throw OrderException.CannotSpend();
                     /// create point detail
                     OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(order,
-                            customer.getPhoneNumber(), EString.SPEND_POINT.getValue(), (spendPoint * -1));
+                            customer.getPhoneNumber(), EString.WAIT_SPEND.getValue(), (spendPoint * -1));
                     order.getOrderDetailPoint().add(detailPoint);
                     List<SettingShop> setting = shopService.findAll();
                     discount = spendPoint / setting.get(0).getPointSpendRate();
@@ -698,6 +830,7 @@ public class OrderController {
             }
 
         }
+
         /// List mate Used
         List<OrderDetailMaterial> listODTMate = new ArrayList<>();
         List<OrderDetailMaterial> keepMateUse = new ArrayList<>();
@@ -734,6 +867,20 @@ public class OrderController {
 
         order.setStatus(EString.PAYMENT.getValue());
         order.setOrderPrice(totalDetailPrices - discount);
+
+        if (!Objects.isNull(request.getCollect()) && (!Objects.isNull(request.getCollect().getPhoneNumber())
+                && !request.getCollect().getPhoneNumber().isEmpty())) {
+            if (request.getCollect().getCollectPoint() != 0) {
+                List<SettingShop> setting = shopService.findAll();
+                double bonus = (totalDetailPrices - discount) * setting.get(0).getPointCollectRate();
+                /// create point detail
+                OrderDetailPoint detailPoint = orderDetailPointService.createPointDetail(order,
+                        request.getCollect().getPhoneNumber(),
+                        EString.WAIT_COLLECT.getValue(), bonus);
+                order.getOrderDetailPoint().add(detailPoint);
+
+            }
+        }
         return order;
     }
 
