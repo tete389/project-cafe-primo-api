@@ -20,6 +20,7 @@ import com.example.cafebackend.model.request.OrderRequest;
 import com.example.cafebackend.model.request.OrderRequestCollect;
 import com.example.cafebackend.model.response.EmployeeNotifications;
 import com.example.cafebackend.model.response.MessageResponse;
+import com.example.cafebackend.model.response.ForOrder.ForRequestListOrder;
 import com.example.cafebackend.table.Order;
 
 // @CrossOrigin(origins = {"http://localhost:5137"})
@@ -70,9 +71,9 @@ public class OrderApi {
     }
 
     @GetMapping("/getOrderByListId")
-    public ResponseEntity<MessageResponse> getOrderInfoByListId(@RequestBody List<String> orderIds,
-            @RequestParam(name = "orderDetail", required = false) String orderDetail) throws BaseException {
-        MessageResponse res = orderController.getOrderInfoByListId(orderIds, orderDetail);
+    public ResponseEntity<MessageResponse> getOrderInfoByListId(@RequestBody ForRequestListOrder orderIds)
+            throws BaseException {
+        MessageResponse res = orderController.getOrderInfoByListId(orderIds);
         return ResponseEntity.ok(res);
     }
 
