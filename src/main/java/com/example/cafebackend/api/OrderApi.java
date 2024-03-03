@@ -69,6 +69,13 @@ public class OrderApi {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/getOrderByListId")
+    public ResponseEntity<MessageResponse> getOrderInfoByListId(@RequestBody List<String> orderIds,
+            @RequestParam(name = "orderDetail", required = false) String orderDetail) throws BaseException {
+        MessageResponse res = orderController.getOrderInfoByListId(orderIds, orderDetail);
+        return ResponseEntity.ok(res);
+    }
+
     @GetMapping("/getRecentOrder")
     public ResponseEntity<MessageResponse> getRecentOrder(
             @RequestParam(name = "recentMaterial", required = false) String recentMaterial,

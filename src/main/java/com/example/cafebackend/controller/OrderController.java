@@ -525,6 +525,37 @@ public class OrderController {
 
     }
 
+    public MessageResponse getOrderInfoByListId(List<String> orderIds, String detail) throws BaseException {
+        /// validate
+        if (Objects.isNull(orderIds))
+            throw OrderException.findFail();
+
+        List<Order> orderList = new ArrayList<>();
+        for (String orderId : orderIds) {
+            Optional<Order> orderOpt = orderService.findById(orderId);
+            if (Objects.isNull(orderOpt) || orderOpt.isEmpty())
+                throw OrderException.findFail();
+            Order order = orderOpt.get();
+            orderList.add(order);
+        }
+
+        if (!(Objects.isNull(detail) || detail.isEmpty()) && detail.equals("true")) {
+            /// response
+            MessageResponse res = new MessageResponse();
+            List<OrderResponse> orderRes = orderMapper.toListOrderResponse(orderList);
+            res.setMessage("Get Order detail By ListId ");
+            res.setRes(orderRes);
+            return res;
+        }
+
+        /// res not detail
+        MessageResponse res = new MessageResponse();
+        res.setMessage("Get Order By ListId ");
+        res.setRes(orderList);
+        return res;
+
+    }
+
     ////////////////////////////////////////////////
 
     public MessageResponse getRecentOrder(String recentMaterial, String recentProduct, String recentOption,
