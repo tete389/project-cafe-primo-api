@@ -9,6 +9,7 @@ import com.example.cafebackend.mapper.MaterialMapper;
 import com.example.cafebackend.mapper.ProductMapper;
 import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseCateMateUseResponse;
 import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseCategoryResponse;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseFormCountResponse;
 import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseFormNameCategoryResponse;
 import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseFormNameResponse;
 import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseMinPriceFormNameResponse;
@@ -297,7 +298,7 @@ public class ProductBaseController {
     //////////////////////////////////////////////////////////////////////////
 
     public MessageResponse findProductBase(String baseId, String cateId, String minPrice, String haveForm,
-            String haveMateUse, String haveCate, Integer pageSize, Integer pageNum)
+            String haveCountFrom, String haveMateUse, String haveCate, Integer pageSize, Integer pageNum)
             throws BaseException {
 
         if (Objects.isNull(pageNum)) {
@@ -320,7 +321,20 @@ public class ProductBaseController {
 
         /// no baseid no cateid = find all
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        List<ProductBase> baseList = productBaseService.findBaseAllASCPageable(pageable);
+        List<ProductBase> baseList = new ArrayList<>();
+        if (!(Objects.isNull(haveCountFrom) || haveCountFrom.isEmpty())) {
+
+            List<ForProductBaseFormCountResponse> baseCfObject = productBaseService
+                    .findBaseAllAndCountFromASCPageable(pageable);
+
+            MessageResponse res = new MessageResponse();
+            res.setMessage("get Product(B) Product(f Count)");
+            res.setRes(baseCfObject);
+            return res;
+        } else {
+            baseList = productBaseService.findBaseAllASCPageable(pageable);
+        }
+
         if (!(Objects.isNull(haveForm) || haveForm.isEmpty())) {
             /// if form true
             if (haveForm.equals("true")) {

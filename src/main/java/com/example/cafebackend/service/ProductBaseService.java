@@ -2,6 +2,7 @@ package com.example.cafebackend.service;
 
 import com.example.cafebackend.exception.BaseException;
 import com.example.cafebackend.exception.ProductException;
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseFormCountResponse;
 import com.example.cafebackend.repository.ProductBaseRepository;
 import com.example.cafebackend.table.MaterialUsed;
 import com.example.cafebackend.table.ProductBase;
@@ -79,6 +80,11 @@ public class ProductBaseService {
     public List<ProductBase> findBaseAllASCPageable(Pageable pageable) {
         ///
         return productBaseRepository.findProdBaseAllPageable(pageable).getContent();
+    }
+
+      public List<ForProductBaseFormCountResponse> findBaseAllAndCountFromASCPageable(Pageable pageable) {
+        ///
+        return productBaseRepository.findProdBaseAndCountFromAllPageable(pageable).getContent();
     }
 
     public List<ProductBase> findBaseAllASCByCateIdPageable(String cateId, Pageable pageable) {

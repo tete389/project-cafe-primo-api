@@ -99,11 +99,12 @@ public class ProductApi {
             @RequestParam(name = "cateId", required = false) String cateId,
             @RequestParam(name = "minPrice", required = false) String minPrice,
             @RequestParam(name = "haveform", required = false) String haveForm,
+            @RequestParam(name = "haveCountform", required = false) String haveCountFrom,
             @RequestParam(name = "haveMateUse", required = false) String haveMateUse,
             @RequestParam(name = "haveCate", required = false) String haveCate,
             @RequestParam(name = "pageSize", required = false) Integer PageSize,
             @RequestParam(name = "pageNum", required = false) Integer PageNum) throws BaseException {
-        MessageResponse res = productBaseController.findProductBase(baseId, cateId, minPrice, haveForm, haveMateUse,
+        MessageResponse res = productBaseController.findProductBase(baseId, cateId, minPrice, haveForm,haveCountFrom, haveMateUse,
                 haveCate, PageSize, PageNum);
         return ResponseEntity.ok(res);
     }

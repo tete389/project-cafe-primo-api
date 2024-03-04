@@ -1,5 +1,6 @@
 package com.example.cafebackend.repository;
 
+import com.example.cafebackend.model.response.ForFindProdcut.ForProductBaseFormCountResponse;
 import com.example.cafebackend.table.ProductBase;
 
 import org.springframework.data.domain.Page;
@@ -19,11 +20,14 @@ public interface ProductBaseRepository extends JpaRepository<ProductBase, String
     @Query(value = "SELECT * FROM product_base pb INNER JOIN cate_prod cp ON cp.prod_base_id = pb.prod_base_id INNER JOIN category c ON c.cate_id = cp.cate_id WHERE cp.cate_id= :cateId AND pb.is_delete = false ORDER BY pb.prod_title_th ASC", nativeQuery = true)
     Page<ProductBase> findProdBaseByCateId(String cateId, Pageable pageable);
 
-    @Query(value = "SELECT * FROM product_base pb  WHERE pb.is_delete = false ORDER BY pb.prod_title_th ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM product_base pb  WHERE pb.is_delete = false ORDER BY pb.prod_base_id ASC", nativeQuery = true)
     List<ProductBase> findProdBaseAll();
 
-    @Query(value = "SELECT * FROM product_base pb  WHERE pb.is_delete = false ORDER BY pb.prod_title_th ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM product_base pb  WHERE pb.is_delete = false ORDER BY pb.prod_base_id ASC", nativeQuery = true)
     Page<ProductBase> findProdBaseAllPageable(Pageable pageable);
+
+    @Query(value = "SELECT pb.prod_base_id as prodBaseId , pb.prod_title_th as prodTitleTh , pb.prod_title_eng as prodTitleEng , pb.is_enable as isEnable , pb.is_material_enable as isMaterialEnable , pb.description as description , pb.image as image , count(pf.prod_form_id) as fromCount FROM product_base pb INNER JOIN product_form pf  ON pb.prod_base_id = pf.prod_base_id  WHERE pb.is_delete = false GROUP BY pb.prod_base_id order by pb.prod_base_id", nativeQuery = true)
+    Page<ForProductBaseFormCountResponse> findProdBaseAndCountFromAllPageable(Pageable pageable);
 
     @Query(value = "SELECT * FROM product_base pb WHERE pb.prod_base_id= :prodId AND pb.is_delete = false", nativeQuery = true)
     Optional<ProductBase> findProdBaseById(@Param("prodId") String prodId);
