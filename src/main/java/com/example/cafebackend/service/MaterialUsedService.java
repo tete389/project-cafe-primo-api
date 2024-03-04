@@ -42,7 +42,7 @@ public class MaterialUsedService {
         return materialUsedRepository.findByProdBaseIdAndMateId(baseId, mateId);
     }
 
-    public Optional<MaterialUsed> findByFormIdAndMateId(String formId, String mateId) {
+    public Optional<MaterialUsed> findByFormIdAndMateId(Long formId, String mateId) {
         /// find
         return materialUsedRepository.findByProdFormIdAndMateId(formId, mateId);
     }

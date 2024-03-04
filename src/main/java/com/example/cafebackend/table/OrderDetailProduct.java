@@ -35,7 +35,7 @@ public class OrderDetailProduct {
     private Double detailPrice;
 
     @Column(name = "prod_form_id", length = 36)
-    private String prodFormId;
+    private Long prodFormId;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

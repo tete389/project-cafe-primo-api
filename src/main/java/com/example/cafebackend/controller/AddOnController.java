@@ -109,12 +109,12 @@ public class AddOnController {
     }
     /////////////////////////////////
 
-    public MessageResponse updateAddOnInProductForm(String prodId, List<AddOn> listAddOnId) throws Exception {
+    public MessageResponse updateAddOnInProductForm(Long fromId, List<AddOn> listAddOnId) throws Exception {
         /// validate
-        if (Objects.isNull(prodId) || prodId.isEmpty())
+        if (Objects.isNull(fromId))
             throw ProductException.findFailRequestProductIdNull();
         /// verify
-        Optional<ProductForm> product = productFormService.findProductFormById(prodId);
+        Optional<ProductForm> product = productFormService.findProductFormById(fromId);
         if (product.isEmpty())
             throw ProductException.findProductFail();
         ProductForm productForm = product.get();
@@ -141,12 +141,12 @@ public class AddOnController {
     }
     ////////////////////////////////////////////////
 
-    public MessageResponse deleteAddOnFromProductForm(String prodId, List<AddOn> listAddOnId) throws Exception {
+    public MessageResponse deleteAddOnFromProductForm(Long fromId, List<AddOn> listAddOnId) throws Exception {
         /// validate
-        if (Objects.isNull(prodId) || prodId.isEmpty())
+        if (Objects.isNull(fromId))
             throw ProductException.findFailRequestProductIdNull();
         /// verify
-        Optional<ProductForm> product = productFormService.findProductFormById(prodId);
+        Optional<ProductForm> product = productFormService.findProductFormById(fromId);
         if (product.isEmpty())
             throw ProductException.findProductFail();
         ProductForm productForm = product.get();
@@ -168,7 +168,7 @@ public class AddOnController {
     }
     ////////////////////////////////////////////////
 
-    public MessageResponse findAddOn(String addId, String formId, String option) throws BaseException {
+    public MessageResponse findAddOn(String addId, Long formId, String option) throws BaseException {
         /// validate
         /// have add id
         if (!(Objects.isNull(addId) || addId.isEmpty())) {
@@ -192,7 +192,7 @@ public class AddOnController {
             return res;
         }
         /// have form id
-        if (!(Objects.isNull(formId) || formId.isEmpty())) {
+        if (!(Objects.isNull(formId))) {
             Optional<ProductForm> productForm = productFormService.findProductFormById(formId);
             if (productForm.isEmpty())
                 throw ProductException.findBaseFail();

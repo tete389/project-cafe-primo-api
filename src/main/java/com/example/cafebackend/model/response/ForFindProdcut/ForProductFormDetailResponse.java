@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class ForProductFormDetailResponse {
 
-    private String prodFormId;
+    private Long prodFormId;
 
     private String prodFormTh;
 

@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class ForProductFormAddOnResponse {
 
-    private String prodFormId;
+    private Long prodFormId;
 
     private String prodFormTh;
 

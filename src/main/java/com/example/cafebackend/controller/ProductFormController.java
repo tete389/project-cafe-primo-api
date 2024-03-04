@@ -74,11 +74,11 @@ public class ProductFormController {
         return res;
     }
 
-    public MessageResponse updateProductForm(String formId, String prodFormTh, String prodFormEng, Double prodPrice,
+    public MessageResponse updateProductForm(Long formId, String prodFormTh, String prodFormEng, Double prodPrice,
             String description,
             Boolean isEnable) throws Exception {
         /// validate
-        if (Objects.isNull(formId) || formId.isEmpty())
+        if (Objects.isNull(formId))
             throw ProductException.findFailRequestProductIdNull();
         /// verify
         Optional<ProductForm> prodOpt = productFormService.findProductFormById(formId);
@@ -176,7 +176,7 @@ public class ProductFormController {
 
     ////////////////////////////////////////////////////////////////
 
-    public MessageResponse findProductForm(String formId, String baseId, String addOn, String option,
+    public MessageResponse findProductForm(Long formId, String baseId, String addOn, String option,
             String haveMateUse, Integer pageSize, Integer pageNum) throws BaseException {
         /// verify
         ///////////////////////////
@@ -187,7 +187,7 @@ public class ProductFormController {
             pageSize = 30;
         }
         /// if form id value
-        if (!(Objects.isNull(formId) || formId.isEmpty())) {
+        if (!(Objects.isNull(formId))) {
             MessageResponse resById = findProductFormId(formId, addOn, option, haveMateUse);
             return resById;
         }
@@ -212,9 +212,9 @@ public class ProductFormController {
 
     ////////////////////////////////////////////////
 
-    public MessageResponse deleteProductForm(String prodId) throws BaseException {
+    public MessageResponse deleteProductForm(Long prodId) throws BaseException {
         /// validate
-        if (Objects.isNull(prodId) || prodId.isEmpty())
+        if (Objects.isNull(prodId))
             throw ProductException.findProductFail();
         Boolean product = productFormService.deleteFormById(prodId);
         /// res
@@ -225,7 +225,7 @@ public class ProductFormController {
     }
     ////////////////////////////////////////////////////////////////
 
-    private MessageResponse findProductFormId(String formId, String addOn, String option,
+    private MessageResponse findProductFormId(Long formId, String addOn, String option,
             String haveMateUse) throws ProductException {
         Optional<ProductForm> productForm = productFormService.findProductFormById(formId);
         if (productForm.isEmpty())

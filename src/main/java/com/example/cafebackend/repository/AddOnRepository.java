@@ -18,7 +18,7 @@ public interface AddOnRepository extends JpaRepository<AddOn, String> {
     Optional<AddOn> findAddOnById(String addId);
 
     @Query(value = "SELECT * FROM add_on add INNER JOIN prod_add pd  ON pd.add_on_id=add.add_on_id INNER JOIN product_form pf ON pf.prod_form_id=pd.prod_form_id WHERE pd.prod_form_id= :formId AND add.is_delete = false ORDER BY add.add_on_title_th ASC", nativeQuery = true)
-    List<AddOn> findAddOnByProductFormId(String formId);
+    List<AddOn> findAddOnByProductFormId(Long formId);
 
     @Query(value = "SELECT * FROM add_on add WHERE add.is_delete = false ORDER BY add.add_on_title_th ASC", nativeQuery = true)
     List<AddOn> findAddOnAll();

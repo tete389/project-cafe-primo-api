@@ -60,7 +60,7 @@ public class AddOnService {
         return addOnRepository.findByAddOnTitleEng(name);
     }
 
-    public List<AddOn> findAddOnByProductFormId(String id) {
+    public List<AddOn> findAddOnByProductFormId(Long id) {
         ///
         return addOnRepository.findAddOnByProductFormId(id);
     }

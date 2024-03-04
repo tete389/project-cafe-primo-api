@@ -140,7 +140,7 @@ public class ProductApi {
 
     @GetMapping("/getProductForm")
     public ResponseEntity<MessageResponse> findListFormByBaseId(
-            @RequestParam(name = "formId", required = false) String formId,
+            @RequestParam(name = "formId", required = false) Long formId,
             @RequestParam(name = "baseId", required = false) String baseId,
             @RequestParam(name = "addOn", required = false) String addOn,
             @RequestParam(name = "option", required = false) String option,

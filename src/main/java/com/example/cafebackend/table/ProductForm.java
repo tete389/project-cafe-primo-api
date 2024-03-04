@@ -14,8 +14,9 @@ import java.util.Objects;
 public class ProductForm {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prod_form_id", length = 15, nullable = false, unique = true)
-    private String prodFormId;
+    private Long prodFormId;
 
     @Column(name = "prod_form_th", length = 60, nullable = false)
     private String prodFormTh;

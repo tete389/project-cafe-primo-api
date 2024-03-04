@@ -18,7 +18,7 @@ public interface MaterialUsedRepository extends JpaRepository<MaterialUsed, Stri
     Optional<MaterialUsed> findByProdBaseIdAndMateId(String baseId, String mateId);
 
     @Query(value = "SELECT * FROM material_used mu INNER JOIN product_form pf ON mu.prod_form_id = pf.prod_form_id INNER JOIN material m ON mu.mate_id = m.mate_id WHERE mu.prod_form_id= :formId AND mu.mate_id= :mateId ", nativeQuery = true)
-    Optional<MaterialUsed> findByProdFormIdAndMateId(String formId, String mateId);
+    Optional<MaterialUsed> findByProdFormIdAndMateId(Long formId, String mateId);
 
     @Query(value = "SELECT * FROM material_used mu INNER JOIN option op ON mu.option_id = op.option_id INNER JOIN material m ON mu.mate_id = m.mate_id WHERE mu.option_id= :opId AND mu.mate_id= :mateId ", nativeQuery = true)
     Optional<MaterialUsed> findByOptionIdAndMateId(String opId, String mateId);

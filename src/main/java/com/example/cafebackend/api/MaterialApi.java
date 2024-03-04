@@ -77,7 +77,7 @@ public class MaterialApi {
     @GetMapping("/getMaterialUse")
     public ResponseEntity<MessageResponse> findMaterialUseInBase(@RequestParam(name = "mateId" , required = false) String mateId,
                                                                  @RequestParam(name = "baseId" , required = false) String baseId,
-                                                                 @RequestParam(name = "formId" , required = false) String formId,
+                                                                 @RequestParam(name = "formId" , required = false) Long formId,
                                                                  @RequestParam(name = "optionId" , required = false) String optionId)  throws Exception {
         MessageResponse res = materialUsedController.findMaterialUsed(mateId, baseId, formId, optionId);
         return ResponseEntity.ok(res);

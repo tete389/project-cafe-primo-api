@@ -54,7 +54,7 @@ public class MaterialUsedController {
             res.setRes(productBase);
             return res;
         }
-        if (!(Objects.isNull(usedRequest.getProdFormId()) || usedRequest.getProdFormId().isEmpty())) {
+        if (!(Objects.isNull(usedRequest.getProdFormId()))) {
             /// check product form
             Optional<ProductForm> prodOpt = productFormService.findProductFormById(usedRequest.getProdFormId());
             if (prodOpt.isEmpty())
@@ -104,7 +104,7 @@ public class MaterialUsedController {
             res.setRes(productBase);
             return res;
         }
-        if (!(Objects.isNull(usedRequest.getProdFormId()) || usedRequest.getProdFormId().isEmpty())) {
+        if (!(Objects.isNull(usedRequest.getProdFormId()) )) {
             /// check product form
             Optional<ProductForm> prodOpt = productFormService.findProductFormById(usedRequest.getProdFormId());
             if (prodOpt.isEmpty())
@@ -182,7 +182,7 @@ public class MaterialUsedController {
     // }
     //////////////////////////////////////
 
-    public MessageResponse findMaterialUsed(String mateId, String baseId, String formId, String optionId)
+    public MessageResponse findMaterialUsed(String mateId, String baseId, Long formId, String optionId)
             throws Exception {
         /// validate
         if (!(Objects.isNull(mateId) || mateId.isEmpty())) {
@@ -242,7 +242,7 @@ public class MaterialUsedController {
             return res;
         }
         ///
-        if (!(Objects.isNull(formId) || formId.isEmpty())) {
+        if (!(Objects.isNull(formId))) {
             /// check form
             Optional<ProductForm> formOpt = productFormService.findProductFormById(formId);
             if (formOpt.isEmpty())

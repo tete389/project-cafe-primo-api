@@ -13,7 +13,7 @@ public class UsedRequest {
 
     private String prodBaseId;
 
-    private String prodFormId;
+    private Long prodFormId;
 
     private String optionId;
 

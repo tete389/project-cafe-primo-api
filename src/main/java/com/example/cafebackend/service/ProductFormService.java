@@ -28,12 +28,12 @@ public class ProductFormService {
             String description)
             throws BaseException {
         /// verify
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        uuid = "PF" + uuid.substring(0, 13);
+        // String uuid = UUID.randomUUID().toString().replace("-", "");
+        // uuid = "PF" + uuid.substring(0, 13);
         /// save
         ProductForm table = new ProductForm();
         table.setProductBase(prod);
-        table.setProdFormId(uuid);
+        // table.setProdFormId(uuid);
         table.setProdFormTh(prodFormTh);
         table.setProdFormEng(prodFormEng);
         table.setIsEnable(true);
@@ -66,7 +66,7 @@ public class ProductFormService {
     }
     ////////////////////////////////////////////////////////
 
-    public Optional<ProductForm> findProductFormById(String prodId) {
+    public Optional<ProductForm> findProductFormById(Long prodId) {
         ///
         return productFormRepository.findProductFormById(prodId);
     }
@@ -107,7 +107,7 @@ public class ProductFormService {
     }
     ////////////////////////////////////////////////////////
 
-    public Boolean deleteFormById(String id) throws BaseException {
+    public Boolean deleteFormById(Long id) throws BaseException {
         /// verify
         Optional<ProductForm> form = productFormRepository.findById(id);
         ProductForm formDelete = form.get();

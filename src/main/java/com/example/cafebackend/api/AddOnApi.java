@@ -61,7 +61,7 @@ public class AddOnApi {
 
     @GetMapping("/getAddOn")
     public ResponseEntity<MessageResponse> getAddById(@RequestParam(name = "addId" , required = false) String addId,
-                                                      @RequestParam(name = "formId" , required = false) String formId,
+                                                      @RequestParam(name = "formId" , required = false) Long formId,
                                                       @RequestParam(name = "option", required = false) String option) throws BaseException {
         MessageResponse res = addOnController.findAddOn(addId, formId, option);
         return ResponseEntity.ok(res);
