@@ -326,10 +326,13 @@ public class ProductBaseController {
 
             List<ForProductBaseFormCountResponse> baseCfObject = productBaseService
                     .findBaseAllAndCountFromASCPageable(pageable);
- List<ForProductBaseFormCountResponse> baseCfObject2 = productBaseService
+            List<ForProductBaseFormCountResponse> baseCfObject2 = productBaseService
                     .findBaseAllAndNoFromASCPageable(pageable);
 
+            Set<ForProductBaseFormCountResponse> baseCfObject3 = new HashSet<>();
 
+            baseCfObject3.addAll(baseCfObject);
+            baseCfObject3.addAll(baseCfObject2);
             MessageResponse res = new MessageResponse();
             res.setMessage("get Product(B) Product(f Count)");
             res.setRes(baseCfObject);
