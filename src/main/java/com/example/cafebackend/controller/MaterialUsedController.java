@@ -104,7 +104,7 @@ public class MaterialUsedController {
             res.setRes(productBase);
             return res;
         }
-        if (!(Objects.isNull(usedRequest.getProdFormId()) )) {
+        if (!(Objects.isNull(usedRequest.getProdFormId()))) {
             /// check product form
             Optional<ProductForm> prodOpt = productFormService.findProductFormById(usedRequest.getProdFormId());
             if (prodOpt.isEmpty())
@@ -448,20 +448,41 @@ public class MaterialUsedController {
             Optional<Material> material = materialService.findById(usedRequest.getMateId());
             if (material.isEmpty())
                 throw MaterialException.findFail();
-            MaterialUsed used = new MaterialUsed();
+
             if (base != null) {
-                used.setMaterial(material.get());
-                used.setProductBase(base);
-                used.setIsEnable(material.get().getIsEnable());
-                used.setAmountUsed(Double.valueOf(usedRequest.getUseCount()));
-                listSaveMateUse.add(used);
+                Optional<MaterialUsed> materialUs = materialUsedService.findByBaseIdAndMateId(base.getProdBaseId(),
+                        usedRequest.getMateId());
+                if (!materialUs.isEmpty()) {
+                    MaterialUsed materialUse = materialUs.get();
+                    materialUse.setAmountUsed(Double.valueOf(usedRequest.getUseCount()));
+                    listSaveMateUse.add(materialUse);
+                } else {
+                    MaterialUsed used = new MaterialUsed();
+                    used.setMaterial(material.get());
+                    used.setProductBase(base);
+                    used.setIsEnable(material.get().getIsEnable());
+                    used.setAmountUsed(Double.valueOf(usedRequest.getUseCount()));
+                    listSaveMateUse.add(used);
+                }
+
             } else if (form != null) {
-                used.setMaterial(material.get());
-                used.setProductForm(form);
-                used.setIsEnable(material.get().getIsEnable());
-                used.setAmountUsed(Double.valueOf(usedRequest.getUseCount()));
-                listSaveMateUse.add(used);
+                Optional<MaterialUsed> materialUs = materialUsedService.findByFormIdAndMateId(form.getProdFormId(),
+                        usedRequest.getMateId());
+                if (!materialUs.isEmpty()) {
+                    MaterialUsed materialUse = materialUs.get();
+                    materialUse.setAmountUsed(Double.valueOf(usedRequest.getUseCount()));
+                    listSaveMateUse.add(materialUse);
+                } else {
+                    MaterialUsed used = new MaterialUsed();
+                    used.setMaterial(material.get());
+                    used.setProductForm(form);
+                    used.setIsEnable(material.get().getIsEnable());
+                    used.setAmountUsed(Double.valueOf(usedRequest.getUseCount()));
+                    listSaveMateUse.add(used);
+                }
+
             } else if (option != null) {
+                MaterialUsed used = new MaterialUsed();
                 used.setMaterial(material.get());
                 used.setOption(option);
                 used.setIsEnable(material.get().getIsEnable());
