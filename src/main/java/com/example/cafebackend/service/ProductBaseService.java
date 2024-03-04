@@ -87,6 +87,11 @@ public class ProductBaseService {
         return productBaseRepository.findProdBaseAndCountFromAllPageable(pageable).getContent();
     }
 
+          public List<ForProductBaseFormCountResponse> findBaseAllAndNoFromASCPageable(Pageable pageable) {
+        ///
+        return productBaseRepository.findProdBaseAndNoFromAllPageable(pageable).getContent();
+    }
+
     public List<ProductBase> findBaseAllASCByCateIdPageable(String cateId, Pageable pageable) {
         ///
         return productBaseRepository.findProdBaseByCateId(cateId, pageable).getContent();

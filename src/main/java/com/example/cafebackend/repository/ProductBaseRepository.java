@@ -29,6 +29,9 @@ public interface ProductBaseRepository extends JpaRepository<ProductBase, String
     @Query(value = "SELECT pb.prod_base_id as prodBaseId , pb.prod_title_th as prodTitleTh , pb.prod_title_eng as prodTitleEng , pb.is_enable as isEnable , pb.is_material_enable as isMaterialEnable , pb.description as description , pb.image as image , count(pf.prod_form_id) as fromCount FROM product_base pb INNER JOIN product_form pf  ON pb.prod_base_id = pf.prod_base_id  WHERE pb.is_delete = false GROUP BY pb.prod_base_id order by pb.prod_base_id", nativeQuery = true)
     Page<ForProductBaseFormCountResponse> findProdBaseAndCountFromAllPageable(Pageable pageable);
 
+    @Query(value = "SELECT pb.prod_base_id as prodBaseId , pb.prod_title_th as prodTitleTh , pb.prod_title_eng as prodTitleEng , pb.is_enable as isEnable , pb.is_material_enable as isMaterialEnable , pb.description as description , pb.image as image FROM product_base pb  WHERE pb.is_delete = false  order by pb.prod_base_id", nativeQuery = true)
+    Page<ForProductBaseFormCountResponse> findProdBaseAndNoFromAllPageable(Pageable pageable);
+
     @Query(value = "SELECT * FROM product_base pb WHERE pb.prod_base_id= :prodId AND pb.is_delete = false", nativeQuery = true)
     Optional<ProductBase> findProdBaseById(@Param("prodId") String prodId);
 
