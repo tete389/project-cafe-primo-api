@@ -335,7 +335,7 @@ public class ProductBaseController {
             baseCfObject3.addAll(baseCfObject2);
             MessageResponse res = new MessageResponse();
             res.setMessage("get Product(B) Product(f Count)");
-            res.setRes(baseCfObject);
+            res.setRes(baseCfObject3);
             return res;
         } else {
             baseList = productBaseService.findBaseAllASCPageable(pageable);
